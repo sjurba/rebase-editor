@@ -1,0 +1,22 @@
+{
+  "name": "rebase-editor",
+  "version": "0.0.0",
+  "description": "Terminal based editor specifically for use with git interactive rebase.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "git",
+    "interactive",
+    "rebase",
+    "editor",
+    "terminal",
+    "console"
+  ],
+  "author": "Sjur Bakka",
+  "license": "ISC",
+  "dependencies": {
+    "terminal-kit": "^0.12.2"
+  }
+}
