@@ -1,0 +1,13 @@
+{
+    "name": "rebase-editor",
+    "version": "1.0.0",
+    "description": "Just for demo",
+    "scripts": {
+        "test": "echo No tests"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/sjurba/rebase-editor.git"
+    },
+    "license": "ISC"
+}
