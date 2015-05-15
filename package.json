@@ -18,5 +18,8 @@
   "license": "ISC",
   "dependencies": {
     "terminal-kit": "^0.12.2"
-  }
+  },
+  "bin": {
+    "rebase-editor": "index.js"
+    }
 }
