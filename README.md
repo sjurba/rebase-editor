@@ -1,0 +1,33 @@
+# rebase-editor
+Simple terminal based sequence editor for git interactive rebase.
+Written in Node.js, published to npm, uses [terminal-kit](https://github.com/cronvel/terminal-kit).
+
+##Install
+     npm install -g rebase-editor
+     git config --global sequence.editor rebase-editor
+
+##Usage
+The terminal prints out the standard interactive rebase file that git creates, pluss some extra command info in the comments.
+When using the standard commands, the current lines action changes to the corresponding action:
+
+Commands:
+ - p, pick = use commit
+ - r, reword = use commit, but edit the commit message
+ - e, edit = use commit, but stop for amending
+ - s, squash = use commit, but meld into previous commit
+ - f, fixup = like "squash", but discard this commit's log message
+ 
+ >NOTE: `x, exec` command is not supported
+
+Supported extra commands are:
+ - Up/Down: Moves cursor between lines
+ - u: Moves current line up one position
+ - d: Moves current line down one position
+ - x: Cut/delete line (Pushes to a clipboard stack)
+ - v: Paste (Pops from clipboard stack)
+ - q: Quit (Saves rebase file and exits)
+ - Ctrl-c: Abort rebase (Deletes all lines from file)
+
+
+
+
