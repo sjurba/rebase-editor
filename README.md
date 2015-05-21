@@ -6,10 +6,14 @@ Written in Node.js, published to npm, uses [terminal-kit](https://github.com/cro
      npm install -g rebase-editor
      git config --global sequence.editor rebase-editor
 
+## Uninstall
+    npm remove -g rebase-editor
+    git config --global --unset sequence.editor
+
 ![Usage demo](https://github.com/sjurba/rebase-editor/raw/master/rebase-editor.gif)
 
 ## Usage
-The terminal prints out the standard interactive rebase file that git creates, pluss some extra command info in the comments.
+The terminal prints out the standard interactive rebase file that git creates, plus some extra command info in the comments.
 When using the standard commands, the current lines action changes to the corresponding action:
 
 Commands:
@@ -18,7 +22,7 @@ Commands:
  - e, edit = use commit, but stop for amending
  - s, squash = use commit, but meld into previous commit
  - f, fixup = like "squash", but discard this commit's log message
- 
+
  >NOTE: `x, exec` command is not supported
 
 Supported extra commands are:
@@ -30,6 +34,6 @@ Supported extra commands are:
  - q: Quit (Saves rebase file and exits)
  - Ctrl-c: Abort rebase (Deletes all lines from file)
 
+To use a different editor for one time (replace `vi` with your favorite editor):
 
-
-
+    GIT_SEQUENCE_EDITOR="vi" git rebase -i master
