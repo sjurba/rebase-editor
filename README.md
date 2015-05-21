@@ -6,6 +6,8 @@ Written in Node.js, published to npm, uses [terminal-kit](https://github.com/cro
      npm install -g rebase-editor
      git config --global sequence.editor rebase-editor
 
+![Usage demo](rebase-editor.gif)
+
 ##Usage
 The terminal prints out the standard interactive rebase file that git creates, pluss some extra command info in the comments.
 When using the standard commands, the current lines action changes to the corresponding action:
