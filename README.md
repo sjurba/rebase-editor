@@ -10,7 +10,7 @@ Written in Node.js, published to npm, uses [terminal-kit](https://github.com/cro
     npm remove -g rebase-editor
     git config --global --unset sequence.editor
 
-![Usage demo](https://github.com/sjurba/rebase-editor/raw/master/rebase-editor.gif)
+![rebase-editor](https://github.com/sjurba/rebase-editor/raw/master/rebase-editor.gif)
 
 ## Usage
 The terminal prints out the standard interactive rebase file that git creates, plus some extra command info in the comments.
@@ -37,6 +37,10 @@ Supported extra commands are:
 To use a different editor for one time (replace `vi` with your favorite editor):
 
     GIT_SEQUENCE_EDITOR="vi" git rebase -i master
+
+## Made a mistake?
+`git reflog` is your friend:
+![git-reflog](https://github.com/sjurba/rebase-editor/raw/master/git-reflog.gif)
 
 ## Development
 >"Sorry no tests.."
