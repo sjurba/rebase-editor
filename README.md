@@ -37,3 +37,17 @@ Supported extra commands are:
 To use a different editor for one time (replace `vi` with your favorite editor):
 
     GIT_SEQUENCE_EDITOR="vi" git rebase -i master
+
+## Contributions
+Contributions and comments are welcome, just make an issue and/or pull req.
+
+## Development
+>"Sorry no tests.."
+
+For debugging i have a `test` file I have been using.
+
+`node index.js test`
+
+For debugging using git:
+
+`GIT_SEQUENCE_EDITOR="./index.js" git rebase -i master`
