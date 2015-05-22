@@ -53,6 +53,10 @@ For debugging using git:
 
 `GIT_SEQUENCE_EDITOR="./index.js" git rebase -i master`
 
+## TODO
+ - [ ] Support exec command
+ - [ ] Add support for custom keymap
+
 ## Contributions
 Contributions and comments are welcome, just make an issue and/or pull req.
 
