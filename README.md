@@ -47,7 +47,7 @@ To use a different editor for one time (replace `vi` with your favorite editor):
 
 For debugging i have a `test` file I have been using.
 
-`node index.js test`
+`node index.js example`
 
 For debugging using git:
 
