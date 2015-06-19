@@ -17,6 +17,8 @@
   "author": "Sjur Bakka",
   "license": "ISC",
   "dependencies": {
+    "node.extend": "^1.1.5",
+    "osenv": "^0.1.2",
     "terminal-kit": "^0.12.2"
   },
   "bin": {
