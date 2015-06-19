@@ -6,12 +6,7 @@ Written in Node.js, published to npm, uses [terminal-kit](https://github.com/cro
      npm install -g rebase-editor
      git config --global sequence.editor rebase-editor
 
-## Uninstall
-    npm remove -g rebase-editor
-    git config --global --unset sequence.editor
-
 ![rebase-editor](https://github.com/sjurba/rebase-editor/raw/master/rebase-editor.gif)
-
 ## Usage
 The terminal prints out the standard interactive rebase file that git creates, plus some extra command info in the comments.
 When using the standard commands, the current lines action changes to the corresponding action:
@@ -38,9 +33,44 @@ To use a different editor for one time (replace `vi` with your favorite editor):
 
     GIT_SEQUENCE_EDITOR="vi" git rebase -i master
 
+### Command line arguments
+The editor accepts the following command line arguments:
+ * -s, --status: Print a status line on top. Useful for debugging custom key maps.
+ * -k, --keys: Set a custom keybinding. Must be defined as .json or a module exporting a json object.
+
+### Custom key bindings
+The keybindings must be a file that can be required, either json or a node module that exports a simple object.
+The specials keys that are supported are defined by terminal-kit.
+
+#### Default key bindings
+        {
+            "UP": "up",
+            "DOWN": "down",
+            "u": "moveUp",
+            "d": "moveDown",
+            "p": "pick",
+            "r": "reword",
+            "e": "edit",
+            "s": "squash",
+            "f": "fixup",
+            "x": "cut",
+            "BACKSPACE": "cut",
+            "v": "paste",
+            "q": "quit",
+            "ENTER": "quit",
+            "CTRL_C": "abort",
+            "ESCAPE": "abort"
+        }
+
+
+
 ## Made a mistake?
 `git reflog` is your friend:
 ![git-reflog](https://github.com/sjurba/rebase-editor/raw/master/git-reflog.gif)
+
+## Uninstall
+    npm remove -g rebase-editor
+    git config --global --unset sequence.editor
 
 ## Development
 >"Sorry no tests.."
@@ -54,8 +84,8 @@ For debugging using git:
 `GIT_SEQUENCE_EDITOR="./index.js" git rebase -i master`
 
 ## TODO
+ - [x] Add support for custom keymap
  - [ ] Support exec command
- - [ ] Add support for custom keymap
 
 ## Contributions
 Contributions and comments are welcome, just make an issue and/or pull req.
