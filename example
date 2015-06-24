@@ -1,8 +1,8 @@
-pick ef1a81f test
-pick 142a871 implemented stuff
-pick 142a871 implemented stuff
-fixup 142a871 implemented stuff with a very very very very very very very very very long line
-reword 142a871 implemented stuff
+pick ef1a81f 1 test
+pick 142a871 2 implemented stuff
+pick 142a871 3 implemented stuff
+fixup 142a871 4 implemented stuff with a very very very very very very very very very long line
+reword 142a871 5 implemented stuff
 
 # Rebase 766fab1..142a871 onto 766fab1
 #
