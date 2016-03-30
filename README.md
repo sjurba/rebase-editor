@@ -37,6 +37,7 @@ To use a different editor for one time (replace `vi` with your favorite editor):
 The editor accepts the following command line arguments:
  * -s, --status: Print a status line on top. Useful for debugging custom key maps.
  * -k, --keys: Set a custom keybinding. Must be defined as .json or a module exporting a json object.
+ * --no-color: Disables colorful editor output
 
 ### Custom key bindings
 The keybindings must be a file that can be required, either json or a node module that exports a simple object.
