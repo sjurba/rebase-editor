@@ -10,6 +10,7 @@ var args = require('minimist')(process.argv, {
 });
 
 global.appconfig = {
+    color: args.color,
     status: args.status,
     keys: args.keys
 };
