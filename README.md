@@ -22,8 +22,8 @@ Commands:
 
 Supported extra commands are:
  - Up/Down: Moves cursor between lines
- - u: Moves current line up one position
- - d: Moves current line down one position
+ - u/Ctrl-up: Moves current line up one position
+ - d/Ctrl-down: Moves current line down one position
  - x: Cut/delete line (Pushes to a clipboard stack)
  - v: Paste (Pops from clipboard stack)
  - q: Quit (Saves rebase file and exits)
