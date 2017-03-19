@@ -5,7 +5,12 @@ const renderer = require('./lib/terminal_renderer');
 const reduce = require('./lib/reducer');
 
 let state = {
-  lines: ['Hello', 'World', 'Sjur', 'Is here'],
+  lines: ['Hello', 'World', 'Sjur', 'Is here'].map((msg) => {
+    return {
+      action: 'pick',
+      message: msg
+    };
+  }),
   cursor: {
     pos: 0
   }
