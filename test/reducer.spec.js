@@ -121,4 +121,12 @@ describe('Reducer', function () {
       expect(newState.otherStateVar).to.equal(state.otherStateVar);
     });
   });
+
+  describe('delete', function () {
+    it('should comment line', function () {
+      const state = getState(3, 1);
+      const newState = reduce(state, 'delete');
+      expect(newState.lines[1].action).to.equal('#');
+    });
+  });
 });

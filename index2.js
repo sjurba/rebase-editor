@@ -21,14 +21,14 @@ function close() {
   process.exit(0);
 }
 
-renderer.init((key) => {
+renderer.init((key, origKey) => {
   if (key === 'quit' || key === 'abort') {
     close();
   } else {
     state = reduce(state, key);
 
-    renderer.render(state);
+    renderer.render(state, key, origKey);
   }
 });
 
-renderer.render(state);
+renderer.render(state, '', '');
