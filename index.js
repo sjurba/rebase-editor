@@ -1,39 +1,58 @@
-#!/usr/bin/env node
-
 'use strict';
+
+
+const renderer = require('./lib/terminal_renderer'),
+  reduce = require('./lib/reducer'),
+  FileHandle = require('./lib/file-handle'),
+  rebaseFile = require('./lib/rebase-file');
+
 var args = require('minimist')(process.argv, {
-    boolean: ['s'],
-    alias: {
-        s: 'status',
-        k: 'keys'
-    }
+  boolean: ['s'],
+  alias: {
+    s: 'status',
+    k: 'keys'
+  }
 });
 
 global.appconfig = {
-    color: args.color,
-    status: args.status,
-    keys: args.keys
+  color: args.color,
+  status: args.status,
+  keys: args.keys
 };
 
 var filename = args._[args._.length - 1];
 
-var FileHandle = require('./lib/file-handle.js');
 var file = new FileHandle(filename);
 
-function close(err) {
-    if (err) {
-        console.log(err);
+function exit(err) {
+  let status = 0;
+  renderer.close();
+  if (err) {
+    console.error(err);
+    status = 1;
+  }
+  process.exit(status);
+}
+
+function writeAndExit(data) {
+  file.write(data)
+    .then(() => exit())
+    .catch((err) => exit(err || 'Failed to write file'));
+}
+
+file.read().then((data) => {
+  let state = rebaseFile.toState(data);
+  renderer.init((key, origKey) => {
+    if (key === 'quit') {
+      writeAndExit(rebaseFile.toFile(state));
+    } else if (key === 'abort') {
+      writeAndExit('');
     } else {
-        console.log('File was saved');
+      state = reduce(state, key);
+      renderer.render(state, key, origKey);
     }
-    process.exit();
-}
-
-function done(output) {
-    file.write(output, close);
-}
-
-var editor = require('./lib/editor');
-editor.init(done);
-
-file.read(editor.setData, close);
+  });
+  renderer.render(state, '', '');
+}).catch((err) => {
+  exit(err || 'Failed to read file');
+});
