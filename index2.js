@@ -1,34 +1,42 @@
 'use strict';
 
 
-const renderer = require('./lib/terminal_renderer');
-const reduce = require('./lib/reducer');
+const renderer = require('./lib/terminal_renderer'),
+  reduce = require('./lib/reducer'),
+  FileHandle = require('./lib/file-handle'),
+  rebaseFile = require('./lib/rebase-file');
 
-let state = {
-  lines: ['Hello', 'World', 'Sjur', 'Is here'].map((msg) => {
-    return {
-      action: 'pick',
-      message: msg
-    };
-  }),
-  cursor: {
-    pos: 0
-  }
-};
-
-function close() {
-  renderer.close();
-  process.exit(0);
-}
-
-renderer.init((key, origKey) => {
-  if (key === 'quit' || key === 'abort') {
-    close();
-  } else {
-    state = reduce(state, key);
-
-    renderer.render(state, key, origKey);
+var args = require('minimist')(process.argv, {
+  boolean: ['s'],
+  alias: {
+    s: 'status',
+    k: 'keys'
   }
 });
 
-renderer.render(state, '', '');
+global.appconfig = {
+  color: args.color,
+  status: args.status,
+  keys: args.keys
+};
+
+var filename = args._[args._.length - 1];
+
+var file = new FileHandle(filename);
+
+file.read().then((data) => {
+  let state = rebaseFile.toState(data);
+  renderer.init((key, origKey) => {
+    if (key === 'quit' || key === 'abort') {
+      renderer.close();
+      process.exit(0);
+    } else {
+      state = reduce(state, key);
+      renderer.render(state, key, origKey);
+    }
+  });
+  renderer.render(state, '', '');
+}).catch((err) => {
+  renderer.close();
+  process.exit(1);
+});
