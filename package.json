@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "test": "mocha",
-        "test-dev": "mocha --watch"
+        "test-dev": "mocha --watch --reporter min"
     },
     "keywords": [
         "git",
