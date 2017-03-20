@@ -10,8 +10,7 @@ describe('Rebase file', function () {
 
   describe('to state', function () {
     it('should parse lines', function () {
-      const state = rebaseFile.toState(`
-          pick ad3d434 Hello message`);
+      const state = rebaseFile.toState('pick ad3d434 Hello message');
       expect(state.lines).to.deep.equal([{
         action: 'pick',
         hash: 'ad3d434',
@@ -20,8 +19,8 @@ describe('Rebase file', function () {
     });
 
     it('should parse info lines', function () {
-      const state = rebaseFile.toState(`
-          pick ad3d434 Hello message
+      const state = rebaseFile.toState(
+        `pick ad3d434 Hello message
 
           # Info here`);
       expect(state.info).to.deep.equal(['# Info here']);
@@ -34,6 +33,18 @@ describe('Rebase file', function () {
           # Info here`);
       const state = rebaseFile.toState(file);
       expect(rebaseFile.toFile(state)).to.equal(file);
+    });
+
+    it('should parse with empty commits', function () {
+      const file = trim(`
+          pick 123 First
+          # pick 234 Empty commit
+          pick 345 Last
+
+          # Info here`);
+      const state = rebaseFile.toState(file);
+      expect(rebaseFile.toFile(state)).to.equal(file);
+      expect(state.lines[1].action).to.equal('# pick');
     });
   });
 
