@@ -40,12 +40,15 @@ describe('Rebase file', function () {
           hash: 'bf44d54',
           message: 'Hello 2 message'
         }
-      ]
+      ],
+      info: ['# Info']
     };
     const file = rebaseFile.toFile(state);
     expect(file).to.equal(trim(`
       pick ad3d434 Hello message
       fixup bf44d54 Hello 2 message
+
+      # Info
     `));
   });
 });

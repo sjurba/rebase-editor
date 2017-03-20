@@ -88,7 +88,6 @@ describe('Terminal renderer', function () {
           fixup 123 Hello
           `);
         expect(mockTerm.clear).not.to.be.called;
-        expect(mockTerm.eraseLineAfter).to.be.called;
       });
 
       it('should only render status line if enabled', function () {
@@ -119,6 +118,34 @@ describe('Terminal renderer', function () {
           # Info
           `);
         expect(mockTerm.getCursorPos()).to.equal(2);
+      });
+
+      it('should render colors if enabled', function () {
+        const state = {
+          lines: [{
+            action: 'pick',
+            hash: '123',
+            message: 'Hello'
+          }, {
+            action: 'pick',
+            hash: '234',
+            message: 'World'
+          }],
+          info: ['# Info'],
+          cursor: {
+            pos: 0
+          }
+        };
+        const terminal = new Terminal(mockTerm, {
+          colors: true
+        });
+        terminal.render(null, state);
+        expectRendered(`
+          pick 123 Hello
+          pick 234 World
+
+          # Info
+          `);
       });
     });
   });

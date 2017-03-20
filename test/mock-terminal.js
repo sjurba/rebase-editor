@@ -6,18 +6,31 @@ function createMockTerminal() {
   let linePos = 0;
 
   function term(str) {
-    lines[linePos - 1] = str;
+    if (str) {
+      lines[linePos - 1] += str;
+    }
+    return term;
   }
 
-  term.noFormat = (str) => {
-    term(str);
-  };
+  const styling = ['bold', 'red', 'yellow', 'noFormat'];
+  styling.forEach((funcName) => {
+    term[funcName] = (str) => {
+      return term(str);
+    };
+    styling.forEach((prop) => {
+      term[funcName][prop] = term;
+    });
+  });
 
   term.moveTo = (col, row) => {
     linePos = row;
   };
 
-  ['fullscreen', 'grabInput', 'eraseLineAfter', 'on', 'clear'].forEach((funcName) => {
+  term.eraseLine = () => {
+    lines[linePos - 1] = '';
+  };
+
+  ['fullscreen', 'grabInput', 'on', 'clear'].forEach((funcName) => {
     term[funcName] = sinon.spy();
   });
 
