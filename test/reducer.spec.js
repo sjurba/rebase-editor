@@ -133,4 +133,82 @@ describe('Reducer', function () {
       expect(newState.otherStateVar).to.equal(state.otherStateVar);
     });
   });
+
+  describe('undo', function () {
+    it('should not undo when nothing has changed', function () {
+      const state = getState(1, 0);
+      let newState = reduce(state, 'undo');
+      expect(newState).to.equal(state);
+    });
+
+    it('should undo action change', function () {
+      const state = getState(1, 0);
+      let newState = reduce(state, 'fixup');
+      newState = reduce(newState, 'undo');
+      expect(newState.lines).to.equal(state.lines);
+    });
+
+    it('should not undo on move', function () {
+      const state = getState(2, 0);
+      let newState = reduce(state, 'down');
+      newState = reduce(newState, 'undo');
+      expect(newState.lines).to.equal(state.lines);
+      expect(newState.cursor).not.to.equal(state.cursor);
+    });
+
+    it('should update cursor on undo', function () {
+      const state = getState(2, 0);
+      let newState = reduce(state, 'fixup');
+      newState = reduce(newState, 'down');
+      newState = reduce(newState, 'undo');
+      expect(newState.lines).to.equal(state.lines);
+      expect(newState.cursor).to.equal(state.cursor);
+    });
+
+    it('should undo multiple actions', function () {
+      const state = getState(1, 0);
+      let newState = reduce(state, 'fixup');
+      newState = reduce(newState, 'reword');
+      expect(newState.lines[0].action).to.equal('reword');
+      newState = reduce(newState, 'undo');
+      expect(newState.lines[0].action).to.equal('fixup');
+      newState = reduce(newState, 'undo');
+      expect(newState.lines).to.equal(state.lines);
+    });
+  });
+
+  describe('redo', function () {
+    it('should not undo when nothing has changed', function () {
+      const state = getState(1, 0);
+      let newState = reduce(state, 'redo');
+      expect(newState).to.equal(state);
+    });
+
+    it('should redo change', function () {
+      let state = getState(1, 0);
+      state = reduce(state, 'fixup');
+      let newState = reduce(state, 'undo');
+      newState = reduce(newState, 'redo');
+      expect(newState.lines).to.equal(state.lines);
+    });
+
+    it('should undo redo change', function () {
+      const state = getState(1, 0);
+      let newState = reduce(state, 'fixup');
+      newState = reduce(newState, 'undo');
+      newState = reduce(newState, 'redo');
+      newState = reduce(newState, 'undo');
+      expect(newState.lines).to.equal(state.lines);
+    });
+
+    it('should clear redo stack on change', function () {
+      let state = getState(1, 0);
+      state = reduce(state, 'fixup');
+      state = reduce(state, 'reword');
+      state = reduce(state, 'undo');
+      state = reduce(state, 'squash');
+      const newState = reduce(state, 'redo');
+      expect(newState).to.equal(state);
+    });
+  });
 });
