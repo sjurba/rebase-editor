@@ -1,6 +1,6 @@
+#!/usr/bin/env node
+
 'use strict';
-
-
 const term = require('terminal-kit').terminal,
   Terminal = require('./lib/terminal'),
   reduce = require('./lib/reducer'),
