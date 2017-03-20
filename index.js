@@ -5,29 +5,10 @@ const Terminal = require('./lib/terminal'),
   reduce = require('./lib/reducer'),
   FileHandle = require('./lib/file-handle'),
   rebaseFile = require('./lib/rebase-file'),
+  keyBindings = require('./lib/key-bindings.js'),
   term = require('terminal-kit').terminal;
 
 
-var args = require('minimist')(process.argv, {
-  boolean: ['s'],
-  alias: {
-    s: 'status',
-    k: 'keys'
-  }
-});
-
-global.appconfig = {
-  color: args.color,
-  status: args.status,
-  keys: args.keys
-};
-
-var filename = args._[args._.length - 1];
-
-var file = new FileHandle(filename);
-
-const undoStack = [];
-const redoStack = [];
 
 function state() {
   if (undoStack.length > 0) {
@@ -64,10 +45,27 @@ function onKey(key, origKey) {
   }
 }
 
+const args = require('minimist')(process.argv, {
+  boolean: ['s', 'c'],
+  alias: {
+    s: 'status',
+    k: 'keys',
+    c: 'colors'
+  }
+});
+
+var filename = args._[args._.length - 1];
+
+var file = new FileHandle(filename);
+
+const undoStack = [];
+const redoStack = [];
+
 const terminal = new Terminal(term, {
   onKey: onKey,
-  status: true,
-  colors: true
+  status: args.status,
+  colors: args.colors,
+  keyBindings: keyBindings(args.keys)
 });
 
 file.read().then((data) => {
