@@ -1,10 +1,12 @@
 'use strict';
 
 
-const renderer = require('./lib/terminal_renderer'),
+const Terminal = require('./lib/terminal'),
   reduce = require('./lib/reducer'),
   FileHandle = require('./lib/file-handle'),
-  rebaseFile = require('./lib/rebase-file');
+  rebaseFile = require('./lib/rebase-file'),
+  term = require('terminal-kit').terminal;
+
 
 var args = require('minimist')(process.argv, {
   boolean: ['s'],
@@ -24,9 +26,35 @@ var filename = args._[args._.length - 1];
 
 var file = new FileHandle(filename);
 
+let state;
+
+function onKey(key, origKey) {
+  if (key === 'quit') {
+    writeAndExit(rebaseFile.toFile(state));
+  } else if (key === 'abort') {
+    writeAndExit('');
+  } else {
+    const newState = reduce(state, key);
+    terminal.render(state, newState, key, origKey);
+    state = newState;
+  }
+}
+
+const terminal = new Terminal(term, {
+  onKey: onKey,
+  status: true
+});
+
+file.read().then((data) => {
+  state = rebaseFile.toState(data);
+  terminal.render(null, state, '', '');
+}).catch((err) => {
+  exit(err || 'Failed to read file');
+});
+
 function exit(err) {
   let status = 0;
-  renderer.close();
+  terminal.close();
   if (err) {
     console.error(err);
     status = 1;
@@ -39,21 +67,3 @@ function writeAndExit(data) {
     .then(() => exit())
     .catch((err) => exit(err || 'Failed to write file'));
 }
-
-file.read().then((data) => {
-  let state = rebaseFile.toState(data);
-  renderer.init((key, origKey) => {
-    if (key === 'quit') {
-      writeAndExit(rebaseFile.toFile(state));
-    } else if (key === 'abort') {
-      writeAndExit('');
-    } else {
-      const newState = reduce(state, key);
-      renderer.render(state, newState, key, origKey);
-      state = newState;
-    }
-  });
-  renderer.render(null, state, '', '');
-}).catch((err) => {
-  exit(err || 'Failed to read file');
-});
