@@ -5,15 +5,16 @@ pick 142a871 3 implemented stuff
 fixup 142a871 5 implemented stuff with a very very very very very very very very very long line
 reword 142a871 6 implemented stuff
 
-# Rebase 766fab1..142a871 onto 766fab1
+# Rebase 98b090ef..928e1806 onto 98b090ef (2 commands)
 #
 # Commands:
-#  p, pick = use commit
-#  r, reword = use commit, but edit the commit message
-#  e, edit = use commit, but stop for amending
-#  s, squash = use commit, but meld into previous commit
-#  f, fixup = like "squash", but discard this commit's log message
-#  x, exec = run command (the rest of the line) using shell
+# p, pick = use commit
+# r, reword = use commit, but edit the commit message
+# e, edit = use commit, but stop for amending
+# s, squash = use commit, but meld into previous commit
+# f, fixup = like "squash", but discard this commit's log message
+# x, exec = run command (the rest of the line) using shell
+# d, drop = remove commit
 #
 # These lines can be re-ordered; they are executed from top to bottom.
 #
@@ -21,3 +22,4 @@ reword 142a871 6 implemented stuff
 #
 # However, if you remove everything, the rebase will be aborted.
 #
+# Note that empty commits are commented out

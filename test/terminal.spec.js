@@ -187,6 +187,33 @@ describe('Terminal renderer', function () {
             # Info
             `);
       });
+
+      it('should render extra info', function () {
+        const state = {
+          lines: [{
+            action: 'pick',
+            hash: '123',
+            message: 'Message'
+          }],
+          info: ['# Info', '#', '# Commands', '#', '# Rest'],
+          extraInfo: ['# Extra info'],
+          cursor: {
+            pos: 0
+          }
+        }
+        const terminal = new Terminal(mockTerm);
+        terminal.render(null, state);
+        expectRendered(`
+            pick 123 Message
+
+            # Info
+            #
+            # Commands
+            # Extra info
+            #
+            # Rest
+            `);
+      });
     });
   });
 });
