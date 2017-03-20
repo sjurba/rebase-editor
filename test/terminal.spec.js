@@ -200,7 +200,7 @@ describe('Terminal renderer', function () {
           cursor: {
             pos: 0
           }
-        }
+        };
         const terminal = new Terminal(mockTerm);
         terminal.render(null, state);
         expectRendered(`
