@@ -48,11 +48,12 @@ file.read().then((data) => {
     } else if (key === 'abort') {
       writeAndExit('');
     } else {
-      state = reduce(state, key);
-      renderer.render(state, key, origKey);
+      const newState = reduce(state, key);
+      renderer.render(state, newState, key, origKey);
+      state = newState;
     }
   });
-  renderer.render(state, '', '');
+  renderer.render(null, state, '', '');
 }).catch((err) => {
   exit(err || 'Failed to read file');
 });
