@@ -17,17 +17,18 @@ Commands:
  - e, edit = use commit, but stop for amending
  - s, squash = use commit, but meld into previous commit
  - f, fixup = like "squash", but discard this commit's log message
+ - d, drop = remove commit
 
  >NOTE: `x, exec` command is not supported
 
 Supported extra commands are:
  - Up/Down: Moves cursor between lines
- - u/Ctrl-up: Moves current line up one position
- - d/Ctrl-down: Moves current line down one position
- - x: Cut/delete line (Pushes to a clipboard stack)
- - v: Paste (Pops from clipboard stack)
- - q: Quit (Saves rebase file and exits)
- - Ctrl-c: Abort rebase (Deletes all lines from file)
+ - Left/Ctrl-up: Moves current line up one position
+ - Right/Ctrl-down: Moves current line down one position
+ - z/Ctrl-z: Undo
+ - Z/Ctrl-shift-x: Redo
+ - q/Enter: Quit (Saves rebase file and exits)
+ - Esc/Ctrl-c: Abort rebase (Deletes all lines from file)
 
 To use a different editor for one time (replace `vi` with your favorite editor):
 
