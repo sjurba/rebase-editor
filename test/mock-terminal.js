@@ -9,6 +9,10 @@ function createMockTerminal() {
     lines[linePos - 1] = str;
   }
 
+  term.noFormat = (str) => {
+    term(str);
+  };
+
   term.moveTo = (col, row) => {
     linePos = row;
   };

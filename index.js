@@ -66,7 +66,8 @@ function onKey(key, origKey) {
 
 const terminal = new Terminal(term, {
   onKey: onKey,
-  status: true
+  status: true,
+  colors: true
 });
 
 file.read().then((data) => {
