@@ -10,7 +10,8 @@ describe('Rebase file', function () {
           pick ad3d434 Hello message`);
       expect(state.lines).to.deep.equal([{
         action: 'pick',
-        message: 'ad3d434 Hello message'
+        hash: 'ad3d434',
+        message: 'Hello message'
       }]);
     });
 

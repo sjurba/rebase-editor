@@ -34,9 +34,11 @@ describe('Terminal renderer', function () {
         terminal.render(null, {
           lines: [{
             action: 'pick',
+            hash: '123',
             message: 'Hello'
           }, {
             action: 'pick',
+            hash: '234',
             message: 'World'
           }],
           info: ['# More', '# Info'],
@@ -45,8 +47,8 @@ describe('Terminal renderer', function () {
           }
         });
         expectRendered(`
-          pick Hello
-          pick World
+          pick 123 Hello
+          pick 234 World
 
           # More
           # Info
@@ -59,9 +61,11 @@ describe('Terminal renderer', function () {
         const oldState = {
           lines: [{
             action: 'pick',
+            hash: '123',
             message: 'Hello'
           }, {
             action: 'pick',
+            hash: '234',
             message: 'World'
           }],
           info: ['# Info'],
@@ -72,6 +76,7 @@ describe('Terminal renderer', function () {
         const state = {
           lines: [{
             action: 'fixup',
+            hash: '123',
             message: 'Hello'
           }, oldState.lines[1]],
           info: oldState.info,
@@ -80,7 +85,7 @@ describe('Terminal renderer', function () {
         const terminal = new Terminal(mockTerm);
         terminal.render(oldState, state);
         expectRendered(`
-          fixup Hello
+          fixup 123 Hello
           `);
         expect(mockTerm.clear).not.to.be.called;
         expect(mockTerm.eraseLineAfter).to.be.called;
@@ -90,9 +95,11 @@ describe('Terminal renderer', function () {
         const state = {
           lines: [{
             action: 'pick',
+            hash: '123',
             message: 'Hello'
           }, {
             action: 'pick',
+            hash: '234',
             message: 'World'
           }],
           info: ['# Info'],
@@ -106,8 +113,8 @@ describe('Terminal renderer', function () {
         terminal.render(null, state, 'up', 'UP');
         expectRendered(`
           Cursor: 0 Key: up Raw key: UP
-          pick Hello
-          pick World
+          pick 123 Hello
+          pick 234 World
 
           # Info
           `);
