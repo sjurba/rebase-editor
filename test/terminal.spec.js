@@ -28,98 +28,117 @@ describe('Terminal renderer', function () {
       expect(mockTerm.getRendered()).to.equal(trim(str));
     }
 
-    describe('on load', function () {
-      it('should render lines', function () {
-        const terminal = new Terminal(mockTerm);
-        terminal.render(null, {
-          lines: [{
-            action: 'pick',
-            hash: '123',
-            message: 'Hello'
-          }, {
-            action: 'pick',
-            hash: '234',
-            message: 'World'
-          }],
-          info: ['# More', '# Info'],
-          cursor: {
-            pos: 0
-          }
-        });
-        expectRendered(`
+    it('should render lines', function () {
+      const terminal = new Terminal(mockTerm);
+      terminal.render(null, {
+        lines: [{
+          action: 'pick',
+          hash: '123',
+          message: 'Hello'
+        }, {
+          action: 'pick',
+          hash: '234',
+          message: 'World'
+        }],
+        info: ['# More', '# Info'],
+        cursor: {
+          pos: 0
+        }
+      });
+      expectRendered(`
           pick 123 Hello
           pick 234 World
 
           # More
           # Info
           `);
-        expect(mockTerm.clear).to.be.called;
-        expect(mockTerm.getCursorPos()).to.equal(1);
-      });
+      expect(mockTerm.clear).to.be.called;
+      expect(mockTerm.getCursorPos()).to.equal(1);
+    });
 
-      it('should only render changed line', function () {
-        const oldState = {
-          lines: [{
-            action: 'pick',
-            hash: '123',
-            message: 'Hello'
-          }, {
-            action: 'pick',
-            hash: '234',
-            message: 'World'
-          }],
-          info: ['# Info'],
-          cursor: {
-            pos: 0
-          }
-        };
-        const state = {
-          lines: [{
-            action: 'fixup',
-            hash: '123',
-            message: 'Hello'
-          }, oldState.lines[1]],
-          info: oldState.info,
-          cursor: oldState.cursor
-        };
-        const terminal = new Terminal(mockTerm);
-        terminal.render(oldState, state);
-        expectRendered(`
+    it('should only render changed line', function () {
+      const oldState = {
+        lines: [{
+          action: 'pick',
+          hash: '123',
+          message: 'Hello'
+        }, {
+          action: 'pick',
+          hash: '234',
+          message: 'World'
+        }],
+        info: ['# Info'],
+        cursor: {
+          pos: 0
+        }
+      };
+      const state = {
+        lines: [{
+          action: 'fixup',
+          hash: '123',
+          message: 'Hello'
+        }, oldState.lines[1]],
+        info: oldState.info,
+        cursor: oldState.cursor
+      };
+      const terminal = new Terminal(mockTerm);
+      terminal.render(oldState, state);
+      expectRendered(`
           fixup 123 Hello
           `);
-        expect(mockTerm.clear).not.to.be.called;
-      });
+      expect(mockTerm.clear).not.to.be.called;
+    });
 
-      it('should only render status line if enabled', function () {
-        const state = {
-          lines: [{
-            action: 'pick',
-            hash: '123',
-            message: 'Hello'
-          }, {
-            action: 'pick',
-            hash: '234',
-            message: 'World'
-          }],
-          info: ['# Info'],
-          cursor: {
-            pos: 0
-          }
-        };
-        const terminal = new Terminal(mockTerm, {
-          status: true
-        });
-        terminal.render(null, state, 'up', 'UP');
-        expectRendered(`
+    it('should render noop', function () {
+      const state = {
+        lines: [{
+          action: 'noop'
+        }],
+        info: ['# Info'],
+        cursor: {
+          pos: 0
+        }
+      };
+      const terminal = new Terminal(mockTerm);
+      terminal.render(null, state);
+      expectRendered(`
+          noop
+
+          # Info
+          `);
+    });
+
+    it('should only render status line if enabled', function () {
+      const state = {
+        lines: [{
+          action: 'pick',
+          hash: '123',
+          message: 'Hello'
+        }, {
+          action: 'pick',
+          hash: '234',
+          message: 'World'
+        }],
+        info: ['# Info'],
+        cursor: {
+          pos: 0
+        }
+      };
+      const terminal = new Terminal(mockTerm, {
+        status: true
+      });
+      terminal.render(null, state, 'up', 'UP');
+      expectRendered(`
           Cursor: 0 Key: up Raw key: UP
           pick 123 Hello
           pick 234 World
 
           # Info
           `);
-        expect(mockTerm.getCursorPos()).to.equal(2);
-      });
+      expect(mockTerm.getCursorPos()).to.equal(2);
+    });
 
+    describe('with color', function () {
       it('should render colors if enabled', function () {
         const state = {
           lines: [{
@@ -141,11 +160,32 @@ describe('Terminal renderer', function () {
         });
         terminal.render(null, state);
         expectRendered(`
-          pick 123 Hello
-          pick 234 World
+      pick 123 Hello
+      pick 234 World
 
-          # Info
-          `);
+      # Info
+      `);
+      });
+
+      it('should render noop', function () {
+        const state = {
+          lines: [{
+            action: 'noop'
+          }],
+          info: ['# Info'],
+          cursor: {
+            pos: 0
+          }
+        };
+        const terminal = new Terminal(mockTerm, {
+          colors: true
+        });
+        terminal.render(null, state);
+        expectRendered(`
+            noop
+
+            # Info
+            `);
       });
     });
   });

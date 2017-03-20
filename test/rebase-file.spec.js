@@ -2,6 +2,10 @@
 
 const rebaseFile = require('../lib/rebase-file');
 
+function trim(str) {
+  return str.trim().split('\n').map((line) => line.trim()).join('\n');
+}
+
 describe('Rebase file', function () {
 
   describe('to state', function () {
@@ -22,11 +26,16 @@ describe('Rebase file', function () {
           # Info here`);
       expect(state.info).to.deep.equal(['# Info here']);
     });
-  });
 
-  function trim(str) {
-    return str.trim().split('\n').map((line) => line.trim()).join('\n');
-  }
+    it('should parse noop', function () {
+      const file = trim(`
+          noop
+
+          # Info here`);
+      const state = rebaseFile.toState(file);
+      expect(rebaseFile.toFile(state)).to.equal(file);
+    });
+  });
 
   it('to file', function () {
     const state = {

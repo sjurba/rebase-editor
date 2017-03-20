@@ -3,13 +3,17 @@
 const reduce = require('../lib/reducer.js');
 
 function getState(lines, cursorPos) {
-  return {
-    lines: new Array(lines || 0).fill().map((val, idx) => {
+  if (typeof lines === 'number') {
+    lines = new Array(lines || 0).fill().map((val, idx) => {
       return {
         action: 'pick',
+        hash: '123',
         message: 'Line ' + idx
       };
-    }),
+    });
+  }
+  return {
+    lines: lines,
     cursor: {
       pos: cursorPos || 0
     },
@@ -106,6 +110,14 @@ describe('Reducer', function () {
   describe('change action key', function () {
     it('should do nothing if action is not different', function () {
       const state = getState(1, 0);
+      const newState = reduce(state, 'pick');
+      expect(newState).to.equal(state);
+    });
+
+    it('should do nothing if line has no hash', function () {
+      const state = getState([{
+        action: 'noop'
+      }], 0);
       const newState = reduce(state, 'pick');
       expect(newState).to.equal(state);
     });
