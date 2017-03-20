@@ -1,37 +1,37 @@
 {
-    "name": "rebase-editor",
-    "version": "1.1.1",
-    "description": "Simple terminal based sequence editor for git interactive rebase.",
-    "main": "index.js",
-    "scripts": {
-        "test": "mocha",
-        "test-dev": "mocha --watch --reporter min"
-    },
-    "keywords": [
-        "git",
-        "interactive",
-        "rebase",
-        "editor",
-        "terminal",
-        "console"
-    ],
-    "author": "Sjur Bakka",
-    "license": "ISC",
-    "dependencies": {
-        "minimist": "^1.1.1",
-        "terminal-kit": "^1.0.1"
-    },
-    "bin": {
-        "rebase-editor": "index.js"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git://github.com/sjurba/rebase-editor.git"
-    },
-    "devDependencies": {
-        "chai": "^3.5.0",
-        "chai-sinon": "^2.8.1",
-        "mocha": "^3.2.0",
-        "sinon": "^2.0.0"
-    }
+  "name": "rebase-editor",
+  "version": "2.0.0",
+  "description": "Simple terminal based sequence editor for git interactive rebase.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha",
+    "test-dev": "mocha --watch --reporter min"
+  },
+  "keywords": [
+    "git",
+    "interactive",
+    "rebase",
+    "editor",
+    "terminal",
+    "console"
+  ],
+  "author": "Sjur Bakka",
+  "license": "ISC",
+  "dependencies": {
+    "minimist": "^1.1.1",
+    "terminal-kit": "^1.0.1"
+  },
+  "bin": {
+    "rebase-editor": "index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/sjurba/rebase-editor.git"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-sinon": "^2.8.1",
+    "mocha": "^3.2.0",
+    "sinon": "^2.0.0"
+  }
 }
