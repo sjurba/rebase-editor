@@ -2,7 +2,7 @@
 
 function createMockTerminal() {
 
-  const lines = [];
+  let lines = [];
   let linePos = 0;
 
   function term(str) {
@@ -33,7 +33,8 @@ function createMockTerminal() {
     lines[linePos - 1] = '';
   };
 
-  ['fullscreen', 'grabInput', 'on', 'clear'].forEach((funcName) => {
+  const controlFncs = ['fullscreen', 'grabInput', 'on', 'clear'];
+  controlFncs.forEach((funcName) => {
     term[funcName] = sinon.spy();
   });
 
@@ -42,6 +43,14 @@ function createMockTerminal() {
   };
 
   term.getCursorPos = () => linePos;
+
+  term.reset = () => {
+    linePos = 0;
+    lines = [];
+    controlFncs.forEach((fnc) => {
+      term[fnc].reset();
+    });
+  };
 
   return sinon.spy(term);
 

@@ -30,7 +30,7 @@ describe('Terminal renderer', function () {
 
     it('should render lines', function () {
       const terminal = new Terminal(mockTerm);
-      terminal.render(null, {
+      terminal.render({
         lines: [{
           action: 'pick',
           hash: '123',
@@ -82,7 +82,9 @@ describe('Terminal renderer', function () {
         cursor: oldState.cursor
       };
       const terminal = new Terminal(mockTerm);
-      terminal.render(oldState, state);
+      terminal.render(oldState);
+      mockTerm.reset();
+      terminal.render(state);
       expectRendered(`
           fixup 123 Hello
           `);
@@ -100,7 +102,7 @@ describe('Terminal renderer', function () {
         }
       };
       const terminal = new Terminal(mockTerm);
-      terminal.render(null, state);
+      terminal.render(state);
       expectRendered(`
           noop
 
@@ -128,7 +130,7 @@ describe('Terminal renderer', function () {
       const terminal = new Terminal(mockTerm, {
         status: true
       });
-      terminal.render(null, state, 'up', 'UP');
+      terminal.render(state, 'up', 'UP');
       expectRendered(`
           Cursor: 0 From: 0 Key: up  Raw key: UP
           pick 123 Hello
@@ -159,7 +161,7 @@ describe('Terminal renderer', function () {
         const terminal = new Terminal(mockTerm, {
           colors: true
         });
-        terminal.render(null, state);
+        terminal.render(state);
         expectRendered(`
       pick 123 Hello
       pick 234 World
@@ -181,7 +183,7 @@ describe('Terminal renderer', function () {
         const terminal = new Terminal(mockTerm, {
           colors: true
         });
-        terminal.render(null, state);
+        terminal.render(state);
         expectRendered(`
             noop
 
@@ -203,7 +205,7 @@ describe('Terminal renderer', function () {
           }
         };
         const terminal = new Terminal(mockTerm);
-        terminal.render(null, state);
+        terminal.render(state);
         expectRendered(`
             pick 123 Message
 
