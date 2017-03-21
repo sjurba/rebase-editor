@@ -1,34 +1,7 @@
   'use strict';
 
-  const reduce = require('../lib/reducer.js');
-
-  function getState(lines, cursor) {
-    if (typeof lines === 'number') {
-      lines = new Array(lines || 0).fill().map((val, idx) => {
-        return {
-          action: 'pick',
-          hash: '123',
-          message: 'Line ' + idx
-        };
-      });
-    }
-    if (!cursor) {
-      cursor = 0;
-    }
-    if (typeof cursor === 'number') {
-      cursor = {
-        pos: cursor,
-        from: cursor
-      };
-    }
-    return {
-      lines: lines,
-      cursor: cursor,
-      otherStateVar: {
-        foo: 'bar'
-      }
-    };
-  }
+  const reduce = require('../lib/reducer'),
+    getState = require('./state-gen');
 
   describe('Reducer', function () {
 

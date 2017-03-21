@@ -1,7 +1,8 @@
 'use strict';
 
-const Terminal = require('../lib/terminal');
-const mockTerminal = require('./mock-terminal');
+const Terminal = require('../lib/terminal'),
+  mockTerminal = require('./mock-terminal'),
+  getState = require('./state-gen');
 
 describe('Terminal renderer', function () {
   let mockTerm;
@@ -110,6 +111,40 @@ describe('Terminal renderer', function () {
           `);
     });
 
+    it('should only render visible lines', function () {
+      const state = getState(4, 0);
+      const terminal = new Terminal(mockTerm);
+      mockTerm.height = 2;
+      terminal.render(state);
+      expectRendered(`
+        pick 123 Line 0
+        pick 123 Line 1
+        `);
+    });
+
+    it('should only render visible info lines', function () {
+      const state = getState(1, 0, 3);
+      const terminal = new Terminal(mockTerm);
+      mockTerm.height = 3;
+      terminal.render(state);
+      expectRendered(`
+        pick 123 Line 0
+
+        # Info 0
+        `);
+    });
+
+    it('should scroll down on bottom', function () {
+      const state = getState(4, 3);
+      const terminal = new Terminal(mockTerm);
+      mockTerm.height = 2;
+      terminal.render(state);
+      expectRendered(`
+        pick 123 Line 2
+        pick 123 Line 3
+        `);
+    });
+
     it('should only render status line if enabled', function () {
       const state = {
         lines: [{
@@ -132,7 +167,7 @@ describe('Terminal renderer', function () {
       });
       terminal.render(state, 'up', 'UP');
       expectRendered(`
-          Cursor: 0 From: 0 Key: up  Raw key: UP
+          Cursor: 0 From: 0 Key: up  Raw key: UP Heigth: 50
           pick 123 Hello
           pick 234 World
 

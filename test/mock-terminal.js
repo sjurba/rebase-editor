@@ -52,6 +52,8 @@ function createMockTerminal() {
     });
   };
 
+  term.height = 50;
+
   return sinon.spy(term);
 
 }
