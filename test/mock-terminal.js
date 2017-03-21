@@ -12,19 +12,6 @@ function createMockTerminal() {
     return term;
   }
 
-  const styling = ['bold', 'red', 'yellow', 'inverse', 'noFormat', 'hideCursor'];
-  styling.forEach((funcName) => {
-    term[funcName] = (str) => {
-      if (typeof str === 'string') {
-        term(str);
-      }
-      return term;
-    };
-    styling.forEach((prop) => {
-      term[funcName][prop] = term;
-    });
-  });
-
   term.moveTo = (col, row) => {
     linePos = row;
   };
@@ -33,7 +20,7 @@ function createMockTerminal() {
     lines[linePos - 1] = '';
   };
 
-  const controlFncs = ['fullscreen', 'grabInput', 'on', 'clear'];
+  const controlFncs = ['fullscreen', 'grabInput', 'on', 'clear', 'hideCursor'];
   controlFncs.forEach((funcName) => {
     term[funcName] = sinon.spy();
   });
@@ -54,7 +41,7 @@ function createMockTerminal() {
 
   term.height = 50;
 
-  return sinon.spy(term);
+  return term;
 
 }
 
