@@ -12,10 +12,13 @@ function createMockTerminal() {
     return term;
   }
 
-  const styling = ['bold', 'red', 'yellow', 'noFormat'];
+  const styling = ['bold', 'red', 'yellow', 'underline', 'noFormat'];
   styling.forEach((funcName) => {
     term[funcName] = (str) => {
-      return term(str);
+      if (typeof str === 'string') {
+        term(str);
+      }
+      return term;
     };
     styling.forEach((prop) => {
       term[funcName][prop] = term;
