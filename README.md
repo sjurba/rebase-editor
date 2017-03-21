@@ -2,6 +2,10 @@
 Simple terminal based sequence editor for git interactive rebase.
 Written in Node.js, published to npm, uses [terminal-kit](https://github.com/cronvel/terminal-kit).
 
+**VERSION 2.0 IS OUT** :sparkles: :camel: :boom:</br>
+New features: Select multiple lines, and undo changes!</br>
+Check the [changelog](#changelog) for details.
+
 ## Install
      npm install -g rebase-editor
      git config --global sequence.editor rebase-editor
@@ -40,7 +44,7 @@ To use a different editor for one time (replace `vi` with your favorite editor):
 The editor accepts the following command line arguments:
  * -s, --status: Print a status line on top. Useful for debugging custom key maps.
  * -k, --keys: Set a custom keybinding. Must be defined as .json or a module exporting a json object.
- * --no-color: Disables colorful editor output
+ * -c, --color: Use colorful editor output
 
 ### Custom key bindings
 The keybindings must be a file that can be required, either json or a node module that exports a simple object.
@@ -75,6 +79,10 @@ The specials keys that are supported are defined by terminal-kit.
         }
 
 
+#### A note on key bindings
+>Not all key combinations work on Mac (that I use). Most notably, no modifier keys work with UP/DOWN (Like SHIFT, CTRL, ALT, META/CMD). Fn works kind of but it translates to PAGE_UP/DOWN. Therefor I decided to use the LEFT/RIGHT combinations as a fallback for Mac.
+>
+> Likewise CMD-Z, CMD-SHIFT-Z does not work either(CMD doesn't work at all really). So I went with simply z,Z for undo redo.
 
 ## Made a mistake?
 `git reflog` is your friend:
@@ -85,9 +93,19 @@ The specials keys that are supported are defined by terminal-kit.
     git config --global --unset sequence.editor
 
 ## Development
->"Sorry no tests.."
 
-For debugging i have a `test` file I have been using.
+### Architecture/Code map
+ - `index.js` - starting point, gules the app together
+ - `rebase-file.js` - reads and write state from a rebase file.
+ - `key-binding.js` - defines default key bindings.
+ - `reducer.js` - a redux-inspired reducer. A pure function that takes the old state and an key action and returns a new state object. Remember that the state is immutable (although not enforced).
+ - `terminal.js` - renders the current state to the terminal. Also takes the old state to compare what has changed to optimize rendering.
+ - `file-handle.js` - file util.
+
+### Testing
+`npm test` or `npm run tdd`
+
+For debugging i have a test file I have been using.
 
 `node index.js example`
 
@@ -95,9 +113,29 @@ For debugging using git:
 
 `GIT_SEQUENCE_EDITOR="./index.js" git rebase -i master`
 
+## Changelog
+
+### v1.0.0
+Initial version
+
+### v2.0.0
+Complete rewrite with new architecture and test driven implementation.
+
+#### New features:
+ - Line selection. You can now select multiple lines and move or change them together. Use Shift up/down (not on mac), or Shift left/right to make a selection.
+ - Highligt line. The selected line(s) is now highlighted.
+ - Support the drop command instead of deleting lines.
+ - Undo/Redo. You can now undo and redo all changes with z,Z or CTRL_Z, CTRL_SHIFT_Z.
+
+#### Breaking changes:
+ - Colors is now opt-in instead of opt-out. With the new line selection I like no colors better.
+ - Removed cut'n paste function. Replaced with drop command.
+ - Changed default move line key from u and d to CTRL_UP/CTRL_DOWN (not on mac) or LEFT/RIGHT. Can be reverted with custom keymap.
+
 ## TODO
- - [x] Add support for custom keymap
  - [ ] Support exec command
+
+ >Or not.. I have never found use for this function anyways, and I'm not sure how I would like the workflow and keymapping to work.
 
 ## Contributions
 Contributions and comments are welcome, just make an issue and/or pull req.
