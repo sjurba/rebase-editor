@@ -12,7 +12,7 @@ function createMockTerminal() {
     return term;
   }
 
-  const styling = ['bold', 'red', 'yellow', 'underline', 'noFormat'];
+  const styling = ['bold', 'red', 'yellow', 'inverse', 'noFormat', 'hideCursor'];
   styling.forEach((funcName) => {
     term[funcName] = (str) => {
       if (typeof str === 'string') {

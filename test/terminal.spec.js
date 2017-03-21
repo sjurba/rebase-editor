@@ -121,7 +121,8 @@ describe('Terminal renderer', function () {
         }],
         info: ['# Info'],
         cursor: {
-          pos: 0
+          pos: 0,
+          from: 0
         }
       };
       const terminal = new Terminal(mockTerm, {
@@ -129,7 +130,7 @@ describe('Terminal renderer', function () {
       });
       terminal.render(null, state, 'up', 'UP');
       expectRendered(`
-          Cursor: 0 Key: up Raw key: UP
+          Cursor: 0 From: 0 Key: up  Raw key: UP
           pick 123 Hello
           pick 234 World
 
