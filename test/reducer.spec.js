@@ -114,6 +114,55 @@
       });
     });
 
+    describe('moving selection', function () {
+      it('down', function () {
+        const state = getState(4, {
+          from: 2,
+          pos: 1
+        });
+        const newState = reduce(state, 'moveDown');
+        expect(newState.lines[0]).to.equal(state.lines[0]);
+        expect(newState.lines[1]).to.equal(state.lines[3]);
+        expect(newState.lines[2]).to.equal(state.lines[1]);
+        expect(newState.lines[3]).to.equal(state.lines[2]);
+        expect(newState.cursor.from).to.equal(3);
+        expect(newState.cursor.pos).to.equal(2);
+      });
+
+      it('up when selection is from the bottom', function () {
+        const state = getState(4, {
+          from: 3,
+          pos: 2
+        });
+        const newState = reduce(state, 'moveDown');
+        expect(newState).to.equal(state);
+      });
+
+      it('up', function () {
+        const state = getState(4, {
+          from: 1,
+          pos: 2
+        });
+        const newState = reduce(state, 'moveUp');
+        expect(newState.lines[0]).to.equal(state.lines[1]);
+        expect(newState.lines[1]).to.equal(state.lines[2]);
+        expect(newState.lines[2]).to.equal(state.lines[0]);
+        expect(newState.lines[3]).to.equal(state.lines[3]);
+        expect(newState.cursor.from).to.equal(0);
+        expect(newState.cursor.pos).to.equal(1);
+      });
+
+      it('up when selection is from the top', function () {
+        const state = getState(4, {
+          from: 0,
+          pos: 2
+        });
+        const newState = reduce(state, 'moveUp');
+        expect(newState).to.equal(state);
+      });
+    });
+
+
     describe('change action key', function () {
       it('should do nothing if action is not different', function () {
         const state = getState(1, 0);
@@ -138,6 +187,17 @@
         expect(newState.lines[1]).not.to.equal(state.lines[1]);
         expect(newState.lines[2]).to.equal(state.lines[2]);
         expect(newState.otherStateVar).to.equal(state.otherStateVar);
+      });
+
+      it('should change entire selection', function () {
+        const state = getState(3, {
+          from: 2,
+          pos: 1
+        });
+        const newState = reduce(state, 'fixup');
+        expect(newState.lines[0].action).to.equal('pick');
+        expect(newState.lines[1].action).to.equal('fixup');
+        expect(newState.lines[2].action).to.equal('fixup');
       });
     });
 

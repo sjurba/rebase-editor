@@ -22,13 +22,15 @@ Commands:
  >NOTE: `x, exec` command is not supported
 
 Supported extra commands are:
- - Up/Down: Moves cursor between lines
- - Left/Ctrl-up: Moves current line up one position
- - Right/Ctrl-down: Moves current line down one position
- - z/Ctrl-z: Undo
- - Z/Ctrl-shift-x: Redo
- - q/Enter: Quit (Saves rebase file and exits)
- - Esc/Ctrl-c: Abort rebase (Deletes all lines from file)
+  - DOWN/UP = Moves cursor between lines
+  - SHIFT_RIGHT/SHIFT_DOWN = Select one line down
+  - SHIFT_LEFT/SHIFT_UP = Select one line up
+  - RIGHT/CTRL_DOWN = Moves current line down one position
+  - LEFT/CTRL_UP = Moves current line up one position
+  - z, CTRL_Z = Undo
+  - Z, CTRL_SHIFT_Z = Redo
+  - ENTER, q = Save and quit
+  - ESC, CTRL_C = Abort
 
 To use a different editor for one time (replace `vi` with your favorite editor):
 
@@ -46,22 +48,30 @@ The specials keys that are supported are defined by terminal-kit.
 
 #### Default key bindings
         {
-            "UP": "up",
-            "DOWN": "down",
-            "u": "moveUp",
-            "d": "moveDown",
-            "p": "pick",
-            "r": "reword",
-            "e": "edit",
-            "s": "squash",
-            "f": "fixup",
-            "x": "cut",
-            "BACKSPACE": "cut",
-            "v": "paste",
-            "q": "quit",
-            "ENTER": "quit",
-            "CTRL_C": "abort",
-            "ESCAPE": "abort"
+          UP: 'up',
+          DOWN: 'down',
+          LEFT: 'moveUp',
+          CTRL_UP: 'moveUp',
+          RIGHT: 'moveDown',
+          CTRL_DOWN: 'moveDown',
+          SHIFT_LEFT: 'selectUp',
+          SHIFT_RIGHT: 'selectDown',
+          p: 'pick',
+          r: 'reword',
+          e: 'edit',
+          s: 'squash',
+          f: 'fixup',
+          d: 'drop',
+          BACKSPACE: 'drop',
+          DELETE: 'drop',
+          z: 'undo',
+          CTRL_Z: 'undo',
+          Z: 'redo',
+          CTRL_SHIFT_Z: 'redo',
+          q: 'quit',
+          ENTER: 'quit',
+          CTRL_C: 'abort',
+          ESCAPE: 'abort'
         }
 
 
