@@ -6,7 +6,8 @@ const term = require('terminal-kit').terminal,
   reduce = require('./lib/reducer'),
   FileHandle = require('./lib/file-handle'),
   rebaseFile = require('./lib/rebase-file'),
-  keyBindings = require('./lib/key-bindings.js');
+  keyBindings = require('./lib/key-bindings.js'),
+  debugLog = require('./lib/debug-log');
 
 const args = require('minimist')(process.argv, {
   boolean: ['s', 'c'],
@@ -25,6 +26,7 @@ const terminal = new Terminal(term, {
   colors: args.colors,
   keyBindings: keyBindings(args.keys)
 });
+debugLog.trapConsole();
 
 file.read().then((data) => {
   return new Promise((resolve, reject) => {
@@ -55,6 +57,7 @@ file.read().then((data) => {
 
 function exit(err) {
   terminal.close();
+  debugLog.untrapConsole();
   let status = 0;
   if (err) {
     console.error(err);
