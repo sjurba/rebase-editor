@@ -193,5 +193,51 @@ describe('Terminal renderer', function () {
             `);
       });
     });
+
+    describe('on resize', function () {
+
+      let clock;
+
+      beforeEach(function () {
+        clock = sinon.useFakeTimers();
+      });
+
+      afterEach(function () {
+        clock.restore();
+      });
+
+      function resize(mockTerm) {
+        const resizeCb = mockTerm.on.firstCall.args[1];
+        mockTerm.reset();
+        resizeCb(50, 50);
+        clock.tick(1000);
+      }
+
+      it('should clear screen and re-render', function () {
+        const terminal = new Terminal(mockTerm);
+        expect(mockTerm.on).to.be.calledWith('resize', sinon.match.func);
+        terminal.render(getState(2, 0, 2));
+        resize(mockTerm);
+        expect(mockTerm.clear).to.be.called;
+        expectRendered(`
+          ^!pick 123 Line 0
+          pick 123 Line 1
+
+          # Info 0
+          # Info 1
+          `);
+      });
+
+      it('should only re-render visible lines', function () {
+        const terminal = new Terminal(mockTerm);
+        terminal.render(getState(2, 0, 2));
+        mockTerm.height = 2;
+        resize(mockTerm);
+        expectRendered(`
+          ^!pick 123 Line 0
+          pick 123 Line 1
+          `);
+      });
+    });
   });
 });

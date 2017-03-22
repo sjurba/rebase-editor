@@ -7,7 +7,7 @@ function createMockTerminal() {
 
   function term(str) {
     if (str) {
-      lines[linePos - 1] += str;
+      lines[linePos - 1] = (lines[linePos - 1] || '') + str;
     }
     return term;
   }
