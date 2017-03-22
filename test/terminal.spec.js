@@ -34,7 +34,11 @@ describe('Terminal renderer', function () {
       if (from || to) {
         lines = lines.slice(from, to);
       }
-      expect(lines.join('\n')).to.equal(trim(str));
+      if (typeof str === 'string') {
+        expect(lines.join('\n')).to.equal(trim(str));
+      } else {
+        expect(lines).to.deep.equal(str);
+      }
     }
 
     it('should render lines', function () {
@@ -235,29 +239,23 @@ describe('Terminal renderer', function () {
         clock.tick(1000);
       }
 
-      it('should clear screen and re-render', function () {
+      it('should do nothing when all lines fit on screen', function () {
         const terminal = new Terminal(mockTerm);
         expect(mockTerm.on).to.be.calledWith('resize', sinon.match.func);
         terminal.render(getState(2, 0, 2));
         resize(mockTerm);
-        expect(mockTerm.clear).to.be.called;
-        expectRendered(`
-          ^!pick 123 Line 0
-          pick 123 Line 1
-
-          # Info 0
-          # Info 1
-          `);
+        expectRendered('');
       });
 
       it('should only re-render visible lines', function () {
         const terminal = new Terminal(mockTerm);
+        mockTerm.height = 2;
         terminal.render(getState(4, 0, 2));
-        resize(mockTerm, 2);
-        expectRendered(`
-          ^!pick 123 Line 0
-          pick 123 Line 1
-          `);
+        resize(mockTerm, 4, false);
+        expectRendered([, ,
+          'pick 123 Line 2',
+          'pick 123 Line 3',
+        ]);
       });
 
       it('should re-render from scroll pos', function () {
