@@ -51,7 +51,6 @@ describe('Terminal renderer', function () {
           # Info 0
           # Info 1
           `);
-      expect(mockTerm.getCursorPos()).to.equal(1);
     });
 
     it('should only render changed line', function () {
@@ -201,7 +200,6 @@ describe('Terminal renderer', function () {
 
           # Info 0
           `);
-        expect(mockTerm.getCursorPos()).to.equal(2);
       });
 
       it('should scroll on last line', function () {
