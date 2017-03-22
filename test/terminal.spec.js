@@ -170,21 +170,36 @@ describe('Terminal renderer', function () {
         `);
     });
 
-    it('should only render status line if enabled', function () {
-      const state = getState(2, 0, 1);
-      const terminal = new Terminal(mockTerm, {
-        status: true
-      });
-      mockTerm.height = 20;
-      terminal.render(state, 'up', 'UP');
-      expectRendered(`
+    describe('with status', function () {
+      it('should render if enabled', function () {
+        const state = getState(2, 0, 1);
+        const terminal = new Terminal(mockTerm, {
+          status: true
+        });
+        mockTerm.height = 20;
+        terminal.render(state, 'up', 'UP');
+        expectRendered(`
           Cursor: 0 From: 0 Key: up  Raw key: UP Height: 20
           ^!pick 123 Line 0
           pick 123 Line 1
 
           # Info 0
           `);
-      expect(mockTerm.getCursorPos()).to.equal(2);
+        expect(mockTerm.getCursorPos()).to.equal(2);
+      });
+
+      it('should scroll on last line', function () {
+        const state = getState(4, 2);
+        const terminal = new Terminal(mockTerm, {
+          status: true
+        });
+        mockTerm.height = 2;
+        terminal.render(state);
+        expectRendered(`
+          pick 123 Line 1
+          ^!pick 123 Line 2
+          `);
+      });
     });
 
     describe('with color', function () {
@@ -213,61 +228,6 @@ describe('Terminal renderer', function () {
 
             # Info 0
             `);
-      });
-    });
-
-    describe('on resize', function () {
-
-      let clock;
-
-      beforeEach(function () {
-        clock = sinon.useFakeTimers();
-      });
-
-      afterEach(function () {
-        clock.restore();
-      });
-
-      function resize(mockTerm, height, width) {
-        height = height || 50;
-        width = width || 50;
-        const resizeCb = mockTerm.on.firstCall.args[1];
-        mockTerm.reset();
-        mockTerm.height = height;
-        mockTerm.width = width;
-        resizeCb(height, width);
-        clock.tick(1000);
-      }
-
-      it('should do nothing when all lines fit on screen', function () {
-        const terminal = new Terminal(mockTerm);
-        expect(mockTerm.on).to.be.calledWith('resize', sinon.match.func);
-        terminal.render(getState(2, 0, 2));
-        resize(mockTerm);
-        expectRendered('');
-      });
-
-      it('should only re-render visible lines', function () {
-        const terminal = new Terminal(mockTerm);
-        mockTerm.height = 2;
-        terminal.render(getState(4, 0, 2));
-        resize(mockTerm, 4, false);
-        expectRendered([, ,
-          'pick 123 Line 2',
-          'pick 123 Line 3',
-        ]);
-      });
-
-      it('should re-render from scroll pos', function () {
-        const terminal = new Terminal(mockTerm);
-        terminal.render(getState(8, 6, 2));
-        resize(mockTerm, 4);
-        expectRendered(`
-          pick 123 Line 3
-          pick 123 Line 4
-          pick 123 Line 5
-          ^!pick 123 Line 6
-          `);
       });
     });
   });
