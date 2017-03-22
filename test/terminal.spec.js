@@ -170,6 +170,22 @@ describe('Terminal renderer', function () {
         `);
     });
 
+    it('should scroll down on bottom of selection', function () {
+      const state = getState(8, {
+        from: 6,
+        pos: 5
+      });
+      const terminal = new Terminal(mockTerm);
+      mockTerm.height = 4;
+      terminal.render(state);
+      expectRendered(`
+        pick 123 Line 3
+        pick 123 Line 4
+        ^!pick 123 Line 5
+        ^!pick 123 Line 6
+        `);
+    });
+
     describe('with status', function () {
       it('should render if enabled', function () {
         const state = getState(2, 0, 1);
