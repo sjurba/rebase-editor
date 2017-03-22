@@ -2,6 +2,8 @@
 Simple terminal based sequence editor for git interactive rebase.
 Written in Node.js, published to npm, uses [terminal-kit](https://github.com/cronvel/terminal-kit).
 
+[![Build Status](https://travis-ci.org/sjurba/rebase-editor.svg?branch=master)](https://travis-ci.org/sjurba/rebase-editor)
+
 **VERSION 2.0 IS OUT** :sparkles: :camel: :boom:</br>
 New features: Select multiple lines, and undo changes!</br>
 Check the [changelog](#changelog) for details.
