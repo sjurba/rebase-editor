@@ -133,14 +133,14 @@ describe('Terminal renderer', function () {
         `);
     });
 
-    it.skip('should scroll down on bottom', function () {
+    it('should scroll down on bottom', function () {
       const state = getState(4, 3);
       const terminal = new Terminal(mockTerm);
       mockTerm.height = 2;
       terminal.render(state);
       expectRendered(`
         pick 123 Line 2
-        pick 123 Line 3
+        ^!pick 123 Line 3
         `);
     });
 
