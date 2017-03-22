@@ -139,13 +139,30 @@ describe('Terminal renderer', function () {
     });
 
     it('should scroll down on bottom', function () {
-      const state = getState(5, 3);
+      const state = getState(8, 6);
       const terminal = new Terminal(mockTerm);
-      mockTerm.height = 2;
+      mockTerm.height = 4;
       terminal.render(state);
       expectRendered(`
-        pick 123 Line 2
-        ^!pick 123 Line 3
+        pick 123 Line 3
+        pick 123 Line 4
+        pick 123 Line 5
+        ^!pick 123 Line 6
+        `);
+      const newState = {
+        cursor: {
+          pos: 7,
+          from: 7
+        },
+        lines: state.lines,
+        info: state.info
+      };
+      terminal.render(newState);
+      expectRendered(`
+        pick 123 Line 4
+        pick 123 Line 5
+        pick 123 Line 6
+        ^!pick 123 Line 7
         `);
     });
 
@@ -154,9 +171,10 @@ describe('Terminal renderer', function () {
       const terminal = new Terminal(mockTerm, {
         status: true
       });
+      mockTerm.height = 20;
       terminal.render(state, 'up', 'UP');
       expectRendered(`
-          Cursor: 0 From: 0 Key: up  Raw key: UP
+          Cursor: 0 From: 0 Key: up  Raw key: UP Height: 20
           ^!pick 123 Line 0
           pick 123 Line 1
 
@@ -244,11 +262,13 @@ describe('Terminal renderer', function () {
 
       it('should re-render from scroll pos', function () {
         const terminal = new Terminal(mockTerm);
-        terminal.render(getState(4, 2, 2));
-        resize(mockTerm, 2);
+        terminal.render(getState(8, 6, 2));
+        resize(mockTerm, 4);
         expectRendered(`
-          pick 123 Line 1
-          ^!pick 123 Line 2
+          pick 123 Line 3
+          pick 123 Line 4
+          pick 123 Line 5
+          ^!pick 123 Line 6
           `);
       });
     });
