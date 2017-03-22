@@ -179,7 +179,7 @@ describe('Terminal renderer', function () {
         mockTerm.height = 20;
         terminal.render(state, 'up', 'UP');
         expectRendered(`
-          Cursor: 0 From: 0 Key: up  Raw key: UP Height: 20
+          ^+^_Cursor: 0 From: 0 Key: up  Raw key: UP Height: 20
           ^!pick 123 Line 0
           pick 123 Line 1
 
@@ -196,7 +196,7 @@ describe('Terminal renderer', function () {
         mockTerm.height = 3;
         terminal.render(state, 'up', 'UP');
         expectRendered(`
-          Cursor: 2 From: 2 Key: up  Raw key: UP Height: 3
+          ^+^_Cursor: 2 From: 2 Key: up  Raw key: UP Height: 3
           pick 123 Line 1
           ^!pick 123 Line 2
           `);
