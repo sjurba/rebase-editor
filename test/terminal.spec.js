@@ -4,6 +4,10 @@ const Terminal = require('../lib/terminal'),
   mockTerminal = require('./mock-terminal'),
   getState = require('./state-gen');
 
+const noopLines = [{
+  action: 'noop'
+}];
+
 describe('Terminal renderer', function () {
   let mockTerm;
 
@@ -31,47 +35,19 @@ describe('Terminal renderer', function () {
 
     it('should render lines', function () {
       const terminal = new Terminal(mockTerm);
-      terminal.render({
-        lines: [{
-          action: 'pick',
-          hash: '123',
-          message: 'Hello'
-        }, {
-          action: 'pick',
-          hash: '234',
-          message: 'World'
-        }],
-        info: ['# More', '# Info'],
-        cursor: {
-          pos: 0
-        }
-      });
+      terminal.render(getState(2, 0, 2));
       expectRendered(`
-          pick 123 Hello
-          pick 234 World
+          ^!pick 123 Line 0
+          pick 123 Line 1
 
-          # More
-          # Info
+          # Info 0
+          # Info 1
           `);
       expect(mockTerm.getCursorPos()).to.equal(1);
     });
 
     it('should only render changed line', function () {
-      const oldState = {
-        lines: [{
-          action: 'pick',
-          hash: '123',
-          message: 'Hello'
-        }, {
-          action: 'pick',
-          hash: '234',
-          message: 'World'
-        }],
-        info: ['# Info'],
-        cursor: {
-          pos: 0
-        }
-      };
+      const oldState = getState(2, 0, 1);
       const state = {
         lines: [{
           action: 'fixup',
@@ -86,27 +62,20 @@ describe('Terminal renderer', function () {
       mockTerm.reset();
       terminal.render(state);
       expectRendered(`
-          fixup 123 Hello
+          ^!fixup 123 Hello
           `);
       expect(mockTerm.clear).not.to.be.called;
     });
 
     it('should render noop', function () {
-      const state = {
-        lines: [{
-          action: 'noop'
-        }],
-        info: ['# Info'],
-        cursor: {
-          pos: 0
-        }
-      };
+      const state = getState(noopLines, 0, 1);
+
       const terminal = new Terminal(mockTerm);
       terminal.render(state);
       expectRendered(`
-          noop
+          ^!noop
 
-          # Info
+          # Info 0
           `);
     });
 
@@ -145,110 +114,46 @@ describe('Terminal renderer', function () {
     });
 
     it('should only render status line if enabled', function () {
-      const state = {
-        lines: [{
-          action: 'pick',
-          hash: '123',
-          message: 'Hello'
-        }, {
-          action: 'pick',
-          hash: '234',
-          message: 'World'
-        }],
-        info: ['# Info'],
-        cursor: {
-          pos: 0,
-          from: 0
-        }
-      };
+      const state = getState(2, 0, 1);
       const terminal = new Terminal(mockTerm, {
         status: true
       });
       terminal.render(state, 'up', 'UP');
       expectRendered(`
           Cursor: 0 From: 0 Key: up  Raw key: UP
-          ^!pick 123 Hello
-          pick 234 World
+          ^!pick 123 Line 0
+          pick 123 Line 1
 
-          # Info
+          # Info 0
           `);
       expect(mockTerm.getCursorPos()).to.equal(2);
     });
 
     describe('with color', function () {
       it('should render colors if enabled', function () {
-        const state = {
-          lines: [{
-            action: 'pick',
-            hash: '123',
-            message: 'Hello'
-          }, {
-            action: 'pick',
-            hash: '234',
-            message: 'World'
-          }],
-          info: ['# Info'],
-          cursor: {
-            pos: 0
-          }
-        };
+        const state = getState(2, 0, 1);
         const terminal = new Terminal(mockTerm, {
           colors: true
         });
         terminal.render(state);
         expectRendered(`
-          ^rpick ^y123^ Hello
-          ^rpick ^y234^ World
+          ^!pick 123 Line 0
+          ^rpick ^y123^ Line 1
 
-          # Info
+          # Info 0
       `);
       });
 
       it('should render noop', function () {
-        const state = {
-          lines: [{
-            action: 'noop'
-          }],
-          info: ['# Info'],
-          cursor: {
-            pos: 0
-          }
-        };
+        const state = getState(noopLines, 0, 1);
         const terminal = new Terminal(mockTerm, {
           colors: true
         });
         terminal.render(state);
         expectRendered(`
-            ^rnoop ^y^${' '}
+            ^!noop
 
-            # Info
-            `);
-      });
-
-      it('should render extra info', function () {
-        const state = {
-          lines: [{
-            action: 'pick',
-            hash: '123',
-            message: 'Message'
-          }],
-          info: ['# Info', '#', '# Commands', '#', '# Rest'],
-          extraInfo: ['# Extra info'],
-          cursor: {
-            pos: 0
-          }
-        };
-        const terminal = new Terminal(mockTerm);
-        terminal.render(state);
-        expectRendered(`
-            pick 123 Message
-
-            # Info
-            #
-            # Commands
-            # Extra info
-            #
-            # Rest
+            # Info 0
             `);
       });
     });
