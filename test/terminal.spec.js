@@ -193,9 +193,10 @@ describe('Terminal renderer', function () {
         const terminal = new Terminal(mockTerm, {
           status: true
         });
-        mockTerm.height = 2;
-        terminal.render(state);
+        mockTerm.height = 3;
+        terminal.render(state, 'up', 'UP');
         expectRendered(`
+          Cursor: 2 From: 2 Key: up  Raw key: UP Height: 3
           pick 123 Line 1
           ^!pick 123 Line 2
           `);
