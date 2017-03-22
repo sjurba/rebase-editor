@@ -29,8 +29,12 @@ describe('Terminal renderer', function () {
       return str.trim().split('\n').map((line) => line.trimLeft()).join('\n');
     }
 
-    function expectRendered(str) {
-      expect(mockTerm.getRendered()).to.equal(trim(str));
+    function expectRendered(str, from, to) {
+      let lines = mockTerm.getRendered();
+      if (from || to) {
+        lines = lines.slice(from, to);
+      }
+      expect(lines.join('\n')).to.equal(trim(str));
     }
 
     it('should render lines', function () {
@@ -77,6 +81,38 @@ describe('Terminal renderer', function () {
 
           # Info 0
           `);
+    });
+
+    it('should highligt selected lines', function () {
+      const state = getState(4, {
+        from: 2,
+        pos: 1
+      }, 1);
+      const terminal = new Terminal(mockTerm);
+      terminal.render(state);
+      expectRendered(`
+        pick 123 Line 0
+        ^!pick 123 Line 1
+        ^!pick 123 Line 2
+        pick 123 Line 3
+
+        # Info 0
+        `);
+    });
+
+    it('should highligt selected lines crossing 10', function () {
+      const state = getState(15, {
+        from: 9,
+        pos: 10
+      }, 1);
+      const terminal = new Terminal(mockTerm);
+      terminal.render(state);
+      expectRendered(`
+        pick 123 Line 8
+        ^!pick 123 Line 9
+        ^!pick 123 Line 10
+        pick 123 Line 11
+        `, 8, 12);
     });
 
     it('should only render visible lines', function () {

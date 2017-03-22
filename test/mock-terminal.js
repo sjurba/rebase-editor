@@ -26,7 +26,7 @@ function createMockTerminal() {
   });
 
   term.getRendered = () => {
-    return lines.join('\n');
+    return lines;
   };
 
   term.getCursorPos = () => linePos;
