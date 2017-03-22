@@ -139,7 +139,7 @@ describe('Terminal renderer', function () {
     });
 
     it('should scroll down on bottom', function () {
-      const state = getState(4, 3);
+      const state = getState(5, 3);
       const terminal = new Terminal(mockTerm);
       mockTerm.height = 2;
       terminal.render(state);
@@ -206,10 +206,14 @@ describe('Terminal renderer', function () {
         clock.restore();
       });
 
-      function resize(mockTerm) {
+      function resize(mockTerm, height, width) {
+        height = height || 50;
+        width = width || 50;
         const resizeCb = mockTerm.on.firstCall.args[1];
         mockTerm.reset();
-        resizeCb(50, 50);
+        mockTerm.height = height;
+        mockTerm.width = width;
+        resizeCb(height, width);
         clock.tick(1000);
       }
 
@@ -230,12 +234,21 @@ describe('Terminal renderer', function () {
 
       it('should only re-render visible lines', function () {
         const terminal = new Terminal(mockTerm);
-        terminal.render(getState(2, 0, 2));
-        mockTerm.height = 2;
-        resize(mockTerm);
+        terminal.render(getState(4, 0, 2));
+        resize(mockTerm, 2);
         expectRendered(`
           ^!pick 123 Line 0
           pick 123 Line 1
+          `);
+      });
+
+      it('should re-render from scroll pos', function () {
+        const terminal = new Terminal(mockTerm);
+        terminal.render(getState(4, 2, 2));
+        resize(mockTerm, 2);
+        expectRendered(`
+          pick 123 Line 1
+          ^!pick 123 Line 2
           `);
       });
     });

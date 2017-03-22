@@ -6,13 +6,17 @@ function createMockTerminal() {
   let linePos = 0;
 
   function term(str) {
-    if (str) {
-      lines[linePos - 1] = (lines[linePos - 1] || '') + str;
+    if (linePos < 1) {
+      throw new Error('Should not write to pos < 1');
     }
+    lines[linePos - 1] = (lines[linePos - 1] || '') + str;
     return term;
   }
 
   term.moveTo = (col, row) => {
+    if (row < 1) {
+      throw new Error('Should not move to row < 1');
+    }
     linePos = row;
   };
 
