@@ -163,7 +163,16 @@
       });
 
       it('should change entire selection', function () {
-        const state = getState(3, {
+        const state = getState([{
+          action: 'pick',
+          hash: '123'
+        }, {
+          action: 'fixup',
+          hash: '123'
+        }, {
+          action: 'pick',
+          hash: '123'
+        }], {
           from: 2,
           pos: 1
         });
@@ -172,6 +181,7 @@
         expect(newState.lines[1].action).to.equal('fixup');
         expect(newState.lines[2].action).to.equal('fixup');
       });
+
     });
 
     describe('undo', function () {
