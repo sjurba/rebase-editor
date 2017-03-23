@@ -22,4 +22,11 @@ const progArgs = {
   term: term
 };
 
-main(progArgs, process.exit);
+main(progArgs, (err) => {
+  let status = 0;
+  if (err) {
+    console.error(err);
+    status = 1;
+  }
+  process.exit(status);
+});

@@ -58,10 +58,22 @@ describe('Main loop', function () {
         return nextTick();
       })
       .then(() => {
-        expect(file.write).to.be.called;
+        expect(file.write).to.be.calledWith(sinon.match.string);
       });
   });
-
+  it('should write blank file on abort', function () {
+    file.read.returns(Promise.resolve(rebaseText));
+    file.write.returns(Promise.resolve);
+    main(args);
+    return nextTick()
+      .then(() => {
+        mockTerm.emit('key', 'ESCAPE');
+        return nextTick();
+      })
+      .then(() => {
+        expect(file.write).to.be.calledWith('');
+      });
+  });
   it('should exit on quit', function (done) {
     file.read.returns(Promise.resolve(rebaseText));
     file.write.returns(Promise.resolve);
@@ -69,6 +81,29 @@ describe('Main loop', function () {
     nextTick()
       .then(() => {
         mockTerm.emit('key', 'q');
+      });
+  });
+
+  it('should render changes', function () {
+    file.read.returns(Promise.resolve(rebaseText));
+    main(args);
+    return nextTick()
+      .then(() => {
+        mockTerm.emit('key', 'f');
+        expect(mockTerm.getRendered()[0]).to.match(/fixup.*/);
+      });
+  });
+
+  it('should exit on render errors', function (done) {
+    file.read.returns(Promise.resolve(rebaseText));
+    main(args, (err) => {
+      expect(err).to.equal('Error');
+      done();
+    });
+    nextTick()
+      .then(() => {
+        mockTerm.throwOnRender('Error');
+        mockTerm.emit('key', 'f');
       });
   });
 

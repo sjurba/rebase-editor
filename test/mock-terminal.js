@@ -5,10 +5,14 @@ function createMockTerminal() {
   let lines = [];
   let linePos = 0;
   let eventListeners = {};
+  let mockError;
 
   function term(str) {
     if (linePos < 1) {
       throw new Error('Should not write to pos < 1');
+    }
+    if (mockError) {
+      throw mockError;
     }
     lines[linePos - 1] = (lines[linePos - 1] || '') + str;
     return term;
@@ -42,6 +46,10 @@ function createMockTerminal() {
   term.emit = (evt, ...args) => {
     let listeners = eventListeners[evt] || [];
     listeners.forEach((fnc) => fnc(...args));
+  };
+
+  term.throwOnRender = (err) => {
+    mockError = err;
   };
 
   term.getRendered = () => {
