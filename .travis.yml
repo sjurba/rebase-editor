@@ -4,3 +4,5 @@ node_js:
   - "7"
   - "6"
   - "6.0"
+after_success:
+  - npm run coveralls
