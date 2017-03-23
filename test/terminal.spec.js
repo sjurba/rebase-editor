@@ -245,5 +245,44 @@ describe('Terminal renderer', function () {
             `);
       });
     });
+
+    describe('events', function () {
+
+
+
+      it('should fire on key', function () {
+        const terminal = new Terminal(mockTerm, {
+          keyBindings: {
+            f: 'foobar'
+          }
+        });
+        const spy = sinon.spy();
+        terminal.addKeyListener(spy);
+        mockTerm.emit('key', 'f');
+        expect(spy).to.be.calledWith('foobar', 'f');
+      });
+
+      describe('', function () {
+        let clock;
+        beforeEach(function () {
+          clock = sinon.useFakeTimers();
+        });
+
+        afterEach(function () {
+          clock.restore();
+        });
+
+        it('should eventually fire on resize', function () {
+          const terminal = new Terminal(mockTerm);
+          const spy = sinon.spy();
+          terminal.addKeyListener(spy);
+          mockTerm.emit('resize', 20, 20);
+          clock.tick(1000);
+          expect(spy).to.be.called;
+        });
+
+      });
+
+    });
   });
 });

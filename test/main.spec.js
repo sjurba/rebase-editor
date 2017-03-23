@@ -107,6 +107,15 @@ describe('Main loop', function () {
       });
   });
 
+  it('should close debug log if never trapped', function () {
+    //Just here for covearge
+  });
+
+  it('should trap debug messages', function () {
+    file.read.returns(Promise.resolve(rebaseText));
+    main(args);
+    console.log('Should never be displayed');
+  });
 });
 
 
