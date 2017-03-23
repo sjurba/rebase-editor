@@ -4,6 +4,7 @@ function createMockTerminal() {
 
   let lines = [];
   let linePos = 0;
+  let eventListeners = {};
 
   function term(str) {
     if (linePos < 1) {
@@ -24,10 +25,24 @@ function createMockTerminal() {
     lines[linePos - 1] = '';
   };
 
-  const controlFncs = ['fullscreen', 'grabInput', 'on', 'clear', 'hideCursor'];
+  const controlFncs = ['fullscreen', 'grabInput', 'clear', 'hideCursor'];
   controlFncs.forEach((funcName) => {
     term[funcName] = sinon.spy();
   });
+
+  term.on = (evt, listener) => {
+    let listeners = eventListeners[evt];
+    if (!listeners) {
+      listeners = [];
+      eventListeners[evt] = listeners;
+    }
+    listeners.push(listener);
+  };
+
+  term.emit = (evt, ...args) => {
+    let listeners = eventListeners[evt] || [];
+    listeners.forEach((fnc) => fnc(...args));
+  };
 
   term.getRendered = () => {
     return lines;
