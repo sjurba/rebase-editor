@@ -54,7 +54,7 @@ describe('File handler', function () {
     });
 
     it('should reject on faliure', function () {
-      const handler = new Handler('test/testfiles/readonlyfile.txt');
+      const handler = new Handler('test/notExistingFolder/file');
       return expect(handler.write('foo')).to.be.rejected;
     });
   });

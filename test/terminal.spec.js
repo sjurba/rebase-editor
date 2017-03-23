@@ -263,22 +263,15 @@ describe('Terminal renderer', function () {
       });
 
       describe('', function () {
-        let clock;
-        beforeEach(function () {
-          clock = sinon.useFakeTimers();
-        });
-
-        afterEach(function () {
-          clock.restore();
-        });
-
-        it('should eventually fire on resize', function () {
+        it('should eventually fire on resize', function (done) {
           const terminal = new Terminal(mockTerm);
           const spy = sinon.spy();
           terminal.addKeyListener(spy);
           mockTerm.emit('resize', 20, 20);
-          clock.tick(1000);
-          expect(spy).to.be.called;
+          setTimeout(function () {
+            expect(spy).to.be.calledWith('resize', 'resize');
+            done();
+          }, 101);
         });
 
       });
