@@ -1,0 +1,52 @@
+{
+  "env": {
+    "browser": false,
+    "node": true,
+    "es6": true
+  },
+  "globals": {
+    "describe": false,
+    "it": false,
+    "before": false,
+    "beforeEach": false,
+    "beforeAll": false,
+    "after": false,
+    "afterEach": false,
+    "afterAll": false,
+    "expect": false,
+    "fail": false,
+    "sinon": false
+  },
+  "rules": {
+    "no-bitwise": 2,
+    "camelcase": 2,
+    "curly": 2,
+    "eqeqeq": 2,
+    "wrap-iife": [
+      2,
+      "any"
+    ],
+    "no-use-before-define": 0,
+    "new-cap": 2,
+    "no-caller": 2,
+    "quotes": [
+      2,
+      "single"
+    ],
+    "no-undef": 2,
+    "no-unused-vars": ["error", {
+      "vars": "all",
+      "args": "after-used",
+      "argsIgnorePattern": "^_"
+    }],
+    "strict": [
+      2,
+      "global"
+    ],
+    "no-multi-str": 2,
+    "semi": [
+      "error",
+      "always"
+    ]
+  }
+}
