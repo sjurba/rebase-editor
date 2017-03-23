@@ -115,6 +115,17 @@ describe('Terminal renderer', function () {
       expect(mockTerm.getRendered()[0]).to.equal('^!pick 123 A rather');
     });
 
+    it('should escape ^ in message', function () {
+      const state = getState([{
+        action: 'pick',
+        hash: 123,
+        message: 'Unexpected ^red'
+      }], 0, 2);
+      const terminal = new Terminal(mockTerm);
+      terminal.render(state);
+      expect(mockTerm.getRendered()[0]).to.equal('^!pick 123 Unexpected ^^red');
+    });
+
     it('should highligt selected lines crossing 10', function () {
       const state = getState(15, {
         from: 9,
