@@ -1,8 +1,16 @@
 language: node_js
 node_js:
-  - "node"
-  - "7"
-  - "6"
-  - "6.0"
+- node
+- '7'
+- '6'
+- '6.0'
 after_success:
-  - npm run coveralls
+- npm run coveralls
+deploy:
+  provider: npm
+  email: barsju@gmail.com
+  api_key:
+    secure: fH/TU0VnVrlV815WvPLnZvzwRHTILGw0eU5s51SJq7X7HoNW6qjmDVKRJcTWq9LAXDhYAy8F8+fjVGnduiRKxCRzVOLhAnibrr0T1Ha8bCwt3C3VTQsuFr8K91wGljZ7O2UeRKm78MPg0vx4k64DQyfaI4bm+YmlDNzcU3LjSvZiv1gRknySwVQU4+CDopkbf7fsAT7/Xzt8GcxyNzDP8MwD6mVGwO6mqAN2jRcnBLtOTHeM+m9KKUaxp0JozVPfzhYDOttAhBEtUMb33uPu2wZGktevjCPp5Q3cAbrLJ3pjVipIECeQMbba03F8dXvi2Skzj0axwUN2cfeJcll9zMpBUTDf+qWLqEK5kwgtF8fbWhxL4m16CPNfZKGNmhWkOCc764PNeughD+Ke8Jlq+NGyW+cZohQ2HeTBdOwKjpf/zFDI0avayicF8HwbHqThlgzQooz85s+pbvNnDbtoktZwhCI67GCgVnvwdJgtPrQRhWmqc6HTuoAoohz3pxg5+yJzOv5J2qQ8aW7aDxpLMpzdFXA6DMcY1Tw/Xswe54ereE8TwWrdj0JMdM8Yhp7KhpSCYn1Ze5Q0Fq8JMCBj+6O5QbKMFQLMjrn7eCrfoVe0SajyVaVIwa254DgJ7b7qNsU2309HCer62NKH97ZnFWuyZDRXfU5ICaK2h/ShzWg=
+  on:
+    tags: true
+    repo: sjurba/rebase-editor
