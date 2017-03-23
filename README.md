@@ -97,11 +97,12 @@ The specials keys that are supported are defined by terminal-kit.
 ## Development
 
 ### Architecture/Code map
- - `index.js` - starting point, gules the app together
- - `rebase-file.js` - reads and write state from a rebase file.
+- `index.js` - bootstrap app. Simple and only tested manually.
+- `main.js` - glues the app togheter.
+- `rebase-file.js` - reads and write state from a rebase file.
  - `key-binding.js` - defines default key bindings.
  - `reducer.js` - a redux-inspired reducer. A pure function that takes the old state and an key action and returns a new state object. Remember that the state is immutable (although not enforced).
- - `terminal.js` - renders the current state to the terminal. Also takes the old state to compare what has changed to optimize rendering.
+ - `terminal.js` - renders the state to the terminal.
  - `file-handle.js` - file util.
 
 ### Testing
