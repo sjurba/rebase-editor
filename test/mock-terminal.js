@@ -67,6 +67,7 @@ function createMockTerminal() {
   };
 
   term.height = 50;
+  term.width = 150;
 
   return term;
 
