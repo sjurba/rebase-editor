@@ -289,8 +289,6 @@ describe('Terminal renderer', function () {
 
     describe('events', function () {
 
-
-
       it('should fire on key', function () {
         const terminal = new Terminal(mockTerm, {
           keyBindings: {
@@ -317,6 +315,21 @@ describe('Terminal renderer', function () {
 
       });
 
+    });
+
+    describe('custom select marker', function () {
+      it('should display custom select marker', function () {
+        const terminal = new Terminal(mockTerm, {
+          selectMarker: '> '
+        });
+        terminal.render(getState(2, 0, 1));
+        expectRendered(`
+          > pick 123 Line 0
+          pick 123 Line 1
+
+          # Info 0
+      `);
+      });
     });
   });
 });

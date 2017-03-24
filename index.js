@@ -10,14 +10,22 @@ const args = require('minimist')(process.argv, {
   alias: {
     s: 'status',
     k: 'keys',
-    c: 'colors'
+    c: 'colors',
+    m: 'marker'
   }
 });
+
+let marker = args.marker;
+if (!marker && !process.env.TERM && process.platform === 'win32') {
+  // Windows CMD and PowerShell dosn't support ANSI Inverse.
+  marker = '^Y';
+}
 
 const progArgs = {
   status: args.status,
   keys: args.keys,
   colors: args.colors,
+  selectMarker: marker,
   file: new FileHandle(args._[args._.length - 1]),
   term: term
 };

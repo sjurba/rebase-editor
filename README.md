@@ -56,6 +56,7 @@ The editor accepts the following command line arguments:
  * -s, --status: Print a status line on top. Useful for debugging custom key maps.
  * -k, --keys: Set a custom keybinding. Must be defined as .json or a module exporting a json object.
  * -c, --color: Use colorful editor output
+ * -m, --marker: Set a custom marker to mark selected lines. It can be any string like '>> ' or one of the [terminal-kit style characters](https://github.com/cronvel/string-kit#ref.format.markup). The default is '^!' (Inverse) except for windows where that doesn't work (See #9) which has yellow instead: '^Y'.
 
 ### Custom key bindings
 The keybindings must be a file that can be required, either json or a node module that exports a simple object.
