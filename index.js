@@ -16,7 +16,7 @@ const args = require('minimist')(process.argv, {
 });
 
 let marker = args.marker;
-if (!marker && !process.env.TERM && process.platform === 'win32') {
+if (!marker && process.platform === 'win32') {
   // Windows CMD and PowerShell dosn't support ANSI Inverse.
   marker = '^Y';
 }
