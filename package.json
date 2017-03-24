@@ -1,6 +1,6 @@
 {
   "name": "rebase-editor",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Simple terminal based sequence editor for git interactive rebase.",
   "main": "index.js",
   "scripts": {
