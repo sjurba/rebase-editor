@@ -13,6 +13,14 @@ Check the [changelog](#changelog) for details.
      npm install -g rebase-editor
      git config --global sequence.editor rebase-editor
 
+## Does it work on...
+
+| Platform | Support |
+| -------- | ------- |
+| Mac      | Yes     |
+| Linux    | Yes     |
+| Windows  | Maybe.. #7 |
+
 ![rebase-editor](https://github.com/sjurba/rebase-editor/raw/master/rebase-editor.gif)
 ## Usage
 The terminal prints out the standard interactive rebase file that git creates, plus some extra command info in the comments.
