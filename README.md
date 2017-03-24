@@ -108,7 +108,7 @@ The specials keys that are supported are defined by terminal-kit.
 
 ### Architecture/Code map
 - `index.js` - bootstrap app. Simple and only tested manually.
-- `main.js` - glues the app togheter.
+- `main.js` - glues the app together.
 - `rebase-file.js` - reads and write state from a rebase file.
  - `key-binding.js` - defines default key bindings.
  - `reducer.js` - a redux-inspired reducer. A pure function that takes the old state and an key action and returns a new state object. Remember that the state is immutable (although not enforced).
@@ -118,7 +118,7 @@ The specials keys that are supported are defined by terminal-kit.
 ### Testing
 `npm test` or `npm run tdd`
 
-For debugging i have a test file I have been using.
+For debugging I have a test file I have been using.
 
 `node index.js example`
 
