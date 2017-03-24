@@ -106,13 +106,31 @@ describe('Terminal renderer', function () {
     it('should truncate lines to screen width', function () {
       const state = getState([{
         action: 'pick',
-        hash: 123,
-        message: 'A rather long message'
+        hash: 6,
+        message: '8^01234567890'
       }], 0, 2);
       const terminal = new Terminal(mockTerm);
-      mockTerm.width = 19;
+      mockTerm.width = 15;
       terminal.render(state);
-      expect(mockTerm.getRendered()[0]).to.equal('^!pick 123 A rather');
+      expect(mockTerm.getRendered()[0]).to.equal('^!pick 6 8^^012345');
+    });
+
+    it('should truncate color lines to screen width', function () {
+      const state = getState([{
+        action: 'pick',
+        hash: 6,
+        message: '8^01234567890'
+      }, {
+        action: 'pick',
+        hash: 123,
+        message: 'Line 2'
+      }], 1, 2);
+      const terminal = new Terminal(mockTerm, {
+        colors: true
+      });
+      mockTerm.width = 15;
+      terminal.render(state);
+      expect(mockTerm.getRendered()[0]).to.equal('^rpick ^y6^ 8^^012345');
     });
 
     it('should escape ^ in message', function () {
