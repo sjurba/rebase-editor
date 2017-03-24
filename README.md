@@ -5,12 +5,9 @@ Written in Node.js, published to npm, uses [terminal-kit](https://github.com/cro
 [![Build Status](https://travis-ci.org/sjurba/rebase-editor.svg?branch=master)](https://travis-ci.org/sjurba/rebase-editor)
 [![Coverage Status](https://coveralls.io/repos/github/sjurba/rebase-editor/badge.svg?branch=master)](https://coveralls.io/github/sjurba/rebase-editor?branch=master)
 
-**VERSION 2.0 IS (Almost) OUT** :sparkles: :camel: :boom:</br>
+**VERSION 2.0 IS OUT** :sparkles: :camel: :boom:</br>
 New features: Select multiple lines, and undo changes!</br>
 Check the [changelog](#changelog) for details.
-
-You can help me betatest by installing with
-`npm install -g sjurba/rebase-editor#master`
 
 ## Install
      npm install -g rebase-editor
