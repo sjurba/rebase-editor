@@ -25,7 +25,7 @@ const progArgs = {
   status: args.status,
   keys: args.keys,
   colors: args.colors,
-  selectMarker: marker,
+  selectMarker: marker || '^!',
   file: new FileHandle(args._[args._.length - 1]),
   term: term
 };
