@@ -5,7 +5,7 @@ const term = require('terminal-kit').terminal,
   FileHandle = require('./lib/file-handle'),
   main = require('./lib/main');
 const args = require('minimist')(process.argv, {
-  boolean: ['s', 'c'],
+  boolean: ['s'],
   alias: {
     s: 'status',
     k: 'keys',
@@ -21,6 +21,13 @@ if (args._.length < 3) {
 
 const file = args._[args._.length - 1];
 
+let colors;
+if (args.colors === true) {
+  colors = ['^r', '^y'];
+} else if (args.colors) {
+  colors = args.colors.split(',');
+}
+
 let marker = args.marker;
 if (!marker && process.platform === 'win32') {
   // Windows CMD and PowerShell dosn't support ANSI Inverse.
@@ -29,7 +36,7 @@ if (!marker && process.platform === 'win32') {
 const progArgs = {
   status: args.status,
   keys: args.keys,
-  colors: args.colors,
+  colors: colors,
   selectMarker: marker || '^!',
   file: new FileHandle(file),
   term: term

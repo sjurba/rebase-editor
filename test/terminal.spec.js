@@ -8,6 +8,8 @@ const noopLines = [{
   action: 'noop'
 }];
 
+const colors = ['^r', '^y'];
+
 describe('Terminal renderer', function () {
   let mockTerm;
 
@@ -126,11 +128,11 @@ describe('Terminal renderer', function () {
         message: 'Line 2'
       }], 1, 2);
       const terminal = new Terminal(mockTerm, {
-        colors: true
+        colors: colors
       });
       mockTerm.width = 15;
       terminal.render(state);
-      expect(mockTerm.getRendered()[0]).to.equal('^rpick ^y6^ 8^^012345');
+      expect(mockTerm.getRendered()[0]).to.equal('^rpick^ ^y6^ 8^^012345');
     });
 
     it('should escape ^ in message', function () {
@@ -262,12 +264,12 @@ describe('Terminal renderer', function () {
       it('should render colors if enabled', function () {
         const state = getState(2, 0, 1);
         const terminal = new Terminal(mockTerm, {
-          colors: true
+          colors: colors
         });
         terminal.render(state);
         expectRendered(`
           ^!pick 123 Line 0
-          ^rpick ^y123^ Line 1
+          ^rpick^ ^y123^ Line 1
 
           # Info 0
       `);
@@ -276,7 +278,7 @@ describe('Terminal renderer', function () {
       it('should render noop', function () {
         const state = getState(noopLines, 0, 1);
         const terminal = new Terminal(mockTerm, {
-          colors: true
+          colors: colors
         });
         terminal.render(state);
         expectRendered(`
@@ -285,6 +287,7 @@ describe('Terminal renderer', function () {
             # Info 0
             `);
       });
+
     });
 
     describe('events', function () {
