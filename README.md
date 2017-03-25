@@ -111,16 +111,18 @@ The specials keys that are supported are defined by terminal-kit.
     npm remove -g rebase-editor
     git config --global --unset sequence.editor
 
+> Yarn: `yarn global remove rebase-editor`
+
 ## Development
 
 ### Architecture/Code map
 - `index.js` - bootstrap app. Simple and only tested manually.
 - `main.js` - glues the app together.
 - `rebase-file.js` - reads and write state from a rebase file.
- - `key-binding.js` - defines default key bindings.
- - `reducer.js` - a redux-inspired reducer. A pure function that takes the old state and an key action and returns a new state object. Remember that the state is immutable (although not enforced).
- - `terminal.js` - renders the state to the terminal.
- - `file-handle.js` - file util.
+- `key-binding.js` - defines default key bindings.
+- `reducer.js` - a redux-inspired reducer. A pure function that takes the old state and an key action and returns a new state object. Remember that the state is immutable (although not enforced).
+- `terminal.js` - renders the state to the terminal.
+- `file-handle.js` - file util.
 
 ### Testing
 `npm test` or `npm run tdd`
@@ -146,6 +148,7 @@ Complete rewrite with new architecture and test driven implementation.
  - Highligt line. The selected line(s) is now highlighted.
  - Support the drop command instead of deleting lines.
  - Undo/Redo. You can now undo and redo all changes with z,Z or CTRL_Z, CTRL_SHIFT_Z.
+ - Custom colors. You can customize the colors using the -c attribute.
 
 #### Breaking changes:
  - Colors is now opt-in instead of opt-out. With the new line selection I like no colors better.
