@@ -24,6 +24,7 @@ Check the [changelog](#changelog) for details.
 | Windows  | Yes, but not Git Bash [(#7)](https://github.com/sjurba/rebase-editor/issues/7) |
 
 ![rebase-editor](https://github.com/sjurba/rebase-editor/raw/master/rebase-editor.gif)
+
 ## Usage
 The terminal prints out the standard interactive rebase file that git creates, plus some extra command info in the comments.
 When using the standard commands, the current lines action changes to the corresponding action:
