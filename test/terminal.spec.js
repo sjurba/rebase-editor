@@ -316,6 +316,38 @@ describe('Terminal renderer', function () {
           }, 101);
         });
 
+        it('should clear screen on resize', function (done) {
+          const terminal = new Terminal(mockTerm);
+          terminal.addKeyListener(sinon.spy());
+          mockTerm.emit('resize', 20, 20);
+          setTimeout(function () {
+            expect(mockTerm.clear).to.be.called;
+            done();
+          }, 101);
+        });
+
+      });
+
+      describe('close', function () {
+
+        it('should clear screen', function () {
+          const terminal = new Terminal(mockTerm);
+          terminal.close();
+          expect(mockTerm.clear).to.be.called;
+        });
+
+        it('should restore screen', function () {
+          const terminal = new Terminal(mockTerm);
+          terminal.close();
+          expect(mockTerm.fullscreen).to.be.calledWith(false);
+        });
+
+        it('should restore cursor', function () {
+          const terminal = new Terminal(mockTerm);
+          terminal.close();
+          expect(mockTerm.hideCursor).to.be.calledWith(false);
+        });
+
       });
 
     });
