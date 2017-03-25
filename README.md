@@ -19,7 +19,7 @@ Check the [changelog](#changelog) for details.
 | -------- | ------- |
 | Mac      | Yes     |
 | Linux    | Yes     |
-| Windows  | Maybe.. #7 |
+| Windows  | Yes, but not Git Bash [(#7)](https://github.com/sjurba/rebase-editor/issues/7) |
 
 ![rebase-editor](https://github.com/sjurba/rebase-editor/raw/master/rebase-editor.gif)
 ## Usage
@@ -56,7 +56,7 @@ The editor accepts the following command line arguments:
  * -s, --status: Print a status line on top. Useful for debugging custom key maps.
  * -k, --keys: Set a custom keybinding. Must be defined as .json or a module exporting a json object.
  * -c, --color: Use colorful editor output
- * -m, --marker: Set a custom marker to mark selected lines. It can be any string like '>> ' or one of the [terminal-kit style characters](https://github.com/cronvel/string-kit#ref.format.markup). The default is '^!' (Inverse) except for windows where that doesn't work (See #9) which has yellow instead: '^Y'.
+ * -m, --marker: Set a custom marker to mark selected lines. It can be any string like '>> ' or one of the [terminal-kit style characters](https://github.com/cronvel/string-kit#ref.format.markup). The default is '^!' (Inverse) except for windows where that doesn't work [(See #9)](https://github.com/sjurba/rebase-editor/issues/9) which has yellow instead: '^Y'.
 
 ### Custom key bindings
 The keybindings must be a file that can be required, either json or a node module that exports a simple object.
