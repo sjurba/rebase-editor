@@ -19,10 +19,13 @@ describe('Main loop', function () {
       file: file,
       alternateScreen: true
     };
+    sinon.stub(debugLog, 'trapConsole');
+    sinon.stub(debugLog, 'untrapConsole');
   });
 
   afterEach(function () {
-    debugLog.untrapConsole();
+    debugLog.trapConsole.restore();
+    debugLog.untrapConsole.restore();
   });
 
   it('should render file to terminal', function (done) {
@@ -108,14 +111,24 @@ describe('Main loop', function () {
       });
   });
 
-  it('should close debug log if never trapped', function () {
-    //Just here for covearge
-  });
-
   it('should trap debug messages', function () {
     file.read.returns(Promise.resolve(rebaseText));
     main(args);
-    console.log('Should never be displayed');
+    expect(debugLog.trapConsole).to.be.called;
+  });
+
+  it('should untrap debug messages on close', function () {
+    file.read.returns(Promise.resolve(rebaseText));
+    file.write.returns(Promise.resolve);
+    main(args);
+    return nextTick()
+      .then(() => {
+        mockTerm.emit('key', 'q');
+      })
+      .then(nextTick)
+      .then(() => {
+        expect(debugLog.untrapConsole).to.be.called;
+      });
   });
 });
 
