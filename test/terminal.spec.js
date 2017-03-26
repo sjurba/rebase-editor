@@ -340,16 +340,52 @@ describe('Terminal renderer', function () {
         expect(spy).to.be.calledWith('foobar', 'f');
       });
 
-      describe('', function () {
-        it('should eventually fire on resize', function (done) {
+      describe('on resize', function () {
+
+        let clock;
+
+        beforeEach(function () {
+          clock = sinon.useFakeTimers();
+        });
+
+        afterEach(function () {
+          clock.restore();
+        });
+
+        it('should eventually trigger callback', function () {
           const terminal = new Terminal(mockTerm);
           const spy = sinon.spy();
           terminal.addKeyListener(spy);
           mockTerm.emit('resize', 20, 20);
-          setTimeout(function () {
-            expect(spy).to.be.calledWith('resize', 'resize');
-            done();
-          }, 101);
+          clock.tick(1000);
+          expect(spy).to.be.calledWith('resize', 'resize');
+        });
+
+        it('should append blank lines to bottom when increasing window height', function () {
+          const terminal = new Terminal(mockTerm);
+          mockTerm.height = 5;
+          terminal.addKeyListener(() => {});
+          mockTerm.height = 7;
+          mockTerm.emit('resize');
+          clock.tick(1000);
+          expect(mockTerm.getRendered()[6]).to.equal('\n\n');
+        });
+
+        it('should not append blank lines to bottom when they have already been added', function () {
+          const terminal = new Terminal(mockTerm);
+          mockTerm.height = 5;
+          terminal.addKeyListener(() => {});
+          mockTerm.height = 10;
+          mockTerm.emit('resize');
+          clock.tick(1000);
+          mockTerm.reset();
+          mockTerm.height = 7;
+          mockTerm.emit('resize');
+          clock.tick(1000);
+          mockTerm.height = 10;
+          mockTerm.emit('resize');
+          clock.tick(1000);
+          expect(mockTerm.getRendered()[9]).to.equal(undefined);
         });
       });
     });
