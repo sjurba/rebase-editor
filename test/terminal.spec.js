@@ -361,6 +361,19 @@ describe('Terminal renderer', function () {
           expect(spy).to.be.calledWith('resize', 'resize');
         });
 
+        it('should debounce resize', function () {
+          const terminal = new Terminal(mockTerm);
+          const spy = sinon.spy();
+          terminal.addKeyListener(spy);
+          mockTerm.emit('resize', 20, 20);
+          expect(spy).not.to.be.called;
+          clock.tick(10);
+          mockTerm.emit('resize', 20, 20);
+          expect(spy).not.to.be.called;
+          clock.tick(1000);
+          expect(spy).to.be.calledWith('resize', 'resize');
+        });
+
         it('should append blank lines to bottom when increasing window height', function () {
           const terminal = new Terminal(mockTerm);
           mockTerm.height = 5;
