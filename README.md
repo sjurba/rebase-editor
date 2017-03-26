@@ -98,8 +98,8 @@ The specials keys that are supported are defined by terminal-kit.
         }
 
 
-#### A note on key bindings
->Not all key combinations work on Mac (that I use). Most notably, no modifier keys work with UP/DOWN (Like SHIFT, CTRL, ALT, META/CMD). Fn works kind of but it translates to PAGE_UP/DOWN. Therefor I decided to use the LEFT/RIGHT combinations as a fallback for Mac.
+#### A note on key bindings for Mac
+>Not all key combinations work on Mac by default. Most notably, no modifier keys work with UP/DOWN (Like SHIFT, CTRL, ALT, META/CMD). Fn works kind of but it translates to PAGE_UP/DOWN. Therefor I decided to use the LEFT/RIGHT combinations as a fallback for Mac. You can however configure your terminal manually. [See #8 for a guide how to do that.](https://github.com/sjurba/rebase-editor/issues/8)
 >
 > Likewise CMD-Z, CMD-SHIFT-Z does not work either(CMD doesn't work at all really). So I went with simply z,Z for undo redo.
 
