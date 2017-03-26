@@ -394,14 +394,14 @@ describe('Terminal renderer', function () {
             }
           }));
           terminal.close();
-          expect(mockTerm.getCursorPos()).to.equal(15);
+          expect(mockTerm.getCursorPos()).to.equal(16);
         });
 
         it('should clear last line ', function () {
           mockTerm.height = 15;
-          terminal.render(getState(5, 2, 10));
+          terminal.render(getState(5, 2, 20));
           terminal.close();
-          expect(mockTerm.getRendered()[14]).to.equal('');
+          expect(mockTerm.getRendered().slice(15)).to.deep.equal(['']);
         });
       });
     });
