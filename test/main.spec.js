@@ -16,7 +16,8 @@ describe('Main loop', function () {
     };
     args = {
       term: mockTerm,
-      file: file
+      file: file,
+      alternateScreen: true
     };
   });
 

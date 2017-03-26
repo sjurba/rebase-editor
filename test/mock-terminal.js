@@ -3,11 +3,14 @@
 function createMockTerminal() {
 
   let lines = [];
-  let linePos = 0;
+  let linePos;
   let eventListeners = {};
   let mockError;
 
   function term(str) {
+    if (linePos === undefined && term.initialScroll === undefined) {
+      term.initialScroll = str.split('\n').length;
+    }
     if (linePos < 1) {
       throw new Error('Should not write to pos < 1');
     }

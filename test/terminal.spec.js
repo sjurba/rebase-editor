@@ -17,17 +17,37 @@ describe('Terminal renderer', function () {
     mockTerm = mockTerminal.create();
   });
 
-  describe('constructor', function () {
-    it('should call fullscreen', function () {
-      new Terminal(mockTerm);
-      expect(mockTerm.fullscreen).to.be.calledWith(true);
+  describe('on construct', function () {
+
+    describe('when alternate screen enabled', function () {
+      it('should call fullscreen', function () {
+        new Terminal(mockTerm);
+        expect(mockTerm.fullscreen).to.be.calledWith(true);
+      });
+
+      it('should hide cursor', function () {
+        new Terminal(mockTerm);
+        expect(mockTerm.hideCursor).to.be.calledWith(true);
+      });
+
     });
 
-    it('should not call fullscreen if disabled', function () {
-      new Terminal(mockTerm, {
-        alternateScreen: false
+    describe('when alternate screen disabled', function () {
+
+      it('should not call fullscreen', function () {
+        new Terminal(mockTerm, {
+          alternateScreen: false
+        });
+        expect(mockTerm.fullscreen).to.not.be.called;
       });
-      expect(mockTerm.fullscreen).to.not.be.called;
+
+      it('should scroll to top', function () {
+        mockTerm.height = 10;
+        new Terminal(mockTerm, {
+          alternateScreen: false
+        });
+        expect(mockTerm.initialScroll).to.equal(10);
+      });
     });
   });
 
@@ -234,6 +254,16 @@ describe('Terminal renderer', function () {
         `);
     });
 
+    it('should clear bottom of screen on resize', function () {
+      const state = getState(7, 0, 2);
+      const terminal = new Terminal(mockTerm);
+      mockTerm.height = 10;
+      terminal.render(state);
+      mockTerm.height = 12;
+      terminal.render(state, 'resize');
+      expect(mockTerm.getRendered().slice(10)).to.deep.equal(['', '']);
+    });
+
     describe('with status', function () {
       it('should render if enabled', function () {
         const state = getState(2, 0, 1);
@@ -298,12 +328,6 @@ describe('Terminal renderer', function () {
 
     describe('events', function () {
 
-      it('should grab input', function () {
-        const terminal = new Terminal(mockTerm);
-        terminal.addKeyListener(() => {});
-        expect(mockTerm.grabInput).to.be.calledWith();
-      });
-
       it('should fire on key', function () {
         const terminal = new Terminal(mockTerm, {
           keyBindings: {
@@ -327,75 +351,61 @@ describe('Terminal renderer', function () {
             done();
           }, 101);
         });
-
-        it('should clear screen on resize', function (done) {
-          const terminal = new Terminal(mockTerm);
-          terminal.addKeyListener(sinon.spy());
-          mockTerm.emit('resize', 20, 20);
-          setTimeout(function () {
-            expect(mockTerm.clear).to.be.called;
-            done();
-          }, 101);
-        });
-
       });
-
-      describe('close', function () {
-
-        it('should restore screen', function () {
-          const terminal = new Terminal(mockTerm);
-          terminal.close();
-          expect(mockTerm.fullscreen).to.be.calledWith(false);
-        });
-
-        it('should restore cursor', function () {
-          const terminal = new Terminal(mockTerm);
-          terminal.close();
-          expect(mockTerm.hideCursor).to.be.calledWith(false);
-        });
-
-        describe('on disabled alternate screen', function () {
-
-          let terminal;
-
-          beforeEach(function () {
-            terminal = new Terminal(mockTerm, {
-              alternateScreen: false
-            });
-          });
-
-          it('should not restore screen', function () {
-            terminal.close();
-            expect(mockTerm.fullscreen).not.to.be.called;
-          });
-
-          it('should move cursor to last line', function () {
-            mockTerm.height = 15;
-            let state = getState(5, 2, 10);
-            terminal.render(state);
-            terminal.render(Object.assign({}, state, {
-              cursor: {
-                from: 3,
-                to: 3
-              }
-            }));
-            terminal.close();
-            expect(mockTerm.getCursorPos()).to.equal(15);
-          });
-
-          it('should clear last line ', function () {
-            mockTerm.height = 15;
-            terminal.render(getState(5, 2, 10));
-            terminal.close();
-            expect(mockTerm.getRendered()[14]).to.equal('');
-          });
-        });
-
-
-
-      });
-
     });
+
+    describe('close', function () {
+
+      it('should restore screen', function () {
+        const terminal = new Terminal(mockTerm);
+        terminal.close();
+        expect(mockTerm.fullscreen).to.be.calledWith(false);
+      });
+
+      it('should restore cursor', function () {
+        const terminal = new Terminal(mockTerm);
+        terminal.close();
+        expect(mockTerm.hideCursor).to.be.calledWith(false);
+      });
+
+      describe('on disabled alternate screen', function () {
+
+        let terminal;
+
+        beforeEach(function () {
+          terminal = new Terminal(mockTerm, {
+            alternateScreen: false
+          });
+        });
+
+        it('should not restore screen', function () {
+          terminal.close();
+          expect(mockTerm.fullscreen).not.to.be.called;
+        });
+
+        it('should move cursor to last line', function () {
+          mockTerm.height = 15;
+          let state = getState(5, 2, 10);
+          terminal.render(state);
+          terminal.render(Object.assign({}, state, {
+            cursor: {
+              from: 3,
+              to: 3
+            }
+          }));
+          terminal.close();
+          expect(mockTerm.getCursorPos()).to.equal(15);
+        });
+
+        it('should clear last line ', function () {
+          mockTerm.height = 15;
+          terminal.render(getState(5, 2, 10));
+          terminal.close();
+          expect(mockTerm.getRendered()[14]).to.equal('');
+        });
+      });
+    });
+
 
     describe('custom select marker', function () {
       it('should display custom select marker', function () {
