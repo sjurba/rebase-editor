@@ -20,7 +20,6 @@
   "author": "Sjur Bakka",
   "license": "ISC",
   "dependencies": {
-    "debounce": "^1.0.0",
     "minimist": "^1.1.1",
     "terminal-kit": "^1.0.3"
   },
