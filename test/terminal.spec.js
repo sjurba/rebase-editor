@@ -21,7 +21,13 @@ describe('Terminal renderer', function () {
     it('should call fullscreen', function () {
       new Terminal(mockTerm);
       expect(mockTerm.fullscreen).to.be.calledWith(true);
-      expect(mockTerm.grabInput).to.be.calledWith();
+    });
+
+    it('should not call fullscreen if disabled', function () {
+      new Terminal(mockTerm, {
+        alternateScreen: false
+      });
+      expect(mockTerm.fullscreen).to.not.be.called;
     });
   });
 
@@ -292,6 +298,12 @@ describe('Terminal renderer', function () {
 
     describe('events', function () {
 
+      it('should grab input', function () {
+        const terminal = new Terminal(mockTerm);
+        terminal.addKeyListener(() => {});
+        expect(mockTerm.grabInput).to.be.calledWith();
+      });
+
       it('should fire on key', function () {
         const terminal = new Terminal(mockTerm, {
           keyBindings: {
@@ -330,12 +342,6 @@ describe('Terminal renderer', function () {
 
       describe('close', function () {
 
-        it('should clear screen', function () {
-          const terminal = new Terminal(mockTerm);
-          terminal.close();
-          expect(mockTerm.clear).to.be.called;
-        });
-
         it('should restore screen', function () {
           const terminal = new Terminal(mockTerm);
           terminal.close();
@@ -347,6 +353,45 @@ describe('Terminal renderer', function () {
           terminal.close();
           expect(mockTerm.hideCursor).to.be.calledWith(false);
         });
+
+        describe('on disabled alternate screen', function () {
+
+          let terminal;
+
+          beforeEach(function () {
+            terminal = new Terminal(mockTerm, {
+              alternateScreen: false
+            });
+          });
+
+          it('should not restore screen', function () {
+            terminal.close();
+            expect(mockTerm.fullscreen).not.to.be.called;
+          });
+
+          it('should move cursor to last line', function () {
+            mockTerm.height = 15;
+            let state = getState(5, 2, 10);
+            terminal.render(state);
+            terminal.render(Object.assign({}, state, {
+              cursor: {
+                from: 3,
+                to: 3
+              }
+            }));
+            terminal.close();
+            expect(mockTerm.getCursorPos()).to.equal(15);
+          });
+
+          it('should clear last line ', function () {
+            mockTerm.height = 15;
+            terminal.render(getState(5, 2, 10));
+            terminal.close();
+            expect(mockTerm.getRendered()[14]).to.equal('');
+          });
+        });
+
+
 
       });
 

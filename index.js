@@ -5,12 +5,15 @@ const term = require('terminal-kit').terminal,
   FileHandle = require('./lib/file-handle'),
   main = require('./lib/main');
 const args = require('minimist')(process.argv, {
-  boolean: ['s'],
+  boolean: ['s', 'alternate-screen'],
   alias: {
     s: 'status',
     k: 'keys',
     c: 'colors',
     m: 'marker'
+  },
+  default: {
+    'alternate-screen': true
   }
 });
 
@@ -38,6 +41,7 @@ const progArgs = {
   keys: args.keys,
   colors: colors,
   selectMarker: marker || '^!',
+  alternateScreen: args['alternate-screen'],
   file: new FileHandle(file),
   term: term
 };
