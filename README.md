@@ -15,14 +15,6 @@ Check the [changelog](#changelog) for details.
 
  > NOTE: Also works with Yarn: `yarn global add rebase-editor`
 
-## Does it work on...
-
-| Platform | Support |
-| -------- | ------- |
-| Mac      | Yes     |
-| Linux    | Yes     |
-| Windows  | Yes, but not Git Bash [(#7)](https://github.com/sjurba/rebase-editor/issues/7) |
-
 ![rebase-editor](https://github.com/sjurba/rebase-editor/raw/master/rebase-editor.gif)
 
 ## Usage
@@ -60,7 +52,7 @@ The editor accepts the following command line arguments:
  * -k, --keys: Set a custom keybinding. Must be defined as .json file or a .js file with a module exporting a json object.
  * -c, --color: Use colorful editor output. This argument takes an extra optional argument with custom colors as a comma separated string of [terminal-kit style characters](https://github.com/cronvel/string-kit#ref.format.markup). You can specify 3 colors, first for the line action ('pick', 'squash', etc.), the second for the hash and the third for the message. An empty string means no special color. Ex. (`-c ^r,^y,^b` (red, yellow, blue) or `-c ^r` (Only color action) or `-c ,,^b` (Only color message))
  * -m, --marker: Set a custom marker to mark selected lines. It can be any string like '>> ' or one of the [terminal-kit style characters](https://github.com/cronvel/string-kit#ref.format.markup). The default is '^!' (Inverse) except for windows where that doesn't work [(See #9)](https://github.com/sjurba/rebase-editor/issues/9) which has yellow instead: '^Y'.
- * --no-alternate-screen: Disable alternate screen. [(See #11)[https://github.com/sjurba/rebase-editor/issues/11]]
+ * --no-alternate-screen: Disable alternate screen. [(See #11)](https://github.com/sjurba/rebase-editor/issues/11)
 
 ```
   git config --global sequence.editor "rebase-editor -s -c -m '> ' -k ~/customKeyBindings.json"
@@ -104,6 +96,15 @@ The specials keys that are supported are defined by terminal-kit.
 >
 > Likewise CMD-Z, CMD-SHIFT-Z does not work either(CMD doesn't work at all really). So I went with simply z,Z for undo redo.
 
+## Does it work on...
+
+| Platform | Support |
+| -------- | ------- |
+| Mac      | Yes     |
+| Linux    | Yes     |
+| Windows  | Yes, but not Git Bash [(#7)](https://github.com/sjurba/rebase-editor/issues/7) |
+
+
 ## Made a mistake?
 `git reflog` is your friend:
 ![git-reflog](https://github.com/sjurba/rebase-editor/raw/master/git-reflog.gif)
@@ -115,15 +116,6 @@ The specials keys that are supported are defined by terminal-kit.
 > Yarn: `yarn global remove rebase-editor`
 
 ## Development
-
-### Architecture/Code map
-- `index.js` - bootstrap app. Simple and only tested manually.
-- `main.js` - glues the app together.
-- `rebase-file.js` - reads and write state from a rebase file.
-- `key-binding.js` - defines default key bindings.
-- `reducer.js` - a redux-inspired reducer. A pure function that takes the old state and an key action and returns a new state object. Remember that the state is immutable (although not enforced).
-- `terminal.js` - renders the state to the terminal.
-- `file-handle.js` - file util.
 
 ### Testing
 `npm test` or `npm run tdd`
