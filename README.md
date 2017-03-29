@@ -42,7 +42,7 @@ Supported extra commands are:
   - ENTER, q = Save and quit
   - ESC, CTRL_C = Abort
 
-To use a different editor for one time (replace `vi` with your favorite editor):
+To use a different editor for one time only you can use the `GIT_SEQUENCE_EDITOR` environment variable (replace `vi` with your favorite editor):
 
     GIT_SEQUENCE_EDITOR="vi" git rebase -i master
 
