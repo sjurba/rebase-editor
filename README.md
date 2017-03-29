@@ -1,19 +1,28 @@
-# rebase-editor
+# rebase-editor [![Build Status](https://travis-ci.org/sjurba/rebase-editor.svg?branch=master)](https://travis-ci.org/sjurba/rebase-editor) [![Coverage Status](https://coveralls.io/repos/github/sjurba/rebase-editor/badge.svg?branch=master)](https://coveralls.io/github/sjurba/rebase-editor?branch=master)
+
 Simple terminal based sequence editor for git interactive rebase.
 Written in Node.js, published to npm, uses [terminal-kit](https://github.com/cronvel/terminal-kit).
-
-[![Build Status](https://travis-ci.org/sjurba/rebase-editor.svg?branch=master)](https://travis-ci.org/sjurba/rebase-editor)
-[![Coverage Status](https://coveralls.io/repos/github/sjurba/rebase-editor/badge.svg?branch=master)](https://coveralls.io/github/sjurba/rebase-editor?branch=master)
 
 **VERSION 2.0 IS OUT** :sparkles: :camel: :boom:</br>
 New features: Select multiple lines, and undo changes!</br>
 Check the [changelog](#changelog) for details.
 
 ## Install
-     npm install -g rebase-editor
-     git config --global sequence.editor rebase-editor
 
- > NOTE: Also works with Yarn: `yarn global add rebase-editor`
+Via npm:
+```bash
+$ npm install -g rebase-editor
+```
+
+Via Yarn:
+```bash
+$ yarn global add rebase-editor
+```
+
+After which:
+```bash
+ $ git config --global sequence.editor rebase-editor
+````
 
 ![rebase-editor](https://github.com/sjurba/rebase-editor/raw/master/rebase-editor.gif)
 
@@ -43,8 +52,9 @@ Supported extra commands are:
   - ESC, CTRL_C = Abort
 
 To use a different editor for one time (replace `vi` with your favorite editor):
-
-    GIT_SEQUENCE_EDITOR="vi" git rebase -i master
+```bash
+$ GIT_SEQUENCE_EDITOR="vi" git rebase -i master
+```
 
 ### Command line arguments
 The editor accepts the following command line arguments:
@@ -54,8 +64,8 @@ The editor accepts the following command line arguments:
  * -m, --marker: Set a custom marker to mark selected lines. It can be any string like '>> ' or one of the [terminal-kit style characters](https://github.com/cronvel/string-kit#ref.format.markup). The default is '^!' (Inverse) except for windows where that doesn't work [(See #9)](https://github.com/sjurba/rebase-editor/issues/9) which has yellow instead: '^Y'.
  * --no-alternate-screen: Disable alternate screen. [(See #11)](https://github.com/sjurba/rebase-editor/issues/11)
 
-```
-  git config --global sequence.editor "rebase-editor -s -c -m '> ' -k ~/customKeyBindings.json"
+```bash
+ $ git config --global sequence.editor "rebase-editor -s -c -m '> ' -k ~/customKeyBindings.json"
 ```
 
 ### Custom key bindings
@@ -63,33 +73,34 @@ The keybindings must be a file that can be required, either json or a node modul
 The specials keys that are supported are defined by terminal-kit.
 
 #### Default key bindings
-        {
-          UP: 'up',
-          DOWN: 'down',
-          LEFT: 'moveUp',
-          CTRL_UP: 'moveUp',
-          RIGHT: 'moveDown',
-          CTRL_DOWN: 'moveDown',
-          SHIFT_LEFT: 'selectUp',
-          SHIFT_RIGHT: 'selectDown',
-          p: 'pick',
-          r: 'reword',
-          e: 'edit',
-          s: 'squash',
-          f: 'fixup',
-          d: 'drop',
-          BACKSPACE: 'drop',
-          DELETE: 'drop',
-          z: 'undo',
-          CTRL_Z: 'undo',
-          Z: 'redo',
-          CTRL_SHIFT_Z: 'redo',
-          q: 'quit',
-          ENTER: 'quit',
-          CTRL_C: 'abort',
-          ESCAPE: 'abort'
-        }
-
+```javascript
+{
+     UP: 'up',
+     DOWN: 'down',
+     LEFT: 'moveUp',
+     CTRL_UP: 'moveUp',
+     RIGHT: 'moveDown',
+     CTRL_DOWN: 'moveDown',
+     SHIFT_LEFT: 'selectUp',
+     SHIFT_RIGHT: 'selectDown',
+     p: 'pick',
+     r: 'reword',
+     e: 'edit',
+     s: 'squash',
+     f: 'fixup',
+     d: 'drop',
+     BACKSPACE: 'drop',
+     DELETE: 'drop',
+     z: 'undo',
+     CTRL_Z: 'undo',
+     Z: 'redo',
+     CTRL_SHIFT_Z: 'redo',
+     q: 'quit',
+     ENTER: 'quit',
+     CTRL_C: 'abort',
+     ESCAPE: 'abort'
+}
+```
 
 #### A note on key bindings for Mac
 >Not all key combinations work on Mac by default. Most notably, no modifier keys work with UP/DOWN (Like SHIFT, CTRL, ALT, META/CMD). Fn works kind of but it translates to PAGE_UP/DOWN. Therefor I decided to use the LEFT/RIGHT combinations as a fallback for Mac. You can however configure your terminal manually. [See #8 for a guide how to do that.](https://github.com/sjurba/rebase-editor/issues/8)
@@ -107,31 +118,53 @@ The specials keys that are supported are defined by terminal-kit.
 
 ## Made a mistake?
 `git reflog` is your friend:
+
 ![git-reflog](https://github.com/sjurba/rebase-editor/raw/master/git-reflog.gif)
 
 ## Uninstall
-    npm remove -g rebase-editor
-    git config --global --unset sequence.editor
+First, run:
+```bash
+$ git config --global --unset sequence.editor
+```
 
-> Yarn: `yarn global remove rebase-editor`
+Via npm:
+```bash
+$ npm remove -g rebase-editor
+```
+
+Via Yarn:
+```bash
+$ yarn global remove rebase-editor
+```
 
 ## Development
 
 ### Testing
-`npm test` or `npm run tdd`
 
-For debugging I have a test file I have been using.
+```bash
+$ npm test
+```
 
-`node index.js example`
+Or in watch mode (to continuously run tests):
+
+```bash
+npm run tdd
+```
+
+For debugging I have a test file I have been using:
+```bash
+$ node index.js example
+```
 
 For debugging using git:
-
-`GIT_SEQUENCE_EDITOR="./index.js" git rebase -i master`
+```bash
+$ GIT_SEQUENCE_EDITOR="./index.js" git rebase -i master
+```
 
 ## Changelog
 
 ### v1.0.0
-Initial version
+Initial version.
 
 ### v2.0.0
 Complete rewrite with new architecture and test driven implementation.
