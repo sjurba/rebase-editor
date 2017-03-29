@@ -5,6 +5,8 @@ Written in Node.js, published to npm, uses [terminal-kit](https://github.com/cro
 [![Build Status](https://travis-ci.org/sjurba/rebase-editor.svg?branch=master)](https://travis-ci.org/sjurba/rebase-editor)
 [![Coverage Status](https://coveralls.io/repos/github/sjurba/rebase-editor/badge.svg?branch=master)](https://coveralls.io/github/sjurba/rebase-editor?branch=master)
 
+![rebase-editor](https://github.com/sjurba/rebase-editor/raw/master/rebase-editor.gif)
+
 **VERSION 2.0 IS OUT** :sparkles: :camel: :boom:</br>
 New features: Select multiple lines, and undo changes!</br>
 Check the [changelog](#changelog) for details.
@@ -14,8 +16,6 @@ Check the [changelog](#changelog) for details.
      git config --global sequence.editor rebase-editor
 
  > NOTE: Also works with Yarn: `yarn global add rebase-editor`
-
-![rebase-editor](https://github.com/sjurba/rebase-editor/raw/master/rebase-editor.gif)
 
 ## Usage
 The terminal prints out the standard interactive rebase file that git creates, plus some extra command info in the comments.
