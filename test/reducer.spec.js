@@ -191,6 +191,36 @@
         });
       });
 
+      describe('page down', function () {
+        it('should select page down', function () {
+          const state = getState({
+            lines: 5,
+            cursor: 0,
+            height: 3
+          });
+          const newState = reduce(state, 'selectPageDown');
+          expect(newState.cursor).to.deep.equal({
+            from: 0,
+            pos: 3
+          });
+        });
+      });
+
+      describe('page up', function () {
+        it('should select page down', function () {
+          const state = getState({
+            lines: 5,
+            cursor: 4,
+            height: 3
+          });
+          const newState = reduce(state, 'selectPageUp');
+          expect(newState.cursor).to.deep.equal({
+            from: 4,
+            pos: 1
+          });
+        });
+      });
+
     });
 
     describe('moving line', function () {
