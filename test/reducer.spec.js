@@ -6,7 +6,7 @@
   describe('Reducer', function () {
 
     it('should return same state on unknown command', function () {
-      const state = getState();
+      const state = getState(0);
       const newState = reduce(state, 'foobar');
       expect(newState).to.equal(state);
     });
@@ -86,7 +86,7 @@
           expect(newState).to.equal(state);
         });
         it('should reduce selection', function () {
-          let state = getState(2, {
+          let state = getState(3, {
             from: 2,
             pos: 0
           });
