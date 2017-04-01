@@ -1,6 +1,7 @@
 'use strict';
 
 const rebaseFile = require('../lib/rebase-file');
+const keyBindings = require('../lib/key-bindings');
 
 function trim(str) {
   return str.trim().split('\n').map((line) => line.trim()).join('\n');
@@ -46,6 +47,26 @@ describe('Rebase file', function () {
       expect(rebaseFile.toFile(state)).to.equal(file);
       expect(state.lines[0].action).to.equal('# pick');
     });
+
+    it('should print key bindings as help', function () {
+      const state = rebaseFile.toState('pick ad3d434 Hello message');
+      expect(state.extraInfo(keyBindings())).to.deep.equal([
+        '# NOTE: x is not supported by rebase editor',
+        '#',
+        '# Rebase Editor Commands:',
+        '# UP = Moves cursor up',
+        '# DOWN = Moves cursor down',
+        '# SHIFT_DOWN, SHIFT_RIGHT = Select one line down',
+        '# SHIFT_UP, SHIFT_LEFT = Select one line up',
+        '# RIGHT, CTRL_DOWN = Moves current line down one position',
+        '# LEFT, CTRL_UP = Moves current line up one position',
+        '# z, CTRL_Z = Undo',
+        '# Z, CTRL_SHIFT_Z = Redo',
+        '# q, ENTER = Save and quit',
+        '# CTRL_C, ESCAPE = Abort'
+      ]);
+    });
+
   });
 
   it('to file', function () {
