@@ -11,6 +11,12 @@
       expect(newState).to.equal(state);
     });
 
+    it('should freeze returned state', function () {
+      const state = getState(0);
+      const newState = reduce(state, 'foobar');
+      expect(Object.isFrozen(newState)).to.equal(true);
+    });
+
     describe('moving cursor', function () {
       it('down', function () {
         const state = getState(2, 0);
