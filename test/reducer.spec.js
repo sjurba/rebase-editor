@@ -68,6 +68,101 @@
       });
     });
 
+    describe('select', function () {
+
+      describe('down', function () {
+        it('should increase selection', function () {
+          let state = getState(3, 0);
+          state = reduce(state, 'selectDown');
+          state = reduce(state, 'selectDown');
+          expect(state.cursor).to.deep.equal({
+            from: 0,
+            pos: 2
+          });
+        });
+        it('should do nothing when on last line', function () {
+          let state = getState(2, 1);
+          let newState = reduce(state, 'selectDown');
+          expect(newState).to.equal(state);
+        });
+        it('should reduce selection', function () {
+          let state = getState(2, {
+            from: 2,
+            pos: 0
+          });
+          state = reduce(state, 'selectDown');
+          expect(state.cursor).to.deep.equal({
+            from: 2,
+            pos: 1
+          });
+        });
+      });
+
+      describe('up', function () {
+        it('should increase selection', function () {
+          let state = getState(3, 2);
+          state = reduce(state, 'selectUp');
+          state = reduce(state, 'selectUp');
+          expect(state.cursor).to.deep.equal({
+            from: 2,
+            pos: 0
+          });
+        });
+        it('should do nothing when on last line', function () {
+          let state = getState(2, 0);
+          let newState = reduce(state, 'selectUp');
+          expect(newState).to.equal(state);
+        });
+        it('should reduce selection', function () {
+          let state = getState(2, {
+            from: 0,
+            pos: 2
+          });
+          state = reduce(state, 'selectUp');
+          expect(state.cursor).to.deep.equal({
+            from: 0,
+            pos: 1
+          });
+        });
+      });
+
+
+      describe('home', function () {
+        it('should do nothing if on top', function () {
+          const state = getState(3, 0);
+          const newState = reduce(state, 'selectHome');
+          expect(state).to.equal(newState);
+        });
+
+        it('should select to top', function () {
+          const state = getState(3, 2);
+          const newState = reduce(state, 'selectHome');
+          expect(newState.cursor).to.deep.equal({
+            from: 2,
+            pos: 0
+          });
+        });
+      });
+
+      describe('end', function () {
+        it('should do nothing if on bottom', function () {
+          const state = getState(3, 2);
+          const newState = reduce(state, 'selectEnd');
+          expect(state).to.equal(newState);
+        });
+
+        it('should select to end', function () {
+          const state = getState(3, 0);
+          const newState = reduce(state, 'selectEnd');
+          expect(newState.cursor).to.deep.equal({
+            from: 0,
+            pos: 2
+          });
+        });
+      });
+
+    });
+
     describe('moving line', function () {
       it('down', function () {
         const state = getState(2, 0);
@@ -162,7 +257,6 @@
         expect(newState).to.equal(state);
       });
     });
-
 
     describe('change action key', function () {
       it('should do nothing if action is not different', function () {
@@ -290,63 +384,4 @@
       });
     });
 
-    describe('select', function () {
-
-      describe('down', function () {
-        it('should increase selection', function () {
-          let state = getState(3, 0);
-          state = reduce(state, 'selectDown');
-          state = reduce(state, 'selectDown');
-          expect(state.cursor).to.deep.equal({
-            from: 0,
-            pos: 2
-          });
-        });
-        it('should do nothing when on last line', function () {
-          let state = getState(2, 1);
-          let newState = reduce(state, 'selectDown');
-          expect(newState).to.equal(state);
-        });
-        it('should reduce selection', function () {
-          let state = getState(2, {
-            from: 2,
-            pos: 0
-          });
-          state = reduce(state, 'selectDown');
-          expect(state.cursor).to.deep.equal({
-            from: 2,
-            pos: 1
-          });
-        });
-      });
-
-      describe('up', function () {
-        it('should increase selection', function () {
-          let state = getState(3, 2);
-          state = reduce(state, 'selectUp');
-          state = reduce(state, 'selectUp');
-          expect(state.cursor).to.deep.equal({
-            from: 2,
-            pos: 0
-          });
-        });
-        it('should do nothing when on last line', function () {
-          let state = getState(2, 0);
-          let newState = reduce(state, 'selectUp');
-          expect(newState).to.equal(state);
-        });
-        it('should reduce selection', function () {
-          let state = getState(2, {
-            from: 0,
-            pos: 2
-          });
-          state = reduce(state, 'selectUp');
-          expect(state.cursor).to.deep.equal({
-            from: 0,
-            pos: 1
-          });
-        });
-      });
-
-    });
   });
