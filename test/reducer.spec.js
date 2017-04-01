@@ -45,6 +45,30 @@
         expect(newState).to.equal(state);
       });
 
+      describe('page down', function () {
+        it('should move term height down', function () {
+          let state = getState({
+            lines: 10,
+            cursor: 0,
+            height: 5
+          });
+          state = reduce(state, 'pageDown');
+          expect(state.cursor.pos).to.equal(5);
+        });
+      });
+
+      describe('page up', function () {
+        it('should move term height up', function () {
+          let state = getState({
+            lines: 10,
+            cursor: 9,
+            height: 5
+          });
+          state = reduce(state, 'pageUp');
+          expect(state.cursor.pos).to.equal(4);
+        });
+      });
+
       describe('to end', function () {
         it('should move to the last line', function () {
           const state = getState(3, 0);
@@ -387,6 +411,14 @@
         state = reduce(state, 'squash');
         const newState = reduce(state, 'redo');
         expect(newState).to.equal(state);
+      });
+    });
+
+    describe('resize', function () {
+      it('should record height', function () {
+        let state = getState(1, 0);
+        state = reduce(state, 'resize', 10);
+        expect(state.height).to.equal(10);
       });
     });
 
