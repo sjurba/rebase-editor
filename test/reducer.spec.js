@@ -38,6 +38,34 @@
         const newState = reduce(state, 'up');
         expect(newState).to.equal(state);
       });
+
+      describe('to end', function () {
+        it('should move to the last line', function () {
+          const state = getState(3, 0);
+          const newState = reduce(state, 'end');
+          expect(newState.cursor.pos).to.equal(2);
+          expect(newState.cursor.from).to.equal(2);
+        });
+        it('should do nothing on the last line', function () {
+          const state = getState(3, 2);
+          const newState = reduce(state, 'end');
+          expect(newState).to.equal(state);
+        });
+      });
+
+      describe('home', function () {
+        it('should move to the first line', function () {
+          const state = getState(3, 2);
+          const newState = reduce(state, 'home');
+          expect(newState.cursor.pos).to.equal(0);
+          expect(newState.cursor.from).to.equal(0);
+        });
+        it('should do nothing on the first line', function () {
+          const state = getState(3, 0);
+          const newState = reduce(state, 'home');
+          expect(newState).to.equal(state);
+        });
+      });
     });
 
     describe('moving line', function () {
