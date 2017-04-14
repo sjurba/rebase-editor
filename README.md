@@ -55,39 +55,39 @@ The editor accepts the following command line arguments:
  * --no-alternate-screen: Disable alternate screen. [(See #11)](https://github.com/sjurba/rebase-editor/issues/11)
 
 ```
-  git config --global sequence.editor "rebase-editor -s -c -m '> ' -k ~/customKeyBindings.json"
+  git config --global sequence.editor "rebase-editor -s -c -m '> ' -k ~/.rebase-editor-keybindings.json"
 ```
 
 ### Custom key bindings
-The keybindings must be a file that can be required, either json or a node module that exports a simple object.
-The specials keys that are supported are defined by terminal-kit.
+The keybindings must be a file that can be required, either JSON or a node module that exports a simple object.
+The specials keys that are supported are defined by [terminal-kit](https://github.com/cronvel/terminal-kit/blob/master/doc/events.md#ref.event.key).
 
 #### Default key bindings
         {
-          UP: 'up',
-          DOWN: 'down',
-          LEFT: 'moveUp',
-          CTRL_UP: 'moveUp',
-          RIGHT: 'moveDown',
-          CTRL_DOWN: 'moveDown',
-          SHIFT_LEFT: 'selectUp',
-          SHIFT_RIGHT: 'selectDown',
-          p: 'pick',
-          r: 'reword',
-          e: 'edit',
-          s: 'squash',
-          f: 'fixup',
-          d: 'drop',
-          BACKSPACE: 'drop',
-          DELETE: 'drop',
-          z: 'undo',
-          CTRL_Z: 'undo',
-          Z: 'redo',
-          CTRL_SHIFT_Z: 'redo',
-          q: 'quit',
-          ENTER: 'quit',
-          CTRL_C: 'abort',
-          ESCAPE: 'abort'
+          "UP": "up",
+          "DOWN": "down",
+          "LEFT": "moveUp",
+          "CTRL_UP": "moveUp",
+          "RIGHT": "moveDown",
+          "CTRL_DOWN": "moveDown",
+          "SHIFT_LEFT": "selectUp",
+          "SHIFT_RIGHT": "selectDown",
+          "p": "pick",
+          "r": "reword",
+          "e": "edit",
+          "s": "squash",
+          "f": "fixup",
+          "d": "drop",
+          "BACKSPACE": "drop",
+          "DELETE": "drop",
+          "z": "undo",
+          "CTRL_Z": "undo",
+          "Z": "redo",
+          "CTRL_SHIFT_Z": "redo",
+          "q": "quit",
+          "ENTER": "quit",
+          "CTRL_C": "abort",
+          "ESCAPE": "abort"
         }
 
 
