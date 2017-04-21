@@ -55,8 +55,10 @@ The editor accepts the following command line arguments:
  * --no-alternate-screen: Disable alternate screen. [(See #11)](https://github.com/sjurba/rebase-editor/issues/11)
 
 ```
-  git config --global sequence.editor "rebase-editor -s -c -m '> ' -k ~/.rebase-editor-keybindings.json"
+  git config --global sequence.editor "rebase-editor -s -c -m '> ' -k ~/.rebase-editor-keybindings.json --"
 ```
+
+>NOTE: When using command line arguments the command should end with `--` to separate custom arguments from the filename of the rebase file
 
 ### Custom key bindings
 The keybindings must be a file that can be required, either JSON or a node module that exports a simple object.
