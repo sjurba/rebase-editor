@@ -63,7 +63,8 @@ describe('Rebase file', function () {
         '# z, CTRL_Z = Undo',
         '# Z, CTRL_SHIFT_Z = Redo',
         '# q, ENTER = Save and quit',
-        '# CTRL_C, ESCAPE = Abort'
+        '# CTRL_C, ESCAPE = Abort',
+        '# HOME, END, PAGE_UP, PAGE_DOWN = Moves cursor and selects with SHIFT'
       ]);
     });
 
