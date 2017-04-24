@@ -340,6 +340,14 @@ describe('Terminal renderer', function () {
         expect(spy).to.be.calledWith('foobar', 'f');
       });
 
+      it('should fire resize event when key listener added', function () {
+        const terminal = new Terminal(mockTerm);
+        mockTerm.height = 10;
+        const spy = sinon.spy();
+        terminal.addKeyListener(spy);
+        expect(spy).to.be.calledWith('resize', 10);
+      });
+
       describe('on resize', function () {
 
         let clock;
@@ -356,22 +364,25 @@ describe('Terminal renderer', function () {
           const terminal = new Terminal(mockTerm);
           const spy = sinon.spy();
           terminal.addKeyListener(spy);
+          mockTerm.height = 20;
           mockTerm.emit('resize', 20, 20);
           clock.tick(1000);
-          expect(spy).to.be.calledWith('resize', 'resize');
+          expect(spy).to.be.calledWith('resize', 20);
         });
 
         it('should debounce resize', function () {
           const terminal = new Terminal(mockTerm);
           const spy = sinon.spy();
           terminal.addKeyListener(spy);
+          spy.reset();
+          mockTerm.height = 20;
           mockTerm.emit('resize', 20, 20);
           expect(spy).not.to.be.called;
           clock.tick(10);
           mockTerm.emit('resize', 20, 20);
           expect(spy).not.to.be.called;
           clock.tick(1000);
-          expect(spy).to.be.calledWith('resize', 'resize');
+          expect(spy).to.be.calledWith('resize', 20);
         });
 
         it('should append blank lines to bottom when increasing window height', function () {

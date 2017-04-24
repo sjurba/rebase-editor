@@ -1,6 +1,7 @@
 'use strict';
 
 module.exports = function getState(lines, cursor, info) {
+  let height = 20;
   if (typeof lines === 'number') {
     lines = new Array(lines || 0).fill().map((val, idx) => {
       return {
@@ -9,6 +10,13 @@ module.exports = function getState(lines, cursor, info) {
         message: 'Line ' + idx
       };
     });
+  } else if (!Array.isArray(lines)) {
+    ({
+      lines,
+      cursor,
+      info,
+      height
+    } = lines);
   }
   if (typeof info === 'number') {
     info = new Array(info || 0).fill().map((val, idx) => {
@@ -30,6 +38,7 @@ module.exports = function getState(lines, cursor, info) {
     otherStateVar: {
       foo: 'bar'
     },
-    info: info || []
+    info: info || [],
+    height: height
   };
 };

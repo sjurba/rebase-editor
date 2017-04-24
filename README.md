@@ -37,6 +37,7 @@ Supported extra commands are:
   - SHIFT_LEFT/SHIFT_UP = Select one line up
   - RIGHT/CTRL_DOWN = Moves current line down one position
   - LEFT/CTRL_UP = Moves current line up one position
+  - HOME/END/PAGE_UP/PAGE_DOWN = Moves cursor and selects with SHIFT
   - z, CTRL_Z = Undo
   - Z, CTRL_SHIFT_Z = Redo
   - ENTER, q = Save and quit
@@ -65,32 +66,42 @@ The keybindings must be a file that can be required, either JSON or a node modul
 The specials keys that are supported are defined by [terminal-kit](https://github.com/cronvel/terminal-kit/blob/master/doc/events.md#ref.event.key).
 
 #### Default key bindings
-        {
-          "UP": "up",
-          "DOWN": "down",
-          "LEFT": "moveUp",
-          "CTRL_UP": "moveUp",
-          "RIGHT": "moveDown",
-          "CTRL_DOWN": "moveDown",
-          "SHIFT_LEFT": "selectUp",
-          "SHIFT_RIGHT": "selectDown",
-          "p": "pick",
-          "r": "reword",
-          "e": "edit",
-          "s": "squash",
-          "f": "fixup",
-          "d": "drop",
-          "BACKSPACE": "drop",
-          "DELETE": "drop",
-          "z": "undo",
-          "CTRL_Z": "undo",
-          "Z": "redo",
-          "CTRL_SHIFT_Z": "redo",
-          "q": "quit",
-          "ENTER": "quit",
-          "CTRL_C": "abort",
-          "ESCAPE": "abort"
-        }
+    {
+      "UP": "up",
+      "DOWN": "down",
+      "LEFT": "moveUp",
+      "CTRL_UP": "moveUp",
+      "RIGHT": "moveDown",
+      "CTRL_DOWN": "moveDown",
+      "END": "end",
+      "HOME": "home",
+      "PAGE_DOWN": "pageDown",
+      "PAGE_UP": "pageUp",
+      "SHIFT_UP": "selectUp",
+      "SHIFT_DOWN": "selectDown",
+      "SHIFT_LEFT": "selectUp",
+      "SHIFT_RIGHT": "selectDown",
+      "SHIFT_PAGE_DOWN": "selectPageDown",
+      "SHIFT_PAGE_UP": "selectPageUp",
+      "SHIFT_HOME": "selectHome",
+      "SHIFT_END": "selectEnd",
+      "p": "pick",
+      "r": "reword",
+      "e": "edit",
+      "s": "squash",
+      "f": "fixup",
+      "d": "drop",
+      "BACKSPACE": "drop",
+      "DELETE": "drop",
+      "z": "undo",
+      "CTRL_Z": "undo",
+      "Z": "redo",
+      "CTRL_SHIFT_Z": "redo",
+      "q": "quit",
+      "ENTER": "quit",
+      "CTRL_C": "abort",
+      "ESCAPE": "abort"
+    }
 
 
 #### A note on key bindings for Mac
@@ -149,6 +160,10 @@ Complete rewrite with new architecture and test driven implementation.
  - Colors is now opt-in instead of opt-out. With the new line selection I like no colors better.
  - Removed cut'n paste function. Replaced with drop command.
  - Changed default move line key from u and d to CTRL_UP/CTRL_DOWN (not on mac) or LEFT/RIGHT. Can be reverted with custom keymap.
+
+### v2.0.5
+ #### New features
+  - support HOME, END, PAGE_UP and PAGE_DOWN
 
 ## TODO
  - [ ] Support exec command
