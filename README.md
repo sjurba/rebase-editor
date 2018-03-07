@@ -177,4 +177,4 @@ Contributions and comments are welcome, just make an issue and/or pull req.
 Thanks to Node.js and the wonderful [terminal-kit project](https://github.com/cronvel/terminal-kit).
 
 ## See also
-There is also [git-interactive-rebase-tool](https://github.com/MitMaro/git-interactive-rebase-tool), a similar tools written in Rust.
+There is also [git-interactive-rebase-tool](https://github.com/MitMaro/git-interactive-rebase-tool), a similar tool written in Rust.
