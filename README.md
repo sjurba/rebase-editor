@@ -27,6 +27,7 @@ Commands:
  - e, edit = use commit, but stop for amending
  - s, squash = use commit, but meld into previous commit
  - f, fixup = like "squash", but discard this commit's log message
+ - b, break = stop here (continue rebase later with `git rebase --continue`)
  - d, drop = remove commit
 
  >NOTE: `x, exec` command is not supported
