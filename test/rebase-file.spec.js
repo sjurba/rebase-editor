@@ -51,7 +51,7 @@ describe('Rebase file', function () {
     it('should print key bindings as help', function () {
       const state = rebaseFile.toState('pick ad3d434 Hello message');
       expect(state.extraInfo(keyBindings())).to.deep.equal([
-        '# NOTE: x is not supported by rebase editor',
+        '# NOTE: x, l, t, m is not supported by rebase editor',
         '#',
         '# Rebase Editor Commands:',
         '# UP = Moves cursor up',
