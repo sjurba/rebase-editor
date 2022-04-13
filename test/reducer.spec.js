@@ -382,7 +382,7 @@ describe('Reducer', function () {
       let newState = reduce(state, 'break');
       newState = reduce(newState, 'drop');
       expect(newState.lines.length).to.equal(1)
-      expect(newState.lines[0]).to.equal(state.lines[0])
+      expect(newState.lines[0]).to.equal(state.lines[0]);
     });
 
     it('should ignore actions on break', function () {
@@ -419,6 +419,39 @@ describe('Reducer', function () {
       expect(newState.lines[1].action).to.equal('drop')
       expect(newState.lines[2].action).to.equal('pick')
       expect(newState.lines[3].action).to.equal('pick')
+    });
+
+    it('should move cursor on drop', function () {
+      let state = getState(1, 0);
+      state = reduce(state, 'break');
+      state = reduce(state, 'drop');
+      expect(state.cursor.from).to.equal(0);
+      expect(state.cursor.pos).to.equal(0);
+    });
+
+    it('should move up selection on drop', function () {
+      let state = getState(2, 1);
+      state = reduce(state, 'break');
+      state = reduce(state, 'selectUp');
+      state = reduce(state, 'selectUp');
+      expect(state.cursor.from).to.equal(2);
+      expect(state.cursor.pos).to.equal(0);
+      state = reduce(state, 'drop');
+      expect(state.cursor.from).to.equal(1);
+      expect(state.cursor.pos).to.equal(0);
+    });
+
+    it('should move down selection on drop', function () {
+      let state = getState(2, 1);
+      state = reduce(state, 'break');
+      state = reduce(state, 'home');
+      state = reduce(state, 'selectDown');
+      state = reduce(state, 'selectDown');
+      expect(state.cursor.from).to.equal(0);
+      expect(state.cursor.pos).to.equal(2);
+      state = reduce(state, 'drop');
+      expect(state.cursor.from).to.equal(0);
+      expect(state.cursor.pos).to.equal(1);
     });
 
     it('should only drop selected break', function () {
