@@ -420,6 +420,20 @@ describe('Reducer', function () {
       expect(newState.lines[2].action).to.equal('pick')
       expect(newState.lines[3].action).to.equal('pick')
     });
+
+    it('should only drop selected break', function () {
+      let state = getState(4, 0);
+      state = reduce(state, 'break');
+      state = reduce(state, 'down');
+      state = reduce(state, 'break');
+      const newState = reduce(state, 'drop');
+      expect(newState.lines.length).to.equal(5)
+      expect(newState.lines[0].action).to.equal('pick')
+      expect(newState.lines[1].action).to.equal('break')
+      expect(newState.lines[2].action).to.equal('pick')
+      expect(newState.lines[3].action).to.equal('pick')
+      expect(newState.lines[4].action).to.equal('pick')
+    });
   });
 
   describe('undo', function () {
