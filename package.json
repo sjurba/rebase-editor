@@ -31,7 +31,7 @@
     "url": "git://github.com/sjurba/rebase-editor.git"
   },
   "engines": {
-    "node": ">=6.0"
+    "node": ">=14.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
