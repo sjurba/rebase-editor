@@ -24,3 +24,8 @@ jobs:
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Add badge
+        uses: ./.github/actions/badge
+        with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
