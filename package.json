@@ -1,13 +1,13 @@
 {
   "name": "rebase-editor",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "description": "Simple terminal based sequence editor for git interactive rebase.",
   "main": "index.js",
   "scripts": {
     "test": "mocha",
     "tdd": "mocha --watch --reporter min",
     "cover": "nyc --reporter=html --reporter=text mocha",
-    "coveralls": "nyc report --reporter=text-lcov | coveralls"
+    "cover-ci": "nyc report --reporter=text-lcov"
   },
   "keywords": [
     "git",
