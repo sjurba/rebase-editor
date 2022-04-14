@@ -166,16 +166,31 @@ Complete rewrite with new architecture and test driven implementation.
  #### New features
   - support HOME, END, PAGE_UP and PAGE_DOWN
 
+### v2.0.6, v2.0.7
+ #### New features
+  - support break. Adds a new line with a break. To remove the line you can drop it. 
+
 ## TODO
  - [ ] Support exec command
+ - [ ] Support label, reset, merge commands
 
  >Or not.. I have never found use for this function anyways, and I'm not sure how I would like the workflow and keymapping to work.
 
 ## Contributions
 Contributions and comments are welcome, just make an issue and/or pull req.
 
+To get started just clone the repo and run `npm install`
+
+To test manually using an example file in the repo: `./index.js example`
+
+To test manually using git: `GIT_SEQUENCE_EDITOR=./index.js git rebase -i HEAD^^^`
+
+Make sure to run the test `npm test` and check the testing coverage `npm run cover` before you create a pr.
+I do have full test coverage and would like to keep it like that. 
+
 ## Credits
 Thanks to Node.js and the wonderful [terminal-kit project](https://github.com/cronvel/terminal-kit).
+Also thanks to @perlund and @real-yfprojects for contributing.
 
 ## See also
 There is also [git-interactive-rebase-tool](https://github.com/MitMaro/git-interactive-rebase-tool), a similar tool written in Rust.
