@@ -1,9 +1,0 @@
-name: 'Add badge'
-description: 'Adds a badge to the description'
-inputs:
-  github_token:
-    description: 'Secret github token'
-    required: true
-runs:
-  using: 'node16'
-  main: 'index.js'
