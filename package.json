@@ -7,7 +7,7 @@
     "test": "mocha",
     "tdd": "mocha --watch --reporter min",
     "cover": "nyc --reporter=html --reporter=text mocha",
-    "cover-ci": "nyc report --reporter=text-lcov"
+    "cover-ci": "nyc --reporter=lcov --reporter=text mocha"
   },
   "keywords": [
     "git",
@@ -31,7 +31,7 @@
     "url": "git://github.com/sjurba/rebase-editor.git"
   },
   "engines": {
-    "node": ">=6.0"
+    "node": ">=14.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",

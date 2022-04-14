@@ -1,0 +1,31 @@
+name: Build CI
+on:
+  push:
+    branches: master
+  pull_request:
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Use Node.js 14.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+
+      - name: Test
+        run: |
+          npm install
+          npm run cover-ci
+
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Add badge
+        uses: ./.github/actions/badge
+        with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
