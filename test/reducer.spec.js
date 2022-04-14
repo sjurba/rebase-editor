@@ -404,7 +404,9 @@ describe('Reducer', function () {
       state = reduce(state, 'break');
       state = reduce(state, 'up');
       const newState = reduce(state, 'break');
-      expect(newState).to.equal(state)
+      expect(newState.lines).to.equal(state.lines)
+      expect(newState.cursor.from).to.equal(1)
+      expect(newState.cursor.pos).to.equal(1)
     });
 
     it('should drop multiple breaks', function () {
