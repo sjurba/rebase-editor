@@ -190,7 +190,7 @@ I do have full test coverage and would like to keep it like that.
 
 ## Credits
 Thanks to Node.js and the wonderful [terminal-kit project](https://github.com/cronvel/terminal-kit).
-Also thanks to @perlund and @real-yfprojects for contributing.
+Also thanks to @perlun and @real-yfprojects for contributing.
 
 ## See also
 There is also [git-interactive-rebase-tool](https://github.com/MitMaro/git-interactive-rebase-tool), a similar tool written in Rust.
