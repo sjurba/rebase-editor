@@ -344,6 +344,24 @@ describe('Reducer', function () {
       expect(newState.otherStateVar).to.equal(state.otherStateVar);
     });
 
+    it("should change on fixup - alternate keybinds with flag", function () {
+      const state = getState(3, 1);
+      let newState = reduce(state, "fixup -C");
+      expect(newState.lines[0]).to.equal(state.lines[0]);
+      expect(newState.lines[1].action).to.equal("fixup -C");
+      expect(newState.lines[1].message).to.equal(state.lines[1].message);
+      expect(newState.lines[1]).not.to.equal(state.lines[1]);
+      expect(newState.lines[2]).to.equal(state.lines[2]);
+      expect(newState.otherStateVar).to.equal(state.otherStateVar);
+      newState = reduce(state, "fixup -c");
+      expect(newState.lines[0]).to.equal(state.lines[0]);
+      expect(newState.lines[1].action).to.equal("fixup -c");
+      expect(newState.lines[1].message).to.equal(state.lines[1].message);
+      expect(newState.lines[1]).not.to.equal(state.lines[1]);
+      expect(newState.lines[2]).to.equal(state.lines[2]);
+      expect(newState.otherStateVar).to.equal(state.otherStateVar);
+    });
+
     it('should change entire selection', function () {
       const state = getState([{
         action: 'pick',
