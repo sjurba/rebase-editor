@@ -11,7 +11,7 @@ describe('Rebase file', function () {
 
   describe('to state', function () {
     it('should parse lines', function () {
-      const state = rebaseFile.toState('pick ad3d434 Hello message');
+      const state = rebaseFile.toState(`pick ad3d434 Hello message`);
       expect(state.lines).to.deep.equal([{
         action: 'pick',
         hash: 'ad3d434',
@@ -34,6 +34,19 @@ describe('Rebase file', function () {
           # Info here`);
       const state = rebaseFile.toState(file);
       expect(rebaseFile.toFile(state)).to.equal(file);
+    });
+
+    it('should should remove blank lines', function () {
+      const file = trim(`update-ref refs/heads/my-branch
+      
+      pick 123 First
+      
+      # Info here`);
+      const state = rebaseFile.toState(file);
+      expect(rebaseFile.toFile(state)).to.equal(trim(`update-ref refs/heads/my-branch
+      pick 123 First
+      
+      # Info here`));
     });
 
     it('should parse with empty commits', function () {
