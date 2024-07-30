@@ -61,10 +61,29 @@ describe('Rebase file', function () {
       expect(state.lines[0].action).to.equal('# pick');
     });
 
+    it('should parse --rebase-merges', function () {
+      const file = trim(`
+          label onto
+          # Branch: merge
+          reset onto
+          pick 345 Last
+          label branch
+          pick 123 First
+          label merge
+          reset branch
+          merge -C 234 merge # Merge branch 'merge' into first
+          
+          # Info here`);
+      const state = rebaseFile.toState(file);
+      expect(rebaseFile.toFile(state)).to.equal(file);
+    });
+
+
     it('should print key bindings as help', function () {
       const state = rebaseFile.toState('pick ad3d434 Hello message');
       expect(state.extraInfo(keyBindings())).to.deep.equal([
-        '# NOTE: x, l, t, m is not supported by rebase editor',
+        '# NOTE: execute (x) is not supported by rebase editor',
+        '# You cannot add update-ref (u), label (l), reset (t) or merge (m), but you can move them around',
         '#',
         '# Rebase Editor Commands:',
         '# UP = Moves cursor up',
@@ -77,6 +96,8 @@ describe('Rebase file', function () {
         '# Z, CTRL_SHIFT_Z = Redo',
         '# q, ENTER = Save and quit',
         '# CTRL_C, ESCAPE = Abort',
+        "# ALT_F = fixup -c",
+        "# CTRL_F = fixup -C",
         '# HOME, END, PAGE_UP, PAGE_DOWN = Moves cursor and selects with SHIFT'
       ]);
     });
