@@ -175,6 +175,10 @@ Complete rewrite with new architecture and test driven implementation.
 - support --update-refs. You can now move around and drop update-ref lines.
 - support --rebase-merges. You can now move around and drop label, reset and merge lines.
 
+### v2.0.9
+#### Bugfix
+- branch comments was not put inline.
+
 ## TODO
  - [ ] Support exec command
  - [ ] Add and edit label, reset, merge, update-refs commands
