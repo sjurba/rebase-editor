@@ -8,7 +8,7 @@ Written in Node.js, published to npm, uses [terminal-kit](https://github.com/cro
 ![rebase-editor](https://github.com/sjurba/rebase-editor/raw/master/rebase-editor.gif)
 
 **VERSION 2.0 IS OUT** :sparkles: :camel: :boom:</br>
-New features: Select multiple lines, and undo changes!</br>
+New features: Select multiple lines, and undo changes, update-ref, rebase-merges!</br>
 Check the [changelog](#changelog) for details.
 
 ## Install
@@ -170,9 +170,14 @@ Complete rewrite with new architecture and test driven implementation.
  #### New features
   - support break. Adds a new line with a break. To remove the line you can drop it. 
 
+### v2.0.8
+#### New features
+- support --update-refs. You can now move around and drop update-ref lines.
+- support --rebase-merges. You can now move around and drop label, reset and merge lines.
+
 ## TODO
  - [ ] Support exec command
- - [ ] Support label, reset, merge commands
+ - [ ] Add and edit label, reset, merge, update-refs commands
 
  >Or not.. I have never found use for this function anyways, and I'm not sure how I would like the workflow and keymapping to work.
 
