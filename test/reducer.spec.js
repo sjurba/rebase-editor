@@ -333,23 +333,26 @@ describe('Reducer', function () {
       expect(newState).to.equal(state);
     });
 
-    it('should do nothing if update-ref line', function () {
-      const state = getState([{
-        action: 'update-ref',
-        hash: 'refs/heads/my-branch'
-      }], 0);
-      const newState = reduce(state, 'pick');
-      expect(newState.lines[0]).to.equal(state.lines[0]);
-    });
+    ['break', 'update-ref', 'label', 'reset', 'merge', '# Comment'].forEach(function (action) {
+      it(`should not allow pick if ${action} line`, function () {
+        const state = getState([{
+          action: action,
+          hash: 'some text'
+        }], 0);
+        const newState = reduce(state, 'pick');
+        expect(newState.lines[0]).to.equal(state.lines[0]);
+      });
 
-    it('should delete update-ref line', function () {
-      const state = getState([{
-        action: 'update-ref',
-        hash: 'refs/heads/my-branch'
-      }], 0);
-      const newState = reduce(state, 'drop');
-      expect(newState.lines).to.be.empty;
-    });
+      it(`should delete ${action} line`, function () {
+        const state = getState([{
+          action: action,
+          hash: 'some text'
+        }], 0);
+        const newState = reduce(state, 'drop');
+        expect(newState.lines).to.be.empty;
+      });
+    })
+
 
     it('should change on fixup', function () {
       const state = getState(3, 1);
