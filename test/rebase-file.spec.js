@@ -82,7 +82,8 @@ describe('Rebase file', function () {
     it('should print key bindings as help', function () {
       const state = rebaseFile.toState('pick ad3d434 Hello message');
       expect(state.extraInfo(keyBindings())).to.deep.equal([
-        '# NOTE: x, l, t, m is not supported by rebase editor',
+        '# NOTE: execute (x) is not supported by rebase editor',
+        '# You cannot add update-ref (u), label (l), reset (t) or merge (m), but you can move them around',
         '#',
         '# Rebase Editor Commands:',
         '# UP = Moves cursor up',
@@ -95,6 +96,8 @@ describe('Rebase file', function () {
         '# Z, CTRL_SHIFT_Z = Redo',
         '# q, ENTER = Save and quit',
         '# CTRL_C, ESCAPE = Abort',
+        "# ALT_F = fixup -c",
+        "# CTRL_F = fixup -C",
         '# HOME, END, PAGE_UP, PAGE_DOWN = Moves cursor and selects with SHIFT'
       ]);
     });
