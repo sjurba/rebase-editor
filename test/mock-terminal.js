@@ -1,4 +1,6 @@
 'use strict';
+import sinon from "sinon";
+import { expect } from 'chai';
 
 function createMockTerminal() {
 
@@ -76,6 +78,4 @@ function createMockTerminal() {
 
 }
 
-module.exports = {
-  create: createMockTerminal
-};
+export default { create: createMockTerminal };

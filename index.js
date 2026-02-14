@@ -1,10 +1,13 @@
 #!/usr/bin/env node
 
 'use strict';
-const term = require('terminal-kit').terminal,
-  FileHandle = require('./lib/file-handle'),
-  main = require('./lib/main');
-const args = require('minimist')(process.argv, {
+import { terminal } from 'terminal-kit';
+import FileHandle from './lib/file-handle.js';
+import main from './lib/main.js';
+import minimist from 'minimist';
+import debugLog from './debug-log.js';
+
+const args = minimist(process.argv, {
   boolean: ['s', 'alternate-screen'],
   alias: {
     s: 'status',
@@ -43,9 +46,9 @@ const progArgs = {
   selectMarker: marker || '^!',
   alternateScreen: args['alternate-screen'],
   file: new FileHandle(file),
-  term: term
+  term: terminal
 };
-main(progArgs, (err) => {
+main(progArgs, debugLog, (err) => {
   let status = 0;
   if (err) {
     console.error(err);

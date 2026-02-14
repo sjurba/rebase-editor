@@ -1,6 +1,7 @@
 'use strict';
 
-const utils = require('../lib/utils');
+import utils from '../lib/utils.js';
+import { expect } from 'chai';
 
 describe('Utils', function () {
 

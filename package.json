@@ -3,11 +3,12 @@
   "version": "2.0.9",
   "description": "Simple terminal based sequence editor for git interactive rebase.",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "mocha",
     "tdd": "mocha --watch --reporter min",
-    "cover": "nyc --reporter=html --reporter=text mocha",
-    "cover-ci": "nyc --reporter=lcov --reporter=text mocha"
+    "cover": "c8 --reporter=html --reporter=text mocha",
+    "cover-ci": "c8 --reporter=lcov --reporter=text mocha"
   },
   "keywords": [
     "git",
@@ -34,12 +35,12 @@
     "node": ">=14.0"
   },
   "devDependencies": {
+    "c8": "^10.1.3",
     "chai": "^6.2.2",
-    "sinon-chai": "^4.0.1",
     "chai-as-promised": "^8.0.2",
     "coveralls-next": "^6.0.1",
     "mocha": "^11.3.0",
-    "nyc": "^17.1.0",
-    "sinon": "^21.0.1"
+    "sinon": "^21.0.1",
+    "sinon-chai": "^4.0.1"
   }
 }

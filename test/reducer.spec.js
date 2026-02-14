@@ -1,7 +1,8 @@
 'use strict';
 
-const reduce = require('../lib/reducer'),
-  getState = require('./state-gen');
+import reduce from '../lib/reducer.js';
+import getState from './state-gen.js';
+import { expect } from 'chai';
 
 describe('Reducer', function () {
 

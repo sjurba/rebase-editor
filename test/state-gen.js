@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = function getState(lines, cursor, info) {
+export default function getState(lines, cursor, info) {
   let height = 20;
   if (typeof lines === 'number') {
     lines = new Array(lines || 0).fill().map((val, idx) => {

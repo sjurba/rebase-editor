@@ -1,7 +1,6 @@
-'use strict';
-
-const rebaseFile = require('../lib/rebase-file');
-const keyBindings = require('../lib/key-bindings');
+import rebaseFile from '../lib/rebase-file.js';
+import keyBindings from '../lib/key-bindings.js';
+import { expect } from 'chai';
 
 function trim(str) {
   return str.trim().split('\n').map((line) => line.trim()).join('\n');
@@ -79,9 +78,9 @@ describe('Rebase file', function () {
     });
 
 
-    it('should print key bindings as help', function () {
+    it('should print key bindings as help', async function () {
       const state = rebaseFile.toState('pick ad3d434 Hello message');
-      expect(state.extraInfo(keyBindings())).to.deep.equal([
+      expect(state.extraInfo(await keyBindings())).to.deep.equal([
         '# NOTE: execute (x) is not supported by rebase editor',
         '# You cannot add update-ref (u), label (l), reset (t) or merge (m), but you can move them around',
         '#',

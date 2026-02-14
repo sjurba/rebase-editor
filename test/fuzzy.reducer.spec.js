@@ -1,7 +1,9 @@
-'use strict';
-const bindings = require('../lib/key-bindings')(),
-  reducer = require('../lib/reducer'),
-  getState = require('./state-gen');
+import bindingsFactory from '../lib/key-bindings.js';
+import reducer from '../lib/reducer.js';
+import getState from './state-gen.js';
+import { expect } from 'chai';
+
+const bindings = await bindingsFactory();
 
 function getActions() {
   const actions = Object.keys(bindings).reduce((set, key) => {

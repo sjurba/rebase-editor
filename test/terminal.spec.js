@@ -1,8 +1,10 @@
 'use strict';
 
-const Terminal = require('../lib/terminal'),
-  mockTerminal = require('./mock-terminal'),
-  getState = require('./state-gen');
+import Terminal from '../lib/terminal.js';
+import mockTerminal from './mock-terminal.js';
+import getState from './state-gen.js';
+import sinon from "sinon";
+import { expect } from 'chai';
 
 const noopLines = [{
   action: 'noop'

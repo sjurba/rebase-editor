@@ -1,5 +1,5 @@
 'use strict';
-module.exports = {
+export default {
   'UP': 'override',
   '7': 'add'
 };
