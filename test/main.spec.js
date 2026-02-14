@@ -1,8 +1,18 @@
 'use strict';
 
-const main = require('../lib/main'),
-  mockTerminal = require('./mock-terminal'),
-  debugLog = require('../lib/debug-log.js');
+import orgMain from '../lib/main.js';
+import mockTerminal from './mock-terminal.js';
+import sinon from "sinon";
+import { expect } from 'chai';
+
+const debugLog = {
+  trapConsole: sinon.stub(),
+  untrapConsole: sinon.stub()
+};
+
+function main(args, onExit) {
+    return orgMain(args, debugLog, onExit);
+}
 
 describe('Main loop', function () {
 
@@ -19,13 +29,6 @@ describe('Main loop', function () {
       file: file,
       alternateScreen: true
     };
-    sinon.stub(debugLog, 'trapConsole');
-    sinon.stub(debugLog, 'untrapConsole');
-  });
-
-  afterEach(function () {
-    debugLog.trapConsole.restore();
-    debugLog.untrapConsole.restore();
   });
 
   it('should render file to terminal', function (done) {

@@ -1,7 +1,8 @@
 'use strict';
 
-const Handler = require('../lib/file-handle');
-const fs = require('fs');
+import Handler from '../lib/file-handle.js';
+import fs from 'fs';
+import { expect } from 'chai';
 
 describe('File handler', function () {
 

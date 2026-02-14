@@ -1,7 +1,9 @@
 'use strict';
 
-const debugLog = require('../lib/debug-log.js');
-const fs = require('fs');
+import debugLog from '../lib/debug-log.js';
+import fs from 'fs';
+import sinon from "sinon";
+import { expect } from 'chai';
 
 describe('Debug log', function () {
 
