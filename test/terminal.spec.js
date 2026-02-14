@@ -374,7 +374,7 @@ describe('Terminal renderer', function () {
           const terminal = new Terminal(mockTerm);
           const spy = sinon.spy();
           terminal.addKeyListener(spy);
-          spy.reset();
+          spy.resetHistory();
           mockTerm.height = 20;
           mockTerm.emit('resize', 20, 20);
           expect(spy).not.to.be.called;
