@@ -1,5 +1,5 @@
 'use strict';
-export default  {
+export default {
   'UP': 'override',
   '7': 'add'
 };
