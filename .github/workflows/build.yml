@@ -6,6 +6,9 @@ on:
 jobs:
   build:
     name: Build
+    permissions:
+      contents: read
+      checks: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
