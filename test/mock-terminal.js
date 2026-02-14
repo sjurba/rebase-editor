@@ -65,7 +65,7 @@ function createMockTerminal() {
     linePos = 0;
     lines = [];
     controlFncs.forEach((fnc) => {
-      term[fnc].reset();
+      term[fnc].resetHistory();
     });
   };
 

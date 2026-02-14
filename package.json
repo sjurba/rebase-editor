@@ -34,12 +34,12 @@
     "node": ">=14.0"
   },
   "devDependencies": {
-    "chai": "^3.5.0",
-    "chai-as-promised": "^6.0.0",
-    "chai-sinon": "^2.8.1",
-    "coveralls": "^3.1.1",
-    "mocha": "^10.7.0",
-    "nyc": "^15.1.0",
-    "sinon": "^2.1.0"
+    "chai": "^6.2.2",
+    "sinon-chai": "^4.0.1",
+    "chai-as-promised": "^8.0.2",
+    "coveralls-next": "^6.0.1",
+    "mocha": "^11.3.0",
+    "nyc": "^17.1.0",
+    "sinon": "^21.0.1"
   }
 }
