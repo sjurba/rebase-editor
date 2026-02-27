@@ -12,9 +12,9 @@ This document describes a **step-by-step plan** to introduce TypeScript into the
 ## Current baseline (from repository)
 
 - Runtime: Node.js ESM project (`"type": "module"`).
-- Entry point: `/home/runner/work/rebase-editor/rebase-editor/index.js`.
-- Source modules: `/home/runner/work/rebase-editor/rebase-editor/lib/*.js`.
-- Tests: Mocha + Chai + Sinon in `/home/runner/work/rebase-editor/rebase-editor/test`.
+- Entry point: `./index.js`.
+- Source modules: `./lib/*.js`.
+- Tests: Mocha + Chai + Sinon in `./test`.
 - Current scripts include `test`, `tdd`, `cover`, `cover-ci`.
 - No TypeScript tooling/config exists yet.
 
@@ -117,7 +117,7 @@ Migrate runtime code first because it defines production behavior.
 ## Phase 4 — Migrate tests to TypeScript
 
 1. Rename test files to `.ts` one by one:
-   - `/home/runner/work/rebase-editor/rebase-editor/test/*.spec.js` → `.spec.ts`
+   - `./test/*.spec.js` → `.spec.ts`
    - support files: `test/setup.ts`, `test/mock-terminal.ts`, `test/state-gen.ts`
 2. Keep test fixtures that intentionally validate JS/CJS loading behavior:
    - Preserve `test/testfiles/customKeybindings.js`
@@ -165,7 +165,7 @@ After full migration is stable:
 
 ## Phase 7 — Documentation updates
 
-1. Update `/home/runner/work/rebase-editor/rebase-editor/README.md` development section:
+1. Update `./README.md` development section:
    - build/typecheck commands
    - test command changes (if loader/build flow changes)
 2. Add a short contributor note describing TS conventions:
