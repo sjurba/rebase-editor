@@ -64,7 +64,7 @@ Input file handling:
 
 Platform-specific marker behavior:
 
-- On Windows, default selection marker is switched from inverse (`^!`) to yellow (`^Y`) due ANSI support limitations.
+- On Windows, default selection marker is switched from inverse (`^!`) to yellow (`^Y`) due to ANSI support limitations.
 
 ---
 
@@ -262,7 +262,7 @@ Explicitly not supported:
 - Selection works in both directions (`from > pos` and `from < pos`).
 - Width trimming is style-aware so terminal color tags do not break truncation.
 - In non-alternate-screen mode, rendering appends output instead of fullscreen replacement.
-- Debug logging can trap `console.log` and persist to `console.log` file during run.
+- Debug logging can trap `console.log` and write messages to a file named `console.log` during run.
 
 ---
 
