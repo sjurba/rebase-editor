@@ -138,4 +138,69 @@ describe('Rebase file', function () {
     }
     expect(parse).to.throw();
   });
+
+  describe('corner cases', function () {
+
+    it('should parse update-ref lines', function () {
+      const file = trim(`
+          pick 123 First commit
+          update-ref refs/heads/my-branch
+
+          # Info here`);
+      const state = rebaseFile.toState(file);
+      expect(state.lines[1].action).to.equal('update-ref');
+      expect(state.lines[1].hash).to.equal('refs/heads/my-branch');
+      expect(state.lines[1].message).to.equal('');
+    });
+
+    it('should roundtrip update-ref lines through toFile', function () {
+      const file = trim(`
+          pick 123 First commit
+          update-ref refs/heads/my-branch
+
+          # Info here`);
+      const state = rebaseFile.toState(file);
+      expect(rebaseFile.toFile(state)).to.equal(file);
+    });
+
+    it('should roundtrip break lines through toFile', function () {
+      const file = trim(`
+          pick 123 First commit
+          break
+
+          # Info here`);
+      const state = rebaseFile.toState(file);
+      expect(state.lines[1].action).to.equal('break');
+      expect(rebaseFile.toFile(state)).to.equal(file);
+    });
+
+    it('should parse file with only comments after first line', function () {
+      const file = trim(`
+          noop
+
+          # Rebase info
+          # More info`);
+      const state = rebaseFile.toState(file);
+      expect(state.lines.length).to.equal(1);
+      expect(state.lines[0].action).to.equal('noop');
+      expect(state.info.length).to.equal(2);
+    });
+
+    it('should parse Branch: comment as inline', function () {
+      const file = trim(`
+          label onto
+          # Branch: feature
+          pick 123 First
+
+          # Info here`);
+      const state = rebaseFile.toState(file);
+      expect(state.lines[1].action).to.equal('# Branch:');
+      expect(state.lines[1].hash).to.equal('feature');
+    });
+
+    it('should return empty string for undefined state in toFile', function () {
+      expect(rebaseFile.toFile(undefined)).to.equal('');
+    });
+
+  });
 });

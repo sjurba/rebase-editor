@@ -56,6 +56,13 @@ describe('File handler', function () {
       const handler = new Handler('test/notExistingFolder/file');
       return expect(handler.write('foo')).to.be.rejected;
     });
+
+    it('should write empty string', function () {
+      const handler = new Handler(file);
+      return handler.write('').then(() => {
+        return expect(handler.read()).to.be.rejected;
+      });
+    });
   });
 
 

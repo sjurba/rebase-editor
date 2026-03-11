@@ -37,6 +37,14 @@ describe('Utils', function () {
     it('should not include escaped ^ at the end', function () {
       expect(utils.trimTo('Line^^ Line', 4)).to.equal('Line');
     });
+
+    it('should handle empty string', function () {
+      expect(utils.trimTo('', 10)).to.equal('');
+    });
+
+    it('should handle length of 0', function () {
+      expect(utils.trimTo('Hello', 0)).to.equal('');
+    });
   });
 
 });

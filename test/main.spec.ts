@@ -133,6 +133,14 @@ describe('Main loop', function () {
         expect(debugLog.untrapConsole).to.be.called;
       });
   });
+
+  it('should exit with error when file read fails', function (done) {
+    file.read.returns(Promise.reject('File not found'));
+    main(args, (err) => {
+      expect(err).to.equal('File not found');
+      done();
+    });
+  });
 });
 
 
