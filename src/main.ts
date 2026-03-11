@@ -1,10 +1,10 @@
-'use strict';
-import Terminal from './terminal.js';
-import reduce from './reducer.js';
-import rebaseFile from './rebase-file.js';
-import keyBindings from './key-bindings.js';
+import Terminal from './terminal';
+import reduce from './reducer';
+import rebaseFile from './rebase-file';
+import keyBindings from './key-bindings';
+import { MainArgs, Logger, RebaseState } from './types';
 
-export default async function main(args, logger, onExit) {
+export default async function main(args: MainArgs, logger: Logger, onExit?: (err?: unknown) => void): Promise<void> {
 
   const file = args.file;
 
@@ -18,7 +18,7 @@ export default async function main(args, logger, onExit) {
   logger.trapConsole();
 
   file.read().then((data) => {
-    return new Promise((resolve, reject) => {
+    return new Promise<RebaseState | undefined>((resolve, reject) => {
       let state = rebaseFile.toState(data);
       terminal.render(state);
       terminal.addKeyListener((key, param) => {
@@ -26,10 +26,10 @@ export default async function main(args, logger, onExit) {
           if (key === 'quit') {
             resolve(state);
           } else if (key === 'abort') {
-            resolve();
+            resolve(undefined);
           } else {
-            state = reduce(state, key, param);
-            terminal.render(state, key, param);
+            state = reduce(state, key, param) as RebaseState;
+            terminal.render(state, key, param as string);
           }
         } catch (err) {
           reject(err);
@@ -44,11 +44,11 @@ export default async function main(args, logger, onExit) {
     closeAndExit(err);
   });
 
-  function closeAndExit(err) {
+  function closeAndExit(err?: unknown): void {
     terminal.close();
     logger.untrapConsole();
     if (onExit) {
       onExit(err);
     }
   }
-};
+}

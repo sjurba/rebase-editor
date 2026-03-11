@@ -1,6 +1,4 @@
-'use strict';
-
-export function trimTo(line, length) {
+export function trimTo(line: string, length: number): string {
   let sofar = 0;
   let tag = false;
   return line.split('').map((c) => {

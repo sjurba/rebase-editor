@@ -1,4 +1,4 @@
-import keyBindings from '../lib/key-bindings.js';
+import keyBindings from '../src/key-bindings';
 import { expect } from 'chai';
 
 describe('Key bindings', function () {
@@ -27,10 +27,10 @@ describe('Key bindings', function () {
 
   it('should provide helpful error message when importing common js file', async function () {
     try {
-     await keyBindings('test/testfiles/customKeyBindingsCommonJs.js')
+     await keyBindings('test/testfiles/customKeyBindingsCommonJs.js');
       expect.fail('Should have thrown error');
     } catch (err) {
-      expect(err.message).to.include('If this is a CommonJS module')
+      expect((err as Error).message).to.include('If this is a CommonJS module');
     }
   });
 });

@@ -1,6 +1,4 @@
-'use strict';
-
-import utils from '../lib/utils.js';
+import utils from '../src/utils';
 import { expect } from 'chai';
 
 describe('Utils', function () {

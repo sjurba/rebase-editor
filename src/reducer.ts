@@ -1,35 +1,35 @@
-'use strict';
+import { RebaseState, RebaseLine, CursorState, UndoEntry } from './types';
 
 const actions = ['pick', 'fixup', 'fixup -c', 'fixup -C', 'squash', 'reword', 'edit', 'drop'];
 const [DOWN, UP] = [1, -1];
 
-function deepFreeze(obj) {
-  var propNames = Object.getOwnPropertyNames(obj);
+function deepFreeze<T extends object>(obj: T): Readonly<T> {
+  const propNames = Object.getOwnPropertyNames(obj);
   propNames.forEach(function (name) {
-    var prop = obj[name];
+    const prop = (obj as Record<string, unknown>)[name];
     if (typeof prop === 'object' && prop !== null) {
-      deepFreeze(prop);
+      deepFreeze(prop as object);
     }
   });
   return Object.freeze(obj);
 }
 
-function cursor(from, pos) {
+function cursor(from: number, pos: number): { cursor: CursorState } {
   return {
     cursor: {
       from: from,
       pos: pos
     }
-  }
+  };
 }
 
-function set(state, ...props) {
+function set(state: RebaseState, ...props: Partial<RebaseState>[]): RebaseState {
   return Object.assign({}, state, ...props);
 }
 
-function insertAfterCurrentPosition(state, action, hash='', message='') {
+function insertAfterCurrentPosition(state: RebaseState, action: string, hash = '', message = ''): Partial<RebaseState> {
   let newLines = state.lines;
-  let line = { action: action, hash: hash, message: message };
+  const line: RebaseLine = { action: action, hash: hash, message: message };
   newLines = insertInto(newLines, line, state.cursor.pos + 1);
   return {
     lines: newLines,
@@ -37,33 +37,33 @@ function insertAfterCurrentPosition(state, action, hash='', message='') {
   };
 }
 
-function push(stack, el) {
+function push(stack: UndoEntry[] | undefined, el: UndoEntry): UndoEntry[] {
   if (!stack) {
     stack = [];
   }
   return [...stack, el];
 }
 
-function pop(stack) {
+function pop(stack: UndoEntry[]): UndoEntry[] {
   return stack.slice(0, stack.length - 1);
 }
 
-function removeFrom(arr, idx) {
+function removeFrom<T>(arr: T[], idx: number): T[] {
   return [...arr.slice(0, idx), ...arr.slice(idx + 1)];
 }
 
-function insertInto(arr, el, idx) {
+function insertInto<T>(arr: T[], el: T, idx: number): T[] {
   return [...arr.slice(0, idx), el, ...arr.slice(idx)];
 }
 
-function getSelection(state) {
-  return [state.cursor.from, state.cursor.pos].sort((a, b) => a - b);
+function getSelection(state: RebaseState): [number, number] {
+  return [state.cursor.from, state.cursor.pos].sort((a, b) => a - b) as [number, number];
 }
 
-function moveSelection(state, dir) {
+function moveSelection(state: RebaseState, dir: number): Partial<RebaseState> {
   const [from, to] = getSelection(state);
   const lines = state.lines;
-  let srcIdx, dstIdx;
+  let srcIdx: number, dstIdx: number;
   if (dir === DOWN) {
     srcIdx = to + 1;
     dstIdx = from;
@@ -71,7 +71,7 @@ function moveSelection(state, dir) {
     srcIdx = from - 1;
     dstIdx = to;
   }
-  let el = lines[srcIdx];
+  const el = lines[srcIdx];
   let newLines = removeFrom(lines, srcIdx);
   newLines = insertInto(newLines, el, dstIdx);
   return {
@@ -80,80 +80,78 @@ function moveSelection(state, dir) {
   };
 }
 
-function getAction(state, action) {
+function getAction(state: RebaseState, action: string): Partial<RebaseState> {
   const [from, to] = getSelection(state);
   return {
     lines: state.lines.map((line, idx) => {
       if (from <= idx && idx <= to && isEditable(line.action)) {
-          line = set(line, {
-            action: action
-          });
+        line = Object.assign({}, line, { action: action });
       }
       return line;
     })
   };
 }
 
-function getUndo(state, stack) {
-  const partialState = {};
-  partialState[stack] = push(state[stack], {
+function getUndo(state: RebaseState, stack: 'undoStack' | 'redoStack'): Partial<RebaseState> {
+  const partialState: Partial<RebaseState> = {};
+  partialState[stack] = push(state[stack] as UndoEntry[] | undefined, {
     lines: state.lines,
     cursor: state.cursor
   });
   return partialState;
 }
 
-function popUndo(state, stackName) {
-  const partialState = {};
-  const stack = state[stackName];
+function popUndo(state: RebaseState, stackName: 'undoStack' | 'redoStack'): Partial<RebaseState> {
+  const partialState: Partial<RebaseState> = {};
+  const stack = state[stackName] as UndoEntry[];
   partialState[stackName] = pop(stack);
   return partialState;
 }
 
-function undo(state, undo, redo) {
-  const undoStack = state[undo];
+function undo(state: RebaseState, undoKey: 'undoStack' | 'redoStack', redoKey: 'undoStack' | 'redoStack'): RebaseState {
+  const undoStack = state[undoKey] as UndoEntry[] | undefined;
   const oldState = state;
   if (undoStack && undoStack.length > 0) {
     const undoState = undoStack[undoStack.length - 1];
-    state = set(state, undoState, getUndo(oldState, redo), popUndo(oldState, undo));
+    state = set(state, undoState as Partial<RebaseState>, getUndo(oldState, redoKey), popUndo(oldState, undoKey));
   }
   return state;
 }
 
-function limitCursor(state, pos, from) {
+function limitCursor(state: RebaseState, pos: number, from: number): { cursor: CursorState } {
   const max = state.lines.length - 1;
   return cursor(
     from < 0 ? 0 : from > max ? max : from,
     pos < 0 ? 0 : pos > max ? max : pos
-  )
+  );
 }
 
-function isSelectionSame(a, b) {
+function isSelectionSame(a: CursorState, b: CursorState): boolean {
   return (a.pos === b.pos && a.from === b.from) ||
     (a.pos === b.from && a.from === b.pos);
 }
 
-function updateCursor(state, pos, from) {
-  const cursor = limitCursor(state, pos, from);
-  if (isSelectionSame(state.cursor, cursor.cursor)) {
+function updateCursor(state: RebaseState, pos: number, from: number): RebaseState {
+  const cur = limitCursor(state, pos, from);
+  if (isSelectionSame(state.cursor, cur.cursor)) {
     return state;
   } else {
     return set(state, {
-      ...cursor
+      ...cur
     });
   }
 }
 
-function getLineAction(state, pos = state.cursor.pos) {
-  return state.lines[pos]?.action
+function getLineAction(state: RebaseState, pos: number = state.cursor.pos): string | undefined {
+  return state.lines[pos]?.action;
 }
 
-function isEditable(action) {
-  const nonEditableActions = ['break', 'update-ref', 'label', 'reset', 'merge']
-  return !action.startsWith('#') && !nonEditableActions.includes(action)
+function isEditable(action: string): boolean {
+  const nonEditableActions = ['break', 'update-ref', 'label', 'reset', 'merge'];
+  return !action.startsWith('#') && !nonEditableActions.includes(action);
 }
 
-export default function reducer(state, action, param) {
+export default function reducer(state: RebaseState, action: string, param?: unknown): Readonly<RebaseState> {
   const pos = state.cursor.pos;
   const from = state.cursor.from;
   const end = state.lines.length - 1;
@@ -201,16 +199,16 @@ export default function reducer(state, action, param) {
       }
     } else if (action === 'resize') {
       state = set(state, {
-        height: param
+        height: param as number
       });
     } else if (actions.includes(action)) {
       const [from, to] = getSelection(state);
-      let newState = state;
+      let newState: Partial<RebaseState> & Pick<RebaseState, 'lines'> = { lines: state.lines };
       if (state.lines.slice(from, to + 1).some((line) => line.action !== action && line.hash)) {
-        newState = getAction(state, action);
+        newState = getAction(state, action) as Partial<RebaseState> & Pick<RebaseState, 'lines'>;
       }
-      if (action === 'drop' && state.lines.slice(from, to + 1).some(line=>!isEditable(line.action))) {
-        const newLines = newState.lines.filter((line, idx)=> idx < from || idx > to || isEditable(line.action));
+      if (action === 'drop' && state.lines.slice(from, to + 1).some(line => !isEditable(line.action))) {
+        const newLines = newState.lines.filter((_line, idx) => idx < from || idx > to || isEditable(_line.action));
         const removedLines = newState.lines.length - newLines.length;
         newState = {
           lines: newLines,
@@ -218,10 +216,10 @@ export default function reducer(state, action, param) {
             state.cursor.from < state.cursor.pos ? state.cursor.from : state.cursor.from - removedLines,
             state.cursor.pos < state.cursor.from ? state.cursor.pos : state.cursor.pos - removedLines,
           )
-        }
+        };
       }
-      if (newState !== state) {
-        state = set(state, newState)
+      if (newState.lines !== state.lines || newState.cursor) {
+        state = set(state, newState);
       }
     } else if (action === 'break') {
       if (getLineAction(state) !== 'break' && getLineAction(state, state.cursor.pos + 1) !== 'break') {
@@ -229,7 +227,7 @@ export default function reducer(state, action, param) {
       } else if (getLineAction(state, state.cursor.pos + 1) === 'break') {
         state = set(state, {
           ...cursor(pos + 1, pos + 1)
-        })
+        });
       }
     }
 
@@ -240,4 +238,4 @@ export default function reducer(state, action, param) {
     }
   }
   return deepFreeze(state);
-};
+}

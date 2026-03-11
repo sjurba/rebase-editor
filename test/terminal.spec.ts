@@ -1,19 +1,21 @@
-'use strict';
-
-import Terminal from '../lib/terminal.js';
-import mockTerminal from './mock-terminal.js';
-import getState from './state-gen.js';
-import sinon from "sinon";
+import Terminal from '../src/terminal';
+import mockTerminal from './mock-terminal';
+import getState from './state-gen';
+import sinon from 'sinon';
 import { expect } from 'chai';
+import { RebaseLine, TerminalKitTerminal, RebaseState } from '../src/types';
+import { MockTerm } from './mock-terminal';
 
-const noopLines = [{
-  action: 'noop'
+const noopLines: RebaseLine[] = [{
+  action: 'noop',
+  hash: '',
+  message: ''
 }];
 
 const colors = ['^r', '^y'];
 
 describe('Terminal renderer', function () {
-  let mockTerm;
+  let mockTerm: MockTerm;
 
   beforeEach(function () {
     mockTerm = mockTerminal.create();
@@ -23,12 +25,12 @@ describe('Terminal renderer', function () {
 
     describe('when alternate screen enabled', function () {
       it('should call fullscreen', function () {
-        new Terminal(mockTerm);
+        new Terminal(mockTerm as unknown as TerminalKitTerminal);
         expect(mockTerm.fullscreen).to.be.calledWith(true);
       });
 
       it('should hide cursor', function () {
-        new Terminal(mockTerm);
+        new Terminal(mockTerm as unknown as TerminalKitTerminal);
         expect(mockTerm.hideCursor).to.be.calledWith(true);
       });
 
@@ -37,7 +39,7 @@ describe('Terminal renderer', function () {
     describe('when alternate screen disabled', function () {
 
       it('should not call fullscreen', function () {
-        new Terminal(mockTerm, {
+        new Terminal(mockTerm as unknown as TerminalKitTerminal, {
           alternateScreen: false
         });
         expect(mockTerm.fullscreen).to.not.be.called;
@@ -45,7 +47,7 @@ describe('Terminal renderer', function () {
 
       it('should scroll to top', function () {
         mockTerm.height = 10;
-        new Terminal(mockTerm, {
+        new Terminal(mockTerm as unknown as TerminalKitTerminal, {
           alternateScreen: false
         });
         expect(mockTerm.initialScroll).to.equal(10);
@@ -55,11 +57,11 @@ describe('Terminal renderer', function () {
 
   describe('render', function () {
 
-    function trim(str) {
-      return str.trim().split('\n').map((line) => line.trimLeft()).join('\n');
+    function trim(str: string): string {
+      return str.trim().split('\n').map((line) => line.trimStart()).join('\n');
     }
 
-    function expectRendered(str, from, to) {
+    function expectRendered(str: string | string[], from?: number, to?: number): void {
       let lines = mockTerm.getRendered();
       if (from || to) {
         lines = lines.slice(from, to);
@@ -72,7 +74,7 @@ describe('Terminal renderer', function () {
     }
 
     it('should render lines', function () {
-      const terminal = new Terminal(mockTerm);
+      const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
       terminal.render(getState(2, 0, 2));
       expectRendered(`
           ^!pick 123 Line 0
@@ -93,8 +95,8 @@ describe('Terminal renderer', function () {
         }, oldState.lines[1]],
         info: oldState.info,
         cursor: oldState.cursor
-      };
-      const terminal = new Terminal(mockTerm);
+      } as RebaseState;
+      const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
       terminal.render(oldState);
       mockTerm.reset();
       terminal.render(state);
@@ -107,7 +109,7 @@ describe('Terminal renderer', function () {
     it('should render noop', function () {
       const state = getState(noopLines, 0, 1);
 
-      const terminal = new Terminal(mockTerm);
+      const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
       terminal.render(state);
       expectRendered(`
           ^!noop
@@ -121,7 +123,7 @@ describe('Terminal renderer', function () {
         from: 2,
         pos: 1
       }, 1);
-      const terminal = new Terminal(mockTerm);
+      const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
       terminal.render(state);
       expectRendered(`
         pick 123 Line 0
@@ -136,10 +138,10 @@ describe('Terminal renderer', function () {
     it('should truncate lines to screen width', function () {
       const state = getState([{
         action: 'pick',
-        hash: 6,
+        hash: '6',
         message: '8^01234567890'
       }], 0, 2);
-      const terminal = new Terminal(mockTerm);
+      const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
       mockTerm.width = 15;
       terminal.render(state);
       expect(mockTerm.getRendered()[0]).to.equal('^!pick 6 8^^012345');
@@ -148,14 +150,14 @@ describe('Terminal renderer', function () {
     it('should truncate color lines to screen width', function () {
       const state = getState([{
         action: 'pick',
-        hash: 6,
+        hash: '6',
         message: '8^01234567890'
       }, {
         action: 'pick',
-        hash: 123,
+        hash: '123',
         message: 'Line 2'
       }], 1, 2);
-      const terminal = new Terminal(mockTerm, {
+      const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal, {
         colors: colors
       });
       mockTerm.width = 15;
@@ -166,10 +168,10 @@ describe('Terminal renderer', function () {
     it('should escape ^ in message', function () {
       const state = getState([{
         action: 'pick',
-        hash: 123,
+        hash: '123',
         message: 'Unexpected ^red'
       }], 0, 2);
-      const terminal = new Terminal(mockTerm);
+      const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
       terminal.render(state);
       expect(mockTerm.getRendered()[0]).to.equal('^!pick 123 Unexpected ^^red');
     });
@@ -179,7 +181,7 @@ describe('Terminal renderer', function () {
         from: 9,
         pos: 10
       }, 1);
-      const terminal = new Terminal(mockTerm);
+      const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
       terminal.render(state);
       expectRendered(`
         pick 123 Line 8
@@ -191,7 +193,7 @@ describe('Terminal renderer', function () {
 
     it('should only render visible lines', function () {
       const state = getState(4, 0);
-      const terminal = new Terminal(mockTerm);
+      const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
       mockTerm.height = 2;
       terminal.render(state);
       expectRendered(`
@@ -202,7 +204,7 @@ describe('Terminal renderer', function () {
 
     it('should only render visible info lines', function () {
       const state = getState(1, 0, 3);
-      const terminal = new Terminal(mockTerm);
+      const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
       mockTerm.height = 3;
       terminal.render(state);
       expectRendered(`
@@ -214,7 +216,7 @@ describe('Terminal renderer', function () {
 
     it('should scroll down on bottom', function () {
       const state = getState(8, 6);
-      const terminal = new Terminal(mockTerm);
+      const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
       mockTerm.height = 4;
       terminal.render(state);
       expectRendered(`
@@ -230,7 +232,7 @@ describe('Terminal renderer', function () {
         },
         lines: state.lines,
         info: state.info
-      };
+      } as RebaseState;
       terminal.render(newState);
       expectRendered(`
         pick 123 Line 4
@@ -245,7 +247,7 @@ describe('Terminal renderer', function () {
         from: 6,
         pos: 5
       });
-      const terminal = new Terminal(mockTerm);
+      const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
       mockTerm.height = 4;
       terminal.render(state);
       expectRendered(`
@@ -258,7 +260,7 @@ describe('Terminal renderer', function () {
 
     it('should clear bottom of screen on resize', function () {
       const state = getState(7, 0, 2);
-      const terminal = new Terminal(mockTerm);
+      const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
       mockTerm.height = 10;
       terminal.render(state);
       mockTerm.height = 12;
@@ -269,7 +271,7 @@ describe('Terminal renderer', function () {
     describe('with status', function () {
       it('should render if enabled', function () {
         const state = getState(2, 0, 1);
-        const terminal = new Terminal(mockTerm, {
+        const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal, {
           status: true
         });
         mockTerm.height = 20;
@@ -285,7 +287,7 @@ describe('Terminal renderer', function () {
 
       it('should scroll on last line', function () {
         const state = getState(4, 2);
-        const terminal = new Terminal(mockTerm, {
+        const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal, {
           status: true
         });
         mockTerm.height = 3;
@@ -301,7 +303,7 @@ describe('Terminal renderer', function () {
     describe('with color', function () {
       it('should render colors if enabled', function () {
         const state = getState(2, 0, 1);
-        const terminal = new Terminal(mockTerm, {
+        const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal, {
           colors: colors
         });
         terminal.render(state);
@@ -315,7 +317,7 @@ describe('Terminal renderer', function () {
 
       it('should render noop', function () {
         const state = getState(noopLines, 0, 1);
-        const terminal = new Terminal(mockTerm, {
+        const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal, {
           colors: colors
         });
         terminal.render(state);
@@ -331,7 +333,7 @@ describe('Terminal renderer', function () {
     describe('events', function () {
 
       it('should fire on key', function () {
-        const terminal = new Terminal(mockTerm, {
+        const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal, {
           keyBindings: {
             f: 'foobar'
           }
@@ -343,7 +345,7 @@ describe('Terminal renderer', function () {
       });
 
       it('should fire resize event when key listener added', function () {
-        const terminal = new Terminal(mockTerm);
+        const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
         mockTerm.height = 10;
         const spy = sinon.spy();
         terminal.addKeyListener(spy);
@@ -352,7 +354,7 @@ describe('Terminal renderer', function () {
 
       describe('on resize', function () {
 
-        let clock;
+        let clock: sinon.SinonFakeTimers;
 
         beforeEach(function () {
           clock = sinon.useFakeTimers();
@@ -363,7 +365,7 @@ describe('Terminal renderer', function () {
         });
 
         it('should eventually trigger callback', function () {
-          const terminal = new Terminal(mockTerm);
+          const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
           const spy = sinon.spy();
           terminal.addKeyListener(spy);
           mockTerm.height = 20;
@@ -373,7 +375,7 @@ describe('Terminal renderer', function () {
         });
 
         it('should debounce resize', function () {
-          const terminal = new Terminal(mockTerm);
+          const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
           const spy = sinon.spy();
           terminal.addKeyListener(spy);
           spy.resetHistory();
@@ -388,9 +390,9 @@ describe('Terminal renderer', function () {
         });
 
         it('should append blank lines to bottom when increasing window height', function () {
-          const terminal = new Terminal(mockTerm);
+          const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
           mockTerm.height = 5;
-          terminal.addKeyListener(() => {});
+          terminal.addKeyListener(() => { /* noop */ });
           mockTerm.height = 7;
           mockTerm.emit('resize');
           clock.tick(1000);
@@ -398,9 +400,9 @@ describe('Terminal renderer', function () {
         });
 
         it('should not append blank lines to bottom when they have already been added', function () {
-          const terminal = new Terminal(mockTerm);
+          const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
           mockTerm.height = 5;
-          terminal.addKeyListener(() => {});
+          terminal.addKeyListener(() => { /* noop */ });
           mockTerm.height = 10;
           mockTerm.emit('resize');
           clock.tick(1000);
@@ -419,23 +421,23 @@ describe('Terminal renderer', function () {
     describe('close', function () {
 
       it('should restore screen', function () {
-        const terminal = new Terminal(mockTerm);
+        const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
         terminal.close();
         expect(mockTerm.fullscreen).to.be.calledWith(false);
       });
 
       it('should restore cursor', function () {
-        const terminal = new Terminal(mockTerm);
+        const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
         terminal.close();
         expect(mockTerm.hideCursor).to.be.calledWith(false);
       });
 
       describe('on disabled alternate screen', function () {
 
-        let terminal;
+        let terminal: Terminal;
 
         beforeEach(function () {
-          terminal = new Terminal(mockTerm, {
+          terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal, {
             alternateScreen: false
           });
         });
@@ -447,7 +449,7 @@ describe('Terminal renderer', function () {
 
         it('should move cursor to last line', function () {
           mockTerm.height = 15;
-          let state = getState(5, 2, 10);
+          const state = getState(5, 2, 10);
           terminal.render(state);
           terminal.render(Object.assign({}, state, {
             cursor: {
@@ -471,7 +473,7 @@ describe('Terminal renderer', function () {
 
     describe('custom select marker', function () {
       it('should display custom select marker', function () {
-        const terminal = new Terminal(mockTerm, {
+        const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal, {
           selectMarker: '> '
         });
         terminal.render(getState(2, 0, 1));

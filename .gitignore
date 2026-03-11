@@ -2,3 +2,4 @@ node_modules
 console.log
 coverage
 .nyc_output
+dist

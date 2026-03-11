@@ -1,22 +1,22 @@
-'use strict';
-
-import orgMain from '../lib/main.js';
-import mockTerminal from './mock-terminal.js';
-import sinon from "sinon";
+import orgMain from '../src/main';
+import mockTerminal from './mock-terminal';
+import sinon from 'sinon';
 import { expect } from 'chai';
+import { MainArgs, TerminalKitTerminal } from '../src/types';
+import { MockTerm } from './mock-terminal';
 
 const debugLog = {
   trapConsole: sinon.stub(),
   untrapConsole: sinon.stub()
 };
 
-function main(args, onExit) {
+function main(args: MainArgs, onExit?: (err?: unknown) => void) {
     return orgMain(args, debugLog, onExit);
 }
 
 describe('Main loop', function () {
 
-  let mockTerm, args, file;
+  let mockTerm: MockTerm, args: MainArgs, file: { read: sinon.SinonStub; write: sinon.SinonStub };
 
   beforeEach(function () {
     mockTerm = mockTerminal.create();
@@ -25,7 +25,7 @@ describe('Main loop', function () {
       write: sinon.stub()
     };
     args = {
-      term: mockTerm,
+      term: mockTerm as unknown as TerminalKitTerminal,
       file: file,
       alternateScreen: true
     };
@@ -40,14 +40,14 @@ describe('Main loop', function () {
     });
   });
 
-  function nextTick(func) {
+  function nextTick(func?: () => unknown): Promise<unknown> {
     return new Promise((resolve, reject) => {
       setImmediate(() => {
         if (!func) {
-          resolve();
+          resolve(undefined);
         }
         try {
-          resolve(func());
+          resolve(func!());
         } catch (e) {
           reject(e);
         }
@@ -109,7 +109,7 @@ describe('Main loop', function () {
     });
     nextTick()
       .then(() => {
-        mockTerm.throwOnRender('Error');
+        mockTerm.throwOnRender('Error' as unknown as Error);
         mockTerm.emit('key', 'f');
       });
   });

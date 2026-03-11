@@ -1,8 +1,7 @@
-'use strict';
-
-import reduce from '../lib/reducer.js';
-import getState from './state-gen.js';
+import reduce from '../src/reducer';
+import getState from './state-gen';
 import { expect } from 'chai';
+import { RebaseState } from '../src/types';
 
 describe('Reducer', function () {
 
@@ -48,24 +47,24 @@ describe('Reducer', function () {
 
     describe('page down', function () {
       it('should move term height down', function () {
-        let state = getState({
+        let state: RebaseState | Readonly<RebaseState> = getState({
           lines: 10,
           cursor: 0,
           height: 5
         });
-        state = reduce(state, 'pageDown');
+        state = reduce(state as RebaseState, 'pageDown');
         expect(state.cursor.pos).to.equal(5);
       });
     });
 
     describe('page up', function () {
       it('should move term height up', function () {
-        let state = getState({
+        let state: RebaseState | Readonly<RebaseState> = getState({
           lines: 10,
           cursor: 9,
           height: 5
         });
-        state = reduce(state, 'pageUp');
+        state = reduce(state as RebaseState, 'pageUp');
         expect(state.cursor.pos).to.equal(4);
       });
     });
@@ -103,26 +102,26 @@ describe('Reducer', function () {
 
     describe('down', function () {
       it('should increase selection', function () {
-        let state = getState(3, 0);
-        state = reduce(state, 'selectDown');
-        state = reduce(state, 'selectDown');
+        let state: RebaseState | Readonly<RebaseState> = getState(3, 0);
+        state = reduce(state as RebaseState, 'selectDown');
+        state = reduce(state as RebaseState, 'selectDown');
         expect(state.cursor).to.deep.equal({
           from: 0,
           pos: 2
         });
       });
       it('should do nothing when on last line', function () {
-        let state = getState(2, 1);
-        let newState = reduce(state, 'selectDown');
+        const state = getState(2, 1);
+        const newState = reduce(state, 'selectDown');
         expect(newState).to.equal(state);
       });
       it('should reduce selection', function () {
-        let state = getState(3, {
+        const state = getState(3, {
           from: 2,
           pos: 0
         });
-        state = reduce(state, 'selectDown');
-        expect(state.cursor).to.deep.equal({
+        const newState = reduce(state, 'selectDown');
+        expect(newState.cursor).to.deep.equal({
           from: 2,
           pos: 1
         });
@@ -131,26 +130,26 @@ describe('Reducer', function () {
 
     describe('up', function () {
       it('should increase selection', function () {
-        let state = getState(3, 2);
-        state = reduce(state, 'selectUp');
-        state = reduce(state, 'selectUp');
+        let state: RebaseState | Readonly<RebaseState> = getState(3, 2);
+        state = reduce(state as RebaseState, 'selectUp');
+        state = reduce(state as RebaseState, 'selectUp');
         expect(state.cursor).to.deep.equal({
           from: 2,
           pos: 0
         });
       });
       it('should do nothing when on last line', function () {
-        let state = getState(2, 0);
-        let newState = reduce(state, 'selectUp');
+        const state = getState(2, 0);
+        const newState = reduce(state, 'selectUp');
         expect(newState).to.equal(state);
       });
       it('should reduce selection', function () {
-        let state = getState(2, {
+        const state = getState(2, {
           from: 0,
           pos: 2
         });
-        state = reduce(state, 'selectUp');
-        expect(state.cursor).to.deep.equal({
+        const newState = reduce(state, 'selectUp');
+        expect(newState.cursor).to.deep.equal({
           from: 0,
           pos: 1
         });
@@ -328,7 +327,9 @@ describe('Reducer', function () {
 
     it('should do nothing if line has no hash', function () {
       const state = getState([{
-        action: 'noop'
+        action: 'noop',
+        hash: '',
+        message: ''
       }], 0);
       const newState = reduce(state, 'pick');
       expect(newState).to.equal(state);
@@ -338,7 +339,8 @@ describe('Reducer', function () {
       it(`should not allow pick if ${action} line`, function () {
         const state = getState([{
           action: action,
-          hash: 'some text'
+          hash: 'some text',
+          message: ''
         }], 0);
         const newState = reduce(state, 'pick');
         expect(newState.lines[0]).to.equal(state.lines[0]);
@@ -347,12 +349,13 @@ describe('Reducer', function () {
       it(`should delete ${action} line`, function () {
         const state = getState([{
           action: action,
-          hash: 'some text'
+          hash: 'some text',
+          message: ''
         }], 0);
         const newState = reduce(state, 'drop');
         expect(newState.lines).to.be.empty;
       });
-    })
+    });
 
 
     it('should change on fixup', function () {
@@ -366,18 +369,18 @@ describe('Reducer', function () {
       expect(newState.otherStateVar).to.equal(state.otherStateVar);
     });
 
-    it("should change on fixup - alternate keybinds with flag", function () {
+    it('should change on fixup - alternate keybinds with flag', function () {
       const state = getState(3, 1);
-      let newState = reduce(state, "fixup -C");
+      let newState = reduce(state, 'fixup -C');
       expect(newState.lines[0]).to.equal(state.lines[0]);
-      expect(newState.lines[1].action).to.equal("fixup -C");
+      expect(newState.lines[1].action).to.equal('fixup -C');
       expect(newState.lines[1].message).to.equal(state.lines[1].message);
       expect(newState.lines[1]).not.to.equal(state.lines[1]);
       expect(newState.lines[2]).to.equal(state.lines[2]);
       expect(newState.otherStateVar).to.equal(state.otherStateVar);
-      newState = reduce(state, "fixup -c");
+      newState = reduce(state, 'fixup -c');
       expect(newState.lines[0]).to.equal(state.lines[0]);
-      expect(newState.lines[1].action).to.equal("fixup -c");
+      expect(newState.lines[1].action).to.equal('fixup -c');
       expect(newState.lines[1].message).to.equal(state.lines[1].message);
       expect(newState.lines[1]).not.to.equal(state.lines[1]);
       expect(newState.lines[2]).to.equal(state.lines[2]);
@@ -387,13 +390,16 @@ describe('Reducer', function () {
     it('should change entire selection', function () {
       const state = getState([{
         action: 'pick',
-        hash: '123'
+        hash: '123',
+        message: ''
       }, {
         action: 'fixup',
-        hash: '123'
+        hash: '123',
+        message: ''
       }, {
         action: 'pick',
-        hash: '123'
+        hash: '123',
+        message: ''
       }], {
         from: 2,
         pos: 1
@@ -411,124 +417,124 @@ describe('Reducer', function () {
     it('should add a new line with break', function () {
       const state = getState(1, 0);
       const newState = reduce(state, 'break');
-      expect(newState.lines.length).to.equal(2)
-      expect(newState.lines[0]).to.equal(state.lines[0])
-      expect(newState.lines[1].action).to.equal('break')
-      expect(newState.cursor.pos).to.equal(1)
+      expect(newState.lines.length).to.equal(2);
+      expect(newState.lines[0]).to.equal(state.lines[0]);
+      expect(newState.lines[1].action).to.equal('break');
+      expect(newState.cursor.pos).to.equal(1);
     });
 
     it('should remove break on drop', function () {
       const state = getState(1, 0);
       let newState = reduce(state, 'break');
-      newState = reduce(newState, 'drop');
-      expect(newState.lines.length).to.equal(1)
+      newState = reduce(newState as RebaseState, 'drop');
+      expect(newState.lines.length).to.equal(1);
       expect(newState.lines[0]).to.equal(state.lines[0]);
     });
 
     it('should ignore actions on break', function () {
-      let state = getState(1, 0);
-      state = reduce(state, 'break');
-      const newState = reduce(state, 'pick');
-      expect(newState).to.equal(state)
+      let state: RebaseState | Readonly<RebaseState> = getState(1, 0);
+      state = reduce(state as RebaseState, 'break');
+      const newState = reduce(state as RebaseState, 'pick');
+      expect(newState).to.equal(state);
     });
 
     it('should not add multiple breaks', function () {
-      let state = getState(1, 0);
-      state = reduce(state, 'break');
-      const newState = reduce(state, 'break');
-      expect(newState).to.equal(state)
+      let state: RebaseState | Readonly<RebaseState> = getState(1, 0);
+      state = reduce(state as RebaseState, 'break');
+      const newState = reduce(state as RebaseState, 'break');
+      expect(newState).to.equal(state);
     });
 
     it('should not add multiple breaks 2', function () {
-      let state = getState(1, 0);
-      state = reduce(state, 'break');
-      state = reduce(state, 'up');
-      const newState = reduce(state, 'break');
-      expect(newState.lines).to.equal(state.lines)
-      expect(newState.cursor.from).to.equal(1)
-      expect(newState.cursor.pos).to.equal(1)
+      let state: RebaseState | Readonly<RebaseState> = getState(1, 0);
+      state = reduce(state as RebaseState, 'break');
+      state = reduce(state as RebaseState, 'up');
+      const newState = reduce(state as RebaseState, 'break');
+      expect(newState.lines).to.equal(state.lines);
+      expect(newState.cursor.from).to.equal(1);
+      expect(newState.cursor.pos).to.equal(1);
     });
 
     it('should drop multiple breaks', function () {
-      let state = getState(4, 0);
-      state = reduce(state, 'break');
-      state = reduce(state, 'down');
-      state = reduce(state, 'break');
-      state = reduce(state, 'selectHome')
-      const newState = reduce(state, 'drop');
-      expect(newState.lines.length).to.equal(4)
-      expect(newState.lines[0].action).to.equal('drop')
-      expect(newState.lines[1].action).to.equal('drop')
-      expect(newState.lines[2].action).to.equal('pick')
-      expect(newState.lines[3].action).to.equal('pick')
+      let state: RebaseState | Readonly<RebaseState> = getState(4, 0);
+      state = reduce(state as RebaseState, 'break');
+      state = reduce(state as RebaseState, 'down');
+      state = reduce(state as RebaseState, 'break');
+      state = reduce(state as RebaseState, 'selectHome');
+      const newState = reduce(state as RebaseState, 'drop');
+      expect(newState.lines.length).to.equal(4);
+      expect(newState.lines[0].action).to.equal('drop');
+      expect(newState.lines[1].action).to.equal('drop');
+      expect(newState.lines[2].action).to.equal('pick');
+      expect(newState.lines[3].action).to.equal('pick');
     });
 
     it('should move cursor on drop', function () {
-      let state = getState(1, 0);
-      state = reduce(state, 'break');
-      state = reduce(state, 'drop');
+      let state: RebaseState | Readonly<RebaseState> = getState(1, 0);
+      state = reduce(state as RebaseState, 'break');
+      state = reduce(state as RebaseState, 'drop');
       expect(state.cursor.from).to.equal(0);
       expect(state.cursor.pos).to.equal(0);
     });
 
     it('should move up selection on drop', function () {
-      let state = getState(2, 1);
-      state = reduce(state, 'break');
-      state = reduce(state, 'selectUp');
-      state = reduce(state, 'selectUp');
+      let state: RebaseState | Readonly<RebaseState> = getState(2, 1);
+      state = reduce(state as RebaseState, 'break');
+      state = reduce(state as RebaseState, 'selectUp');
+      state = reduce(state as RebaseState, 'selectUp');
       expect(state.cursor.from).to.equal(2);
       expect(state.cursor.pos).to.equal(0);
-      state = reduce(state, 'drop');
+      state = reduce(state as RebaseState, 'drop');
       expect(state.cursor.from).to.equal(1);
       expect(state.cursor.pos).to.equal(0);
     });
 
     it('should move down selection on drop', function () {
-      let state = getState(2, 1);
-      state = reduce(state, 'break');
-      state = reduce(state, 'home');
-      state = reduce(state, 'selectDown');
-      state = reduce(state, 'selectDown');
+      let state: RebaseState | Readonly<RebaseState> = getState(2, 1);
+      state = reduce(state as RebaseState, 'break');
+      state = reduce(state as RebaseState, 'home');
+      state = reduce(state as RebaseState, 'selectDown');
+      state = reduce(state as RebaseState, 'selectDown');
       expect(state.cursor.from).to.equal(0);
       expect(state.cursor.pos).to.equal(2);
-      state = reduce(state, 'drop');
+      state = reduce(state as RebaseState, 'drop');
       expect(state.cursor.from).to.equal(0);
       expect(state.cursor.pos).to.equal(1);
     });
 
     it('should only drop selected break', function () {
-      let state = getState(4, 0);
-      state = reduce(state, 'break');
-      state = reduce(state, 'down');
-      state = reduce(state, 'break');
-      const newState = reduce(state, 'drop');
-      expect(newState.lines.length).to.equal(5)
-      expect(newState.lines[0].action).to.equal('pick')
-      expect(newState.lines[1].action).to.equal('break')
-      expect(newState.lines[2].action).to.equal('pick')
-      expect(newState.lines[3].action).to.equal('pick')
-      expect(newState.lines[4].action).to.equal('pick')
+      let state: RebaseState | Readonly<RebaseState> = getState(4, 0);
+      state = reduce(state as RebaseState, 'break');
+      state = reduce(state as RebaseState, 'down');
+      state = reduce(state as RebaseState, 'break');
+      const newState = reduce(state as RebaseState, 'drop');
+      expect(newState.lines.length).to.equal(5);
+      expect(newState.lines[0].action).to.equal('pick');
+      expect(newState.lines[1].action).to.equal('break');
+      expect(newState.lines[2].action).to.equal('pick');
+      expect(newState.lines[3].action).to.equal('pick');
+      expect(newState.lines[4].action).to.equal('pick');
     });
   });
 
   describe('undo', function () {
     it('should not undo when nothing has changed', function () {
       const state = getState(1, 0);
-      let newState = reduce(state, 'undo');
+      const newState = reduce(state, 'undo');
       expect(newState).to.equal(state);
     });
 
     it('should undo action change', function () {
       const state = getState(1, 0);
       let newState = reduce(state, 'fixup');
-      newState = reduce(newState, 'undo');
+      newState = reduce(newState as RebaseState, 'undo');
       expect(newState.lines).to.equal(state.lines);
     });
 
     it('should not undo on move', function () {
       const state = getState(2, 0);
       let newState = reduce(state, 'down');
-      newState = reduce(newState, 'undo');
+      newState = reduce(newState as RebaseState, 'undo');
       expect(newState.lines).to.equal(state.lines);
       expect(newState.cursor).not.to.equal(state.cursor);
     });
@@ -536,8 +542,8 @@ describe('Reducer', function () {
     it('should update cursor on undo', function () {
       const state = getState(2, 0);
       let newState = reduce(state, 'fixup');
-      newState = reduce(newState, 'down');
-      newState = reduce(newState, 'undo');
+      newState = reduce(newState as RebaseState, 'down');
+      newState = reduce(newState as RebaseState, 'undo');
       expect(newState.lines).to.equal(state.lines);
       expect(newState.cursor).to.equal(state.cursor);
     });
@@ -545,11 +551,11 @@ describe('Reducer', function () {
     it('should undo multiple actions', function () {
       const state = getState(1, 0);
       let newState = reduce(state, 'fixup');
-      newState = reduce(newState, 'reword');
+      newState = reduce(newState as RebaseState, 'reword');
       expect(newState.lines[0].action).to.equal('reword');
-      newState = reduce(newState, 'undo');
+      newState = reduce(newState as RebaseState, 'undo');
       expect(newState.lines[0].action).to.equal('fixup');
-      newState = reduce(newState, 'undo');
+      newState = reduce(newState as RebaseState, 'undo');
       expect(newState.lines).to.equal(state.lines);
     });
   });
@@ -557,42 +563,42 @@ describe('Reducer', function () {
   describe('redo', function () {
     it('should not undo when nothing has changed', function () {
       const state = getState(1, 0);
-      let newState = reduce(state, 'redo');
+      const newState = reduce(state, 'redo');
       expect(newState).to.equal(state);
     });
 
     it('should redo change', function () {
-      let state = getState(1, 0);
-      state = reduce(state, 'fixup');
-      let newState = reduce(state, 'undo');
-      newState = reduce(newState, 'redo');
+      let state: RebaseState | Readonly<RebaseState> = getState(1, 0);
+      state = reduce(state as RebaseState, 'fixup');
+      let newState = reduce(state as RebaseState, 'undo');
+      newState = reduce(newState as RebaseState, 'redo');
       expect(newState.lines).to.equal(state.lines);
     });
 
     it('should undo redo change', function () {
       const state = getState(1, 0);
       let newState = reduce(state, 'fixup');
-      newState = reduce(newState, 'undo');
-      newState = reduce(newState, 'redo');
-      newState = reduce(newState, 'undo');
+      newState = reduce(newState as RebaseState, 'undo');
+      newState = reduce(newState as RebaseState, 'redo');
+      newState = reduce(newState as RebaseState, 'undo');
       expect(newState.lines).to.equal(state.lines);
     });
 
     it('should clear redo stack on change', function () {
-      let state = getState(1, 0);
-      state = reduce(state, 'fixup');
-      state = reduce(state, 'reword');
-      state = reduce(state, 'undo');
-      state = reduce(state, 'squash');
-      const newState = reduce(state, 'redo');
+      let state: RebaseState | Readonly<RebaseState> = getState(1, 0);
+      state = reduce(state as RebaseState, 'fixup');
+      state = reduce(state as RebaseState, 'reword');
+      state = reduce(state as RebaseState, 'undo');
+      state = reduce(state as RebaseState, 'squash');
+      const newState = reduce(state as RebaseState, 'redo');
       expect(newState).to.equal(state);
     });
   });
 
   describe('resize', function () {
     it('should record height', function () {
-      let state = getState(1, 0);
-      state = reduce(state, 'resize', 10);
+      let state: RebaseState | Readonly<RebaseState> = getState(1, 0);
+      state = reduce(state as RebaseState, 'resize', 10);
       expect(state.height).to.equal(10);
     });
   });
