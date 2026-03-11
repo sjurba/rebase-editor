@@ -9,9 +9,11 @@ export default async function keyBindings(customKeyBindingsFile?: string): Promi
     const modulePath = path.resolve(customKeyBindingsFile);
     let loaded: { default: KeyBindings };
     if (modulePath.endsWith('.json')) {
+      /* c8 ignore next */
       loaded = await import(modulePath, { with: { type: 'json' } });
     } else {
       try {
+        /* c8 ignore next */
         loaded = await import(modulePath);
       } catch (e) {
         throw new Error(`Failed to load custom key bindings from ${customKeyBindingsFile}. If this is a CommonJS module, please change the file extension to .cjs. Error: ${(e as Error).message}`);
