@@ -1,25 +1,24 @@
-'use strict';
-
 import fs from 'fs';
 import util from 'util';
-let file;
-let origConsoleLog;
+
+let file: fs.WriteStream | null;
+let origConsoleLog: typeof console.log | undefined;
 
 const debugLog = {
-  trapConsole: () => {
+  trapConsole: (): void => {
     origConsoleLog = console.log;
-    console.log = (...params) => {
+    console.log = (...params: unknown[]): Promise<void> => {
       if (!file) {
         file = fs.createWriteStream('console.log', {
           flags: 'w'
         });
       }
       return new Promise((resolve) => {
-        file.write(util.format(...params) + '\n', resolve);
+        file!.write(util.format(...params) + '\n', () => resolve());
       });
     };
   },
-  untrapConsole: () => {
+  untrapConsole: (): void => {
     if (origConsoleLog) {
       console.log = origConsoleLog;
     }

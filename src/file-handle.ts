@@ -1,12 +1,13 @@
-'use strict';
 import fs from 'fs';
 
 export default class FileHandle {
-  constructor(file) {
+  file: string;
+
+  constructor(file: string) {
     this.file = file;
   }
 
-  read() {
+  read(): Promise<string> {
     return new Promise((resolve, reject) => {
       fs.readFile(this.file, 'utf8', function (err, data) {
         if (err) {
@@ -21,7 +22,7 @@ export default class FileHandle {
     });
   }
 
-  write(data) {
+  write(data: string): Promise<void> {
     return new Promise((resolve, reject) => {
       fs.writeFile(this.file, data, function (err) {
         if (err) {

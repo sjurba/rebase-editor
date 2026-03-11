@@ -1,8 +1,6 @@
-'use strict';
-
-import debugLog from '../lib/debug-log.js';
+import debugLog from '../src/debug-log.js';
 import fs from 'fs';
-import sinon from "sinon";
+import sinon from 'sinon';
 import { expect } from 'chai';
 
 describe('Debug log', function () {
@@ -31,8 +29,8 @@ describe('Debug log', function () {
 
   it('should write console log to file', function () {
     debugLog.trapConsole();
-    console.log("Jalla1")
-    return console.log('Jalla2').then(() => {
+    console.log('Jalla1');
+    return (console.log('Jalla2') as unknown as Promise<void>).then(() => {
       expect(fs.readFileSync(logFile, 'utf-8')).to.equal('Jalla1\nJalla2\n');
     });
   });

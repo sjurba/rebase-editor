@@ -1,21 +1,20 @@
-'use strict';
 import path from 'path';
-import { createRequire } from "module";
+import { createRequire } from 'module';
+import { KeyBindings } from './types.js';
 const require = createRequire(import.meta.url);
 
-
-export default async function keyBindings(customKeyBindingsFile) {
-  let customCmds = {};
+export default async function keyBindings(customKeyBindingsFile?: string): Promise<KeyBindings> {
+  let customCmds: KeyBindings = {};
   if (customKeyBindingsFile) {
     const modulePath = path.resolve(customKeyBindingsFile);
-    let loaded;
+    let loaded: { default: KeyBindings };
     if (modulePath.endsWith('.json')) {
       loaded = await import(modulePath, { with: { type: 'json' } });
     } else {
       try {
         loaded = await import(modulePath);
       } catch (e) {
-        throw new Error(`Failed to load custom key bindings from ${customKeyBindingsFile}. If this is a CommonJS module, please change the file extension to .cjs. Error: ${e.message}`);
+        throw new Error(`Failed to load custom key bindings from ${customKeyBindingsFile}. If this is a CommonJS module, please change the file extension to .cjs. Error: ${(e as Error).message}`);
       }
     }
     customCmds = loaded.default;

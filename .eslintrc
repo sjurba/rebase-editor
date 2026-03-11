@@ -1,4 +1,9 @@
 {
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "extends": [
+    "plugin:@typescript-eslint/recommended"
+  ],
   "env": {
     "browser": false,
     "node": true,
@@ -26,23 +31,22 @@
       2,
       "any"
     ],
-    "no-use-before-define": 0,
+    "no-use-before-define": "off",
+    "@typescript-eslint/no-use-before-define": "off",
     "new-cap": 2,
     "no-caller": 2,
     "quotes": [
       2,
       "single"
     ],
-    "no-undef": 2,
-    "no-unused-vars": ["error", {
+    "no-undef": "off",
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": ["error", {
       "vars": "all",
       "args": "after-used",
       "argsIgnorePattern": "^_"
     }],
-    "strict": [
-      2,
-      "global"
-    ],
+    "strict": "off",
     "no-multi-str": 2,
     "semi": [
       "error",

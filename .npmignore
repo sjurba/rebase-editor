@@ -1,0 +1,13 @@
+src/
+test/
+tsconfig.json
+tsconfig.test.json
+.eslintrc
+.gitignore
+.github/
+.travis.yml
+nyc.config.json
+coverage/
+.nyc_output/
+console.log
+*.gif

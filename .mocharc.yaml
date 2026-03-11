@@ -1,0 +1,7 @@
+reporter: 'spec'
+ui: 'bdd'
+require: './test/setup.ts'
+spec: 'test/*.spec.ts'
+node-option:
+  - 'import=tsx'
+  - 'no-warnings'

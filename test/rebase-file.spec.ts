@@ -1,8 +1,9 @@
-import rebaseFile from '../lib/rebase-file.js';
-import keyBindings from '../lib/key-bindings.js';
+import rebaseFile from '../src/rebase-file.js';
+import keyBindings from '../src/key-bindings.js';
 import { expect } from 'chai';
+import { RebaseState } from '../src/types.js';
 
-function trim(str) {
+function trim(str: string): string {
   return str.trim().split('\n').map((line) => line.trim()).join('\n');
 }
 
@@ -10,7 +11,7 @@ describe('Rebase file', function () {
 
   describe('to state', function () {
     it('should parse lines', function () {
-      const state = rebaseFile.toState(`pick ad3d434 Hello message`);
+      const state = rebaseFile.toState('pick ad3d434 Hello message');
       expect(state.lines).to.deep.equal([{
         action: 'pick',
         hash: 'ad3d434',
@@ -80,7 +81,7 @@ describe('Rebase file', function () {
 
     it('should print key bindings as help', async function () {
       const state = rebaseFile.toState('pick ad3d434 Hello message');
-      expect(state.extraInfo(await keyBindings())).to.deep.equal([
+      expect(state.extraInfo!(await keyBindings())).to.deep.equal([
         '# NOTE: execute (x) is not supported by rebase editor',
         '# You cannot add update-ref (u), label (l), reset (t) or merge (m), but you can move them around',
         '#',
@@ -95,8 +96,8 @@ describe('Rebase file', function () {
         '# Z, CTRL_SHIFT_Z = Redo',
         '# q, ENTER = Save and quit',
         '# CTRL_C, ESCAPE = Abort',
-        "# ALT_F = fixup -c",
-        "# CTRL_F = fixup -C",
+        '# ALT_F = fixup -c',
+        '# CTRL_F = fixup -C',
         '# HOME, END, PAGE_UP, PAGE_DOWN = Moves cursor and selects with SHIFT'
       ]);
     });
@@ -117,7 +118,7 @@ describe('Rebase file', function () {
         }
       ],
       info: ['# Info']
-    };
+    } as unknown as RebaseState;
     const file = rebaseFile.toFile(state);
     expect(file).to.equal(trim(`
       pick ad3d434 Hello message

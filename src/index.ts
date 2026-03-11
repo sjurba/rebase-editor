@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
-'use strict';
 import { terminal } from 'terminal-kit';
-import FileHandle from './lib/file-handle.js';
-import main from './lib/main.js';
+import FileHandle from './file-handle.js';
+import main from './main.js';
 import minimist from 'minimist';
 import debugLog from './debug-log.js';
+import { TerminalKitTerminal } from './types.js';
 
 const args = minimist(process.argv, {
   boolean: ['s', 'alternate-screen'],
@@ -27,16 +27,16 @@ if (args._.length < 3) {
 
 const file = args._[args._.length - 1];
 
-let colors;
+let colors: string[] | undefined;
 if (args.colors === true) {
   colors = ['^r', '^y'];
 } else if (args.colors) {
   colors = args.colors.split(',');
 }
 
-let marker = args.marker;
+let marker: string | undefined = args.marker;
 if (!marker && process.platform === 'win32') {
-  // Windows CMD and PowerShell dosn't support ANSI Inverse.
+  // Windows CMD and PowerShell doesn't support ANSI Inverse.
   marker = '^Y';
 }
 const progArgs = {
@@ -46,7 +46,7 @@ const progArgs = {
   selectMarker: marker || '^!',
   alternateScreen: args['alternate-screen'],
   file: new FileHandle(file),
-  term: terminal
+  term: terminal as unknown as TerminalKitTerminal
 };
 main(progArgs, debugLog, (err) => {
   let status = 0;

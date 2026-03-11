@@ -1,12 +1,12 @@
-'use strict';
+import { RebaseState, RebaseLine, KeyBindings } from './types.js';
 
-function getKeyInfo(action, keyBindings, description) {
-  let keys = Object.keys(keyBindings)
+function getKeyInfo(action: string, keyBindings: KeyBindings, description: string): string {
+  const keys = Object.keys(keyBindings)
     .filter((key) => keyBindings[key] === action);
   return '# ' + keys.join(', ') + ' = ' + description;
 }
 
-const actionDescriptions = {
+const actionDescriptions: Record<string, string> = {
   'up': 'Moves cursor up',
   'down': 'Moves cursor down',
   'selectDown': 'Select one line down',
@@ -21,8 +21,8 @@ const actionDescriptions = {
   'fixup -C': 'fixup -C'
 };
 
-function editorCommands(keyBindings) {
-  let extraInfo = [
+function editorCommands(keyBindings: KeyBindings): string[] {
+  const extraInfo = [
     '# NOTE: execute (x) is not supported by rebase editor',
     '# You cannot add update-ref (u), label (l), reset (t) or merge (m), but you can move them around',
     '#',
@@ -39,13 +39,13 @@ function editorCommands(keyBindings) {
   return extraInfo;
 }
 
-function toState(data) {
+function toState(data: string): RebaseState {
   const lines = data.split('\n');
   if (!lines[0].match(/^(noop|pick|break|update-ref|label|# pick)/)) {
     throw 'Not a proper rebase file: \n' + lines.slice(0, 5).join('\n') + '\n ...';
   }
   return lines
-    .reduce((state, line) => {
+    .reduce<RebaseState>((state, line) => {
       line = line.trim();
       if (line.length > 0) {
         let parts = line.split(' ');
@@ -71,15 +71,16 @@ function toState(data) {
         pos: 0,
         from: 0
       },
+      height: 0,
       extraInfo: editorCommands
     });
 }
 
-function toFile(state) {
+function toFile(state: RebaseState | undefined): string {
   if (!state) {
     return '';
   }
-  const lines = state.lines.map((line) => [line.action, line.hash, line.message].filter((line) => line).join(' '));
+  const lines = state.lines.map((line: RebaseLine) => [line.action, line.hash, line.message].filter((part) => part).join(' '));
   return [...lines, '', ...state.info].join('\n');
 }
 

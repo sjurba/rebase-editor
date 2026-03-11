@@ -1,6 +1,4 @@
-'use strict';
-
-import Handler from '../lib/file-handle.js';
+import Handler from '../src/file-handle.js';
 import fs from 'fs';
 import { expect } from 'chai';
 
@@ -27,7 +25,7 @@ describe('File handler', function () {
 
     const file = 'test/testfiles/writtenfile.txt';
 
-    function remove(file, done) {
+    function remove(file: string, done: (err?: Error) => void) {
       fs.unlink(file, (err) => {
         //Ignore if file not exists
         if (err && err.code !== 'ENOENT') {

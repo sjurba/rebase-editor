@@ -1,19 +1,22 @@
-'use strict';
 import debounce from './debounce.js';
 import utils from './utils.js';
+import { RebaseState, TerminalKitTerminal, TerminalOpts, KeyBindings } from './types.js';
 
-function inSelection(state, idx) {
+function inSelection(state: RebaseState, idx: number): boolean {
   const [from, to] = [state.cursor.from, state.cursor.pos].sort((a, b) => a - b);
   return from <= idx && idx <= to;
 }
 
-function getBlankLines(n) {
+function getBlankLines(n: number): string {
   return new Array(n + 1).join('\n');
 }
 
 export default class Terminal {
+  opts: Required<Pick<TerminalOpts, 'status' | 'selectMarker' | 'alternateScreen'>> & TerminalOpts;
+  term: TerminalKitTerminal;
+  viewPort: string[];
 
-  constructor(term, opts) {
+  constructor(term: TerminalKitTerminal, opts?: TerminalOpts) {
     this.opts = Object.assign({
       status: false,
       selectMarker: '^!',
@@ -29,10 +32,10 @@ export default class Terminal {
     this.term.hideCursor(true);
   }
 
-  addKeyListener(cb) {
+  addKeyListener(cb: (key: string, param: string | number) => void): void {
     this.term.grabInput();
-    this.term.on('key', (key) => {
-      cb(this.opts.keyBindings[key], key);
+    this.term.on('key', (key: unknown) => {
+      cb(this.opts.keyBindings![key as string], key as string);
     });
     let oldHeight = this.term.height;
     this.term.on('resize', debounce(() => {
@@ -48,7 +51,7 @@ export default class Terminal {
     cb('resize', this.term.height);
   }
 
-  close() {
+  close(): void {
     if (this.opts.alternateScreen) {
       this.term.fullscreen(false);
     } else {
@@ -59,7 +62,7 @@ export default class Terminal {
   }
 
 
-  _writeLine(line, index) {
+  _writeLine(line: string, index: number): void {
     line = utils.trimTo(line, this.term.width);
     if (line !== this.viewPort[index]) {
       this._moveTo(index);
@@ -69,11 +72,11 @@ export default class Terminal {
     this.viewPort[index] = line;
   }
 
-  _moveTo(line) {
+  _moveTo(line: number): void {
     this.term.moveTo(1, line + 1);
   }
 
-  _wrapColors(arr, colors) {
+  _wrapColors(arr: string[], colors: string[]): string {
     return arr.map((txt, idx) => {
       const color = colors[idx];
       if (color) {
@@ -84,29 +87,29 @@ export default class Terminal {
     }).join(' ');
   }
 
-  render(state, key, rawKey) {
-    const allLines = [];
+  render(state: RebaseState, key?: string, rawKey?: string): void {
+    const allLines: string[] = [];
 
     state.lines.forEach((line, idx) => {
       const selected = inSelection(state, idx);
-      let termStr;
+      let termStr: string;
       const message = (line.message || '').replace(/\^/g, '^^');
       if (this.opts.colors && !selected) {
         termStr = this._wrapColors([line.action, line.hash, message], this.opts.colors);
       } else {
-        termStr = (selected ? this.opts.selectMarker : '') + [line.action, line.hash, message].filter(line => line).join(' ');
+        termStr = (selected ? this.opts.selectMarker : '') + [line.action, line.hash, message].filter(part => part).join(' ');
       }
       allLines.push(termStr);
     });
     allLines.push('');
     let emptyLines = 0;
-    let extraInfo = state.extraInfo && state.extraInfo(this.opts.keyBindings);
+    let extraInfo = state.extraInfo && state.extraInfo(this.opts.keyBindings as KeyBindings);
     state.info.forEach((line) => {
       if (line === '#' && extraInfo) {
         emptyLines++;
         if (emptyLines === 2) {
-          extraInfo.forEach((line) => {
-            allLines.push(line);
+          extraInfo.forEach((infoLine) => {
+            allLines.push(infoLine);
           });
         }
       }
@@ -131,4 +134,4 @@ export default class Terminal {
       }
     }
   }
-};
+}
