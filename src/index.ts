@@ -1,4 +1,5 @@
-import { terminal } from 'terminal-kit';
+import terminalKit from 'terminal-kit';
+const { terminal } = terminalKit;
 import FileHandle from './file-handle';
 import main from './main';
 import minimist from 'minimist';

@@ -12,4 +12,6 @@ export default defineConfig({
     js: '#!/usr/bin/env node',
   },
   splitting: false,
+  noExternal: [],
+  external: ['terminal-kit', 'minimist'],
 });
