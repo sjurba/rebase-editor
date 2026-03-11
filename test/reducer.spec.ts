@@ -603,4 +603,102 @@ describe('Reducer', function () {
     });
   });
 
+  describe('corner cases', function () {
+
+    it('should add break after last line', function () {
+      const state = getState(3, 2);
+      const newState = reduce(state, 'break');
+      expect(newState.lines.length).to.equal(4);
+      expect(newState.lines[3].action).to.equal('break');
+      expect(newState.cursor.pos).to.equal(3);
+    });
+
+    it('should drop all non-editable lines in selection', function () {
+      const state = getState([
+        { action: 'update-ref', hash: 'refs/heads/branch', message: '' },
+        { action: 'break', hash: '', message: '' },
+        { action: 'label', hash: 'onto', message: '' }
+      ], { from: 0, pos: 2 });
+      const newState = reduce(state, 'drop');
+      expect(newState.lines).to.be.empty;
+    });
+
+    it('should handle drop of non-editable lines with mixed selection', function () {
+      const state = getState([
+        { action: 'pick', hash: '123', message: 'First' },
+        { action: 'update-ref', hash: 'refs/heads/branch', message: '' },
+        { action: 'pick', hash: '456', message: 'Third' }
+      ], { from: 0, pos: 2 });
+      const newState = reduce(state, 'drop');
+      expect(newState.lines.length).to.equal(2);
+      expect(newState.lines[0].action).to.equal('drop');
+      expect(newState.lines[1].action).to.equal('drop');
+    });
+
+    it('should handle moveDown with reversed selection', function () {
+      const state = getState(4, { from: 2, pos: 1 });
+      const newState = reduce(state, 'moveDown');
+      expect(newState.lines[0]).to.equal(state.lines[0]);
+      expect(newState.lines[1]).to.equal(state.lines[3]);
+      expect(newState.lines[2]).to.equal(state.lines[1]);
+      expect(newState.lines[3]).to.equal(state.lines[2]);
+      expect(newState.cursor.from).to.equal(3);
+      expect(newState.cursor.pos).to.equal(2);
+    });
+
+    it('should handle moveUp with reversed selection', function () {
+      const state = getState(4, { from: 3, pos: 2 });
+      const newState = reduce(state, 'moveUp');
+      expect(newState.lines[0]).to.equal(state.lines[0]);
+      expect(newState.lines[1]).to.equal(state.lines[2]);
+      expect(newState.lines[2]).to.equal(state.lines[3]);
+      expect(newState.lines[3]).to.equal(state.lines[1]);
+      expect(newState.cursor.from).to.equal(2);
+      expect(newState.cursor.pos).to.equal(1);
+    });
+
+    it('should undo break insertion then drop', function () {
+      const state = getState(2, 0);
+      let s = reduce(state, 'break') as RebaseState;
+      expect(s.lines.length).to.equal(3);
+      s = reduce(s, 'drop') as RebaseState;
+      expect(s.lines.length).to.equal(2);
+      s = reduce(s, 'undo') as RebaseState;
+      expect(s.lines.length).to.equal(3);
+      expect(s.lines[1].action).to.equal('break');
+      s = reduce(s, 'undo') as RebaseState;
+      expect(s.lines.length).to.equal(2);
+      expect(s.lines).to.equal(state.lines);
+    });
+
+    it('should handle pageDown with height 0', function () {
+      const state = getState({ lines: [
+        { action: 'pick', hash: '123', message: 'First' },
+        { action: 'pick', hash: '456', message: 'Second' }
+      ], cursor: 0, height: 0 });
+      const newState = reduce(state, 'pageDown');
+      expect(newState).to.equal(state);
+    });
+
+    it('should handle pageUp with height 0', function () {
+      const state = getState({ lines: [
+        { action: 'pick', hash: '123', message: 'First' },
+        { action: 'pick', hash: '456', message: 'Second' }
+      ], cursor: 1, height: 0 });
+      const newState = reduce(state, 'pageUp');
+      expect(newState).to.equal(state);
+    });
+
+    it('should handle single line list', function () {
+      const state = getState(1, 0);
+      expect(reduce(state, 'down')).to.equal(state);
+      expect(reduce(state, 'up')).to.equal(state);
+      expect(reduce(state, 'moveDown')).to.equal(state);
+      expect(reduce(state, 'moveUp')).to.equal(state);
+      expect(reduce(state, 'selectDown')).to.equal(state);
+      expect(reduce(state, 'selectUp')).to.equal(state);
+    });
+
+  });
+
 });
