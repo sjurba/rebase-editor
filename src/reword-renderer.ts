@@ -6,7 +6,7 @@ export default function renderReword(state: RebaseState): string[] {
   const { message, cursorPos } = rewordMode;
 
   const allLines: string[] = [];
-  allLines.push(`^+Editing commit message for ${line.hash} (ESC to finish):^`);
+  allLines.push(`^!Editing commit message for ${line.hash} (ESC to finish):^`);
   allLines.push('');
 
   const messageLines = message.split('\n');
@@ -21,7 +21,7 @@ export default function renderReword(state: RebaseState): string[] {
       const before = msgLine.slice(0, col).replace(/\^/g, '^^');
       const cursorChar = (msgLine[col] ?? ' ').replace(/\^/g, '^^');
       const after = msgLine.slice(col + 1).replace(/\^/g, '^^');
-      allLines.push(before + '^_' + cursorChar + '^' + after);
+      allLines.push(before + '^!' + cursorChar + '^' + after);
     } else {
       allLines.push(msgLine.replace(/\^/g, '^^'));
     }
