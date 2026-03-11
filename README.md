@@ -1,15 +1,11 @@
 # rebase-editor
 Simple terminal based sequence editor for git interactive rebase.
-Written in Node.js, published to npm, uses [terminal-kit](https://github.com/cronvel/terminal-kit).
+Written in TypeScript, published to npm, uses [terminal-kit](https://github.com/cronvel/terminal-kit).
 
 [![Build Status](https://travis-ci.org/sjurba/rebase-editor.svg?branch=master)](https://travis-ci.org/sjurba/rebase-editor)
 [![Coverage Status](https://coveralls.io/repos/github/sjurba/rebase-editor/badge.svg?branch=master)](https://coveralls.io/github/sjurba/rebase-editor?branch=master)
 
 ![rebase-editor](https://github.com/sjurba/rebase-editor/raw/master/rebase-editor.gif)
-
-**VERSION 2.0 IS OUT** :sparkles: :camel: :boom:</br>
-New features: Select multiple lines, and undo changes, update-ref, rebase-merges!</br>
-Check the [changelog](#changelog) for details.
 
 ## Install
      npm install -g rebase-editor
@@ -131,21 +127,51 @@ The specials keys that are supported are defined by [terminal-kit](https://githu
 
 ## Development
 
-### Testing
-`npm test` or `npm run tdd`
+### Setup
+```bash
+git clone https://github.com/sjurba/rebase-editor.git
+cd rebase-editor
+npm install
+npm run build
+```
 
-For debugging I have a test file I have been using.
+### Commands
+- `npm test` — Run all tests
+- `npm run tdd` — Watch mode with minimal output
+- `npm run cover` — Coverage report (100% required)
+- `npm run build` — Compile TypeScript (`src/` → `dist/`)
 
-`node index.js example`
+### Manual testing
 
-For debugging using git:
+Using the example file in the repo:
 
-`GIT_SEQUENCE_EDITOR="./index.js" git rebase -i master`
+    npx tsx src/index.ts example
+
+Using git:
+
+    GIT_SEQUENCE_EDITOR="npx tsx src/index.ts" git rebase -i HEAD^^^
 
 ## Changelog
 
-### v1.0.0
-Initial version
+### v2.1.0
+Migrated to TypeScript with strict mode. No functional changes.
+
+### v2.0.9
+#### Bugfix
+- branch comments was not put inline.
+
+### v2.0.8
+#### New features
+- support --update-refs. You can now move around and drop update-ref lines.
+- support --rebase-merges. You can now move around and drop label, reset and merge lines.
+
+### v2.0.6, v2.0.7
+ #### New features
+  - support break. Adds a new line with a break. To remove the line you can drop it.
+
+### v2.0.5
+ #### New features
+  - support HOME, END, PAGE_UP and PAGE_DOWN
 
 ### v2.0.0
 Complete rewrite with new architecture and test driven implementation.
@@ -162,22 +188,8 @@ Complete rewrite with new architecture and test driven implementation.
  - Removed cut'n paste function. Replaced with drop command.
  - Changed default move line key from u and d to CTRL_UP/CTRL_DOWN (not on mac) or LEFT/RIGHT. Can be reverted with custom keymap.
 
-### v2.0.5
- #### New features
-  - support HOME, END, PAGE_UP and PAGE_DOWN
-
-### v2.0.6, v2.0.7
- #### New features
-  - support break. Adds a new line with a break. To remove the line you can drop it. 
-
-### v2.0.8
-#### New features
-- support --update-refs. You can now move around and drop update-ref lines.
-- support --rebase-merges. You can now move around and drop label, reset and merge lines.
-
-### v2.0.9
-#### Bugfix
-- branch comments was not put inline.
+### v1.0.0
+Initial version
 
 ## TODO
  - [ ] Support exec command
@@ -188,14 +200,10 @@ Complete rewrite with new architecture and test driven implementation.
 ## Contributions
 Contributions and comments are welcome, just make an issue and/or pull req.
 
-To get started just clone the repo and run `npm install`
+To get started just clone the repo and run `npm install`.
 
-To test manually using an example file in the repo: `./index.js example`
-
-To test manually using git: `GIT_SEQUENCE_EDITOR=./index.js git rebase -i HEAD^^^`
-
-Make sure to run the test `npm test` and check the testing coverage `npm run cover` before you create a pr.
-I do have full test coverage and would like to keep it like that. 
+Make sure to run the tests `npm test` and check the testing coverage `npm run cover` before you create a PR.
+Full test coverage is required.
 
 ## Credits
 Thanks to Node.js and the wonderful [terminal-kit project](https://github.com/cronvel/terminal-kit).
