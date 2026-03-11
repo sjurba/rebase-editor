@@ -703,6 +703,16 @@ describe('Reducer', function () {
 
   describe('reword mode', function () {
 
+    it('should enter reword mode when pressing r on a reworded line', function () {
+      const state = getState([{ action: 'reworded', hash: 'abc123', message: 'Edited message\nSecond line' }], 0);
+      const newState = reduce(state, 'reword');
+      expect(newState.rewordMode).to.deep.equal({
+        message: 'Edited message\nSecond line',
+        lineIndex: 0,
+        cursorPos: 26
+      });
+    });
+
     it('should enter reword mode on double-press of reword', function () {
       const state = getState([{ action: 'reword', hash: 'abc123', message: 'My commit' }], 0);
       const newState = reduce(state, 'reword');

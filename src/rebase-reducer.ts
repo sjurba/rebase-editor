@@ -201,8 +201,8 @@ export default function rebaseReducer(state: RebaseState, action: string, param?
       state = set(state, {
         height: param as number
       });
-    } else if (action === 'reword' && state.lines[pos]?.action === 'reword') {
-      // Double-press reword: enter reword mode
+    } else if (action === 'reword' && (state.lines[pos]?.action === 'reword' || state.lines[pos]?.action === 'reworded')) {
+      // Double-press reword (or press on already-reworded line): enter reword mode
       const line = state.lines[pos];
       const rewordMode: RewordModeState = {
         message: line.message,
