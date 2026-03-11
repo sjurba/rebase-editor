@@ -11,7 +11,7 @@ Written in TypeScript, published to npm, uses [terminal-kit](https://github.com/
      npm install -g rebase-editor
      git config --global sequence.editor rebase-editor
 
- > NOTE: Also works with Yarn: `yarn global add rebase-editor`
+ > NOTE: Requires Node.js 18 or later. Also works with Yarn: `yarn global add rebase-editor`
 
 ## Usage
 The terminal prints out the standard interactive rebase file that git creates, plus some extra command info in the comments.
