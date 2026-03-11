@@ -1,7 +1,7 @@
-import rebaseFile from '../src/rebase-file.js';
-import keyBindings from '../src/key-bindings.js';
+import rebaseFile from '../src/rebase-file';
+import keyBindings from '../src/key-bindings';
 import { expect } from 'chai';
-import { RebaseState } from '../src/types.js';
+import { RebaseState } from '../src/types';
 
 function trim(str: string): string {
   return str.trim().split('\n').map((line) => line.trim()).join('\n');

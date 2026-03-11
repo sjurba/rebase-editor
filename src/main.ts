@@ -1,8 +1,8 @@
-import Terminal from './terminal.js';
-import reduce from './reducer.js';
-import rebaseFile from './rebase-file.js';
-import keyBindings from './key-bindings.js';
-import { MainArgs, Logger, RebaseState } from './types.js';
+import Terminal from './terminal';
+import reduce from './reducer';
+import rebaseFile from './rebase-file';
+import keyBindings from './key-bindings';
+import { MainArgs, Logger, RebaseState } from './types';
 
 export default async function main(args: MainArgs, logger: Logger, onExit?: (err?: unknown) => void): Promise<void> {
 

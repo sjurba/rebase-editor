@@ -1,9 +1,9 @@
-import orgMain from '../src/main.js';
-import mockTerminal from './mock-terminal.js';
+import orgMain from '../src/main';
+import mockTerminal from './mock-terminal';
 import sinon from 'sinon';
 import { expect } from 'chai';
-import { MainArgs, TerminalKitTerminal } from '../src/types.js';
-import { MockTerm } from './mock-terminal.js';
+import { MainArgs, TerminalKitTerminal } from '../src/types';
+import { MockTerm } from './mock-terminal';
 
 const debugLog = {
   trapConsole: sinon.stub(),

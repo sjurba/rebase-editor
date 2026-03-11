@@ -1,4 +1,4 @@
-import { RebaseState, RebaseLine, CursorState } from '../src/types.js';
+import { RebaseState, RebaseLine, CursorState } from '../src/types';
 
 interface StateInput {
   lines: RebaseLine[];

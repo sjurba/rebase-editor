@@ -1,4 +1,4 @@
-import keyBindings from '../src/key-bindings.js';
+import keyBindings from '../src/key-bindings';
 import { expect } from 'chai';
 
 describe('Key bindings', function () {

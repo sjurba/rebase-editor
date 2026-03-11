@@ -1,7 +1,7 @@
-import reduce from '../src/reducer.js';
-import getState from './state-gen.js';
+import reduce from '../src/reducer';
+import getState from './state-gen';
 import { expect } from 'chai';
-import { RebaseState } from '../src/types.js';
+import { RebaseState } from '../src/types';
 
 describe('Reducer', function () {
 

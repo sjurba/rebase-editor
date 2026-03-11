@@ -1,10 +1,10 @@
-import Terminal from '../src/terminal.js';
-import mockTerminal from './mock-terminal.js';
-import getState from './state-gen.js';
+import Terminal from '../src/terminal';
+import mockTerminal from './mock-terminal';
+import getState from './state-gen';
 import sinon from 'sinon';
 import { expect } from 'chai';
-import { RebaseLine, TerminalKitTerminal, RebaseState } from '../src/types.js';
-import { MockTerm } from './mock-terminal.js';
+import { RebaseLine, TerminalKitTerminal, RebaseState } from '../src/types';
+import { MockTerm } from './mock-terminal';
 
 const noopLines: RebaseLine[] = [{
   action: 'noop',

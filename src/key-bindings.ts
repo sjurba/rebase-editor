@@ -1,6 +1,6 @@
 import path from 'path';
 import { createRequire } from 'module';
-import { KeyBindings } from './types.js';
+import { KeyBindings } from './types';
 const require = createRequire(import.meta.url);
 
 export default async function keyBindings(customKeyBindingsFile?: string): Promise<KeyBindings> {

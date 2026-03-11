@@ -1,4 +1,4 @@
-import { RebaseState, RebaseLine, KeyBindings } from './types.js';
+import { RebaseState, RebaseLine, KeyBindings } from './types';
 
 function getKeyInfo(action: string, keyBindings: KeyBindings, description: string): string {
   const keys = Object.keys(keyBindings)

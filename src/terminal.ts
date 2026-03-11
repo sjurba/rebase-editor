@@ -1,6 +1,6 @@
-import debounce from './debounce.js';
-import utils from './utils.js';
-import { RebaseState, TerminalKitTerminal, TerminalOpts, KeyBindings } from './types.js';
+import debounce from './debounce';
+import utils from './utils';
+import { RebaseState, TerminalKitTerminal, TerminalOpts, KeyBindings } from './types';
 
 function inSelection(state: RebaseState, idx: number): boolean {
   const [from, to] = [state.cursor.from, state.cursor.pos].sort((a, b) => a - b);

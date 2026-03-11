@@ -1,11 +1,9 @@
-#!/usr/bin/env node
-
 import { terminal } from 'terminal-kit';
-import FileHandle from './file-handle.js';
-import main from './main.js';
+import FileHandle from './file-handle';
+import main from './main';
 import minimist from 'minimist';
-import debugLog from './debug-log.js';
-import { TerminalKitTerminal } from './types.js';
+import debugLog from './debug-log';
+import { TerminalKitTerminal } from './types';
 
 const args = minimist(process.argv, {
   boolean: ['s', 'alternate-screen'],
