@@ -141,6 +141,45 @@ describe('Main loop', function () {
       done();
     });
   });
+
+  it('should enter reword mode on double-press r', function () {
+    file.read.returns(Promise.resolve(rebaseText));
+    main(args);
+    return nextTick()
+      .then(() => {
+        mockTerm.emit('key', 'r');   // first press: reword action
+        mockTerm.emit('key', 'r');   // second press: enter reword mode
+        const rendered = mockTerm.getRendered();
+        expect(rendered[0]).to.include('ESC to finish');
+      });
+  });
+
+  it('should route characters to reword mode when active', function () {
+    file.read.returns(Promise.resolve(rebaseText));
+    main(args);
+    return nextTick()
+      .then(() => {
+        mockTerm.emit('key', 'r');      // reword
+        mockTerm.emit('key', 'r');      // enter reword mode
+        mockTerm.emit('key', 'A');      // type a character
+        const rendered = mockTerm.getRendered();
+        const text = rendered.join('\n');
+        expect(text).to.include('1 implemented stuffA');
+      });
+  });
+
+  it('should exit reword mode on ESCAPE and set action to reworded', function () {
+    file.read.returns(Promise.resolve(rebaseText));
+    main(args);
+    return nextTick()
+      .then(() => {
+        mockTerm.emit('key', 'r');        // reword
+        mockTerm.emit('key', 'r');        // enter reword mode
+        mockTerm.emit('key', 'ESCAPE');   // finish editing
+        const rendered = mockTerm.getRendered();
+        expect(rendered[0]).to.match(/reworded.*/);
+      });
+  });
 });
 
 

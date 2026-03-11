@@ -4,6 +4,19 @@ import rebaseFile from './rebase-file';
 import keyBindings from './key-bindings';
 import { MainArgs, Logger, RebaseState } from './types';
 
+const rewordKeyMap: Record<string, string> = {
+  'ESCAPE': 'rewordDone',
+  'BACKSPACE': 'rewordBackspace',
+  'DELETE': 'rewordDelete',
+  'ENTER': 'rewordEnter',
+  'LEFT': 'rewordLeft',
+  'RIGHT': 'rewordRight',
+  'UP': 'rewordUp',
+  'DOWN': 'rewordDown',
+  'HOME': 'rewordHome',
+  'END': 'rewordEnd',
+};
+
 export default async function main(args: MainArgs, logger: Logger, onExit?: (err?: unknown) => void): Promise<void> {
 
   const file = args.file;
@@ -21,15 +34,23 @@ export default async function main(args: MainArgs, logger: Logger, onExit?: (err
     return new Promise<RebaseState | undefined>((resolve, reject) => {
       let state = rebaseFile.toState(data);
       terminal.render(state);
-      terminal.addKeyListener((key, param) => {
+      terminal.addKeyListener((key, rawKey) => {
         try {
-          if (key === 'quit') {
+          if (state.rewordMode) {
+            const rewordAction = rewordKeyMap[rawKey as string];
+            if (rewordAction) {
+              state = reduce(state, rewordAction) as RebaseState;
+            } else if ((rawKey as string).length === 1) {
+              state = reduce(state, 'rewordChar', rawKey) as RebaseState;
+            }
+            terminal.render(state, key, rawKey as string);
+          } else if (key === 'quit') {
             resolve(state);
           } else if (key === 'abort') {
             resolve(undefined);
           } else {
-            state = reduce(state, key, param) as RebaseState;
-            terminal.render(state, key, param as string);
+            state = reduce(state, key, rawKey) as RebaseState;
+            terminal.render(state, key, rawKey as string);
           }
         } catch (err) {
           reject(err);

@@ -701,4 +701,69 @@ describe('Reducer', function () {
 
   });
 
+  describe('reword mode', function () {
+
+    it('should enter reword mode on double-press of reword', function () {
+      const state = getState([{ action: 'reword', hash: 'abc123', message: 'My commit' }], 0);
+      const newState = reduce(state, 'reword');
+      expect(newState.rewordMode).to.deep.equal({
+        message: 'My commit',
+        lineIndex: 0,
+        cursorPos: 9
+      });
+    });
+
+    it('should not enter reword mode on first press', function () {
+      const state = getState([{ action: 'pick', hash: 'abc123', message: 'My commit' }], 0);
+      const newState = reduce(state, 'reword');
+      expect(newState.rewordMode).to.be.undefined;
+      expect(newState.lines[0].action).to.equal('reword');
+    });
+
+    it('should delegate text editing to reword-reducer when in reword mode', function () {
+      let state = getState([{ action: 'reword', hash: 'abc123', message: 'My commit' }], 0) as RebaseState;
+      state = reduce(state, 'reword') as RebaseState;
+      expect(state.rewordMode).to.exist;
+      state = reduce(state, 'rewordChar', '!') as RebaseState;
+      expect(state.rewordMode!.message).to.equal('My commit!');
+    });
+
+    it('should commit message and set action to reworded on rewordDone', function () {
+      let state = getState([{ action: 'reword', hash: 'abc123', message: 'My commit' }], 0) as RebaseState;
+      state = reduce(state, 'reword') as RebaseState;
+      state = reduce(state, 'rewordChar', '!') as RebaseState;
+      state = reduce(state, 'rewordDone') as RebaseState;
+      expect(state.rewordMode).to.be.undefined;
+      expect(state.lines[0].action).to.equal('reworded');
+      expect(state.lines[0].message).to.equal('My commit!');
+    });
+
+    it('should push undo entry on rewordDone', function () {
+      let state = getState([{ action: 'reword', hash: 'abc123', message: 'My commit' }], 0) as RebaseState;
+      state = reduce(state, 'reword') as RebaseState;
+      state = reduce(state, 'rewordChar', '!') as RebaseState;
+      const beforeDone = state;
+      state = reduce(state, 'rewordDone') as RebaseState;
+      const undoStack = state.undoStack!;
+      expect(undoStack.length).to.be.greaterThan(0);
+      const undoState = reduce(state, 'undo') as RebaseState;
+      expect(undoState.lines[0].action).to.equal(beforeDone.lines[0].action);
+    });
+
+    it('should clear reword mode before routing normal actions', function () {
+      const state = getState([{ action: 'pick', hash: 'abc123', message: 'My commit' }], 0) as RebaseState;
+      const newState = reduce(state, 'down') as RebaseState;
+      expect(newState.rewordMode).to.be.undefined;
+    });
+
+    it('should return same state when reword-reducer handles unknown action in reword mode', function () {
+      let state = getState([{ action: 'reword', hash: 'abc123', message: 'My commit' }], 0) as RebaseState;
+      state = reduce(state, 'reword') as RebaseState;
+      expect(state.rewordMode).to.exist;
+      const newState = reduce(state, 'unknownAction');
+      expect(newState).to.equal(state);
+    });
+
+  });
+
 });

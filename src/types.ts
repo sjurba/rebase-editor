@@ -4,6 +4,12 @@ export interface RebaseLine {
   message: string;
 }
 
+export interface RewordModeState {
+  message: string;   // full message being edited (may contain \n)
+  lineIndex: number; // index of the RebaseLine being edited
+  cursorPos: number; // character offset within the message string
+}
+
 export interface CursorState {
   pos: number;
   from: number;
@@ -21,6 +27,7 @@ export interface RebaseState {
   extraInfo?: ExtraInfoFn;
   undoStack?: UndoEntry[];
   redoStack?: UndoEntry[];
+  rewordMode?: RewordModeState;
   [key: string]: unknown;
 }
 

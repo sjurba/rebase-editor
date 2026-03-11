@@ -202,5 +202,46 @@ describe('Rebase file', function () {
       expect(rebaseFile.toFile(undefined)).to.equal('');
     });
 
+    it('should serialize reworded lines as pick + exec git commit --amend', function () {
+      const state = {
+        lines: [{
+          action: 'reworded',
+          hash: 'abc123',
+          message: 'New commit message'
+        }],
+        info: []
+      } as unknown as RebaseState;
+      const file = rebaseFile.toFile(state);
+      expect(file).to.include('pick abc123 New commit message');
+      expect(file).to.include('exec git commit --amend -m "New commit message"');
+    });
+
+    it('should serialize reworded lines with multiple message paragraphs', function () {
+      const state = {
+        lines: [{
+          action: 'reworded',
+          hash: 'abc123',
+          message: 'First line\n\nSecond paragraph'
+        }],
+        info: []
+      } as unknown as RebaseState;
+      const file = rebaseFile.toFile(state);
+      expect(file).to.include('pick abc123 First line');
+      expect(file).to.include('exec git commit --amend -m "First line" -m "Second paragraph"');
+    });
+
+    it('should escape quotes in reworded message', function () {
+      const state = {
+        lines: [{
+          action: 'reworded',
+          hash: 'abc123',
+          message: 'Fix "bug" here'
+        }],
+        info: []
+      } as unknown as RebaseState;
+      const file = rebaseFile.toFile(state);
+      expect(file).to.include('-m "Fix \\"bug\\" here"');
+    });
+
   });
 });

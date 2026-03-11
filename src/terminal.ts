@@ -1,11 +1,8 @@
 import debounce from './debounce';
 import utils from './utils';
 import { RebaseState, TerminalKitTerminal, TerminalOpts, KeyBindings } from './types';
-
-function inSelection(state: RebaseState, idx: number): boolean {
-  const [from, to] = [state.cursor.from, state.cursor.pos].sort((a, b) => a - b);
-  return from <= idx && idx <= to;
-}
+import renderRebase from './rebase-renderer';
+import renderReword from './reword-renderer';
 
 function getBlankLines(n: number): string {
   return new Array(n + 1).join('\n');
@@ -76,45 +73,11 @@ export default class Terminal {
     this.term.moveTo(1, line + 1);
   }
 
-  _wrapColors(arr: string[], colors: string[]): string {
-    return arr.map((txt, idx) => {
-      const color = colors[idx];
-      if (color) {
-        return color + txt + '^';
-      } else {
-        return txt;
-      }
-    }).join(' ');
-  }
-
   render(state: RebaseState, key?: string, rawKey?: string): void {
-    const allLines: string[] = [];
+    const allLines = state.rewordMode
+      ? renderReword(state)
+      : renderRebase(state, this.opts);
 
-    state.lines.forEach((line, idx) => {
-      const selected = inSelection(state, idx);
-      let termStr: string;
-      const message = (line.message || '').replace(/\^/g, '^^');
-      if (this.opts.colors && !selected) {
-        termStr = this._wrapColors([line.action, line.hash, message], this.opts.colors);
-      } else {
-        termStr = (selected ? this.opts.selectMarker : '') + [line.action, line.hash, message].filter(part => part).join(' ');
-      }
-      allLines.push(termStr);
-    });
-    allLines.push('');
-    let emptyLines = 0;
-    let extraInfo = state.extraInfo && state.extraInfo(this.opts.keyBindings as KeyBindings);
-    state.info.forEach((line) => {
-      if (line === '#' && extraInfo) {
-        emptyLines++;
-        if (emptyLines === 2) {
-          extraInfo.forEach((infoLine) => {
-            allLines.push(infoLine);
-          });
-        }
-      }
-      allLines.push(line);
-    });
     let offset = 0;
     const pos = Math.max(state.cursor.pos, state.cursor.from) + (this.opts.status ? 1 : 0);
     if (pos >= this.term.height) {

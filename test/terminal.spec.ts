@@ -485,5 +485,55 @@ describe('Terminal renderer', function () {
       `);
       });
     });
+
+    describe('reword mode', function () {
+      it('should render reword mode editor when rewordMode is set', function () {
+        const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
+        const state: RebaseState = {
+          ...getState([{ action: 'reword', hash: 'abc123', message: 'My commit' }], 0),
+          rewordMode: {
+            message: 'My commit',
+            lineIndex: 0,
+            cursorPos: 9
+          }
+        };
+        terminal.render(state);
+        const rendered = mockTerm.getRendered();
+        expect(rendered[0]).to.include('abc123');
+        expect(rendered[0]).to.include('ESC to finish');
+        expect(rendered.join('\n')).to.include('My commit');
+      });
+
+      it('should render non-cursor lines without highlight in multi-line messages', function () {
+        const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
+        const state: RebaseState = {
+          ...getState([{ action: 'reword', hash: 'abc123', message: 'First line\nSecond line' }], 0),
+          rewordMode: {
+            message: 'First line\nSecond line',
+            lineIndex: 0,
+            cursorPos: 2  // cursor on first line, col 2
+          }
+        };
+        terminal.render(state);
+        const rendered = mockTerm.getRendered();
+        // Second line should be rendered without cursor highlight
+        expect(rendered.join('\n')).to.include('Second line');
+      });
+
+      it('should show first line of message for all lines in rebase mode', function () {
+        const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
+        const state: RebaseState = {
+          ...getState([{
+            action: 'reworded',
+            hash: 'abc123',
+            message: 'First line\nSecond line'
+          }], 0)
+        };
+        terminal.render(state);
+        const rendered = mockTerm.getRendered();
+        expect(rendered[0]).to.include('First line');
+        expect(rendered[0]).not.to.include('Second line');
+      });
+    });
   });
 });
