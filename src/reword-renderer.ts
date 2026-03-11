@@ -6,7 +6,7 @@ export default function renderReword(state: RebaseState): string[] {
   const { message, cursorPos } = rewordMode;
 
   const allLines: string[] = [];
-  allLines.push(`^!Editing commit message for ${line.hash} (ESC to finish):^`);
+  allLines.push(`^!Editing commit message for ${line.hash} (ESC to finish):`);
   allLines.push('');
 
   const messageLines = message.split('\n');
