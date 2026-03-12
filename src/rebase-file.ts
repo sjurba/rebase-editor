@@ -86,7 +86,7 @@ function toFile(state: RebaseState | undefined): string {
       const flags = parts.map(p => `-m "${p.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`).join(' ');
       return `pick ${line.hash} ${parts[0]}\nexec git commit --amend ${flags}`;
     }
-    return [line.action, line.hash, line.message].filter((part) => part).join(' ');
+    return [line.action, line.hash, line.message.split('\n')[0]].filter((part) => part).join(' ');
   });
   return [...lines, '', ...state.info].join('\n');
 }

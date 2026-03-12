@@ -128,6 +128,18 @@ describe('Rebase file', function () {
     `));
   });
 
+  it('should only write first line of message for non-reworded lines', function () {
+    const state = {
+      lines: [{
+        action: 'pick',
+        hash: 'ad3d434',
+        message: 'Hello message\nSecond line'
+      }],
+      info: []
+    } as unknown as RebaseState;
+    expect(rebaseFile.toFile(state)).to.equal('pick ad3d434 Hello message\n');
+  });
+
   it('should throw error if file is not a rebase file', function () {
     function parse() {
       const file = trim(`
