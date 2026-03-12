@@ -3,24 +3,42 @@ import { createRequire } from 'module';
 import { KeyBindings } from './types';
 const require = createRequire(import.meta.url);
 
-export default async function keyBindings(customKeyBindingsFile?: string): Promise<KeyBindings> {
-  let customCmds: KeyBindings = {};
-  if (customKeyBindingsFile) {
-    const modulePath = path.resolve(customKeyBindingsFile);
-    let loaded: { default: KeyBindings };
-    if (modulePath.endsWith('.json')) {
-      /* c8 ignore next */
-      loaded = await import(modulePath, { with: { type: 'json' } });
-    } else {
-      try {
-        /* c8 ignore next */
-        loaded = await import(modulePath);
-      } catch (e) {
-        throw new Error(`Failed to load custom key bindings from ${customKeyBindingsFile}. If this is a CommonJS module, please change the file extension to .cjs. Error: ${(e as Error).message}`);
-      }
-    }
-    customCmds = loaded.default;
+const defaultRewordBindings: KeyBindings = {
+  ESCAPE: 'rewordDone',
+  BACKSPACE: 'rewordBackspace',
+  DELETE: 'rewordDelete',
+  ENTER: 'rewordEnter',
+  LEFT: 'rewordLeft',
+  RIGHT: 'rewordRight',
+  UP: 'rewordUp',
+  DOWN: 'rewordDown',
+  HOME: 'rewordHome',
+  END: 'rewordEnd',
+};
+
+async function loadCustom(customKeyBindingsFile?: string): Promise<{ main: KeyBindings, reword: KeyBindings }> {
+  if (!customKeyBindingsFile) {
+    return { main: {}, reword: {} };
   }
+  const modulePath = path.resolve(customKeyBindingsFile);
+  let loaded: { default: Record<string, string | KeyBindings> };
+  if (modulePath.endsWith('.json')) {
+    /* c8 ignore next */
+    loaded = await import(modulePath, { with: { type: 'json' } });
+  } else {
+    try {
+      /* c8 ignore next */
+      loaded = await import(modulePath);
+    } catch (e) {
+      throw new Error(`Failed to load custom key bindings from ${customKeyBindingsFile}. If this is a CommonJS module, please change the file extension to .cjs. Error: ${(e as Error).message}`);
+    }
+  }
+  const { rewordMode, ...rest } = loaded.default;
+  return { main: rest as KeyBindings, reword: (rewordMode ?? {}) as KeyBindings };
+}
+
+export default async function keyBindings(customKeyBindingsFile?: string): Promise<KeyBindings> {
+  const { main } = await loadCustom(customKeyBindingsFile);
   return Object.assign({
     UP: 'up',
     DOWN: 'down',
@@ -59,5 +77,10 @@ export default async function keyBindings(customKeyBindingsFile?: string): Promi
     ENTER: 'quit',
     CTRL_C: 'abort',
     ESCAPE: 'abort'
-  }, customCmds);
+  }, main);
+}
+
+export async function rewordKeyBindings(customKeyBindingsFile?: string): Promise<KeyBindings> {
+  const { reword } = await loadCustom(customKeyBindingsFile);
+  return Object.assign({}, defaultRewordBindings, reword);
 }

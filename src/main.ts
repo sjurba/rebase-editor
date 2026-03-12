@@ -1,25 +1,13 @@
 import Terminal from './terminal';
 import reduce from './reducer';
 import rebaseFile from './rebase-file';
-import keyBindings from './key-bindings';
+import keyBindings, { rewordKeyBindings } from './key-bindings';
 import { MainArgs, Logger, RebaseState } from './types';
-
-const rewordKeyMap: Record<string, string> = {
-  'ESCAPE': 'rewordDone',
-  'BACKSPACE': 'rewordBackspace',
-  'DELETE': 'rewordDelete',
-  'ENTER': 'rewordEnter',
-  'LEFT': 'rewordLeft',
-  'RIGHT': 'rewordRight',
-  'UP': 'rewordUp',
-  'DOWN': 'rewordDown',
-  'HOME': 'rewordHome',
-  'END': 'rewordEnd',
-};
 
 export default async function main(args: MainArgs, logger: Logger, onExit?: (err?: unknown) => void): Promise<void> {
 
   const file = args.file;
+  const rewordMap = await rewordKeyBindings(args.keys);
 
   const terminal = new Terminal(args.term, {
     status: args.status,
@@ -37,7 +25,7 @@ export default async function main(args: MainArgs, logger: Logger, onExit?: (err
       terminal.addKeyListener((key, rawKey) => {
         try {
           if (state.rewordState) {
-            const rewordAction = rewordKeyMap[rawKey as string];
+            const rewordAction = rewordMap[rawKey as string];
             if (rewordAction) {
               state = reduce(state, rewordAction) as RebaseState;
             } else if ((rawKey as string).length === 1) {
