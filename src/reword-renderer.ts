@@ -10,12 +10,14 @@ export default function renderReword(state: RebaseState, termHeight: number): st
   const messageLines: string[] = [];
   const msgLines = message.split('\n');
   let offset = 0;
-  for (const msgLine of msgLines) {
+  let cursorLine = 0;
+  for (let i = 0; i < msgLines.length; i++) {
+    const msgLine = msgLines[i];
     const lineStart = offset;
     const lineEnd = offset + msgLine.length;
 
     if (cursorPos >= lineStart && cursorPos <= lineEnd) {
-      // cursor is on this line
+      cursorLine = i;
       const col = cursorPos - lineStart;
       const before = msgLine.slice(0, col);
       const cursorChar = (msgLine[col] ?? ' ');
@@ -29,11 +31,13 @@ export default function renderReword(state: RebaseState, termHeight: number): st
     offset += msgLine.length + 1; // +1 for the \n
   }
 
-  // Fill content area, then place footer on the last line
+  // Scroll so the cursor line is always visible
   const contentHeight = termHeight - 1;
+  const scrollOffset = Math.max(0, cursorLine - contentHeight + 1);
+
   const allLines: string[] = [];
   for (let i = 0; i < contentHeight; i++) {
-    allLines.push(messageLines[i] ?? '');
+    allLines.push(messageLines[i + scrollOffset] ?? '');
   }
   allLines.push(footer);
 

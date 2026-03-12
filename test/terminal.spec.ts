@@ -535,6 +535,26 @@ describe('Terminal renderer', function () {
         expect(rendered.join('\n')).to.include('Second line');
       });
 
+      it('should scroll so cursor line is visible when below terminal height', function () {
+        // height=50, contentHeight=49. Put cursor on line 49 (index 49) → scrollOffset=1
+        // Build a 51-line message: "line0\nline1\n...line50"
+        const lines51 = Array.from({ length: 51 }, (_, i) => `line${i}`);
+        const msg = lines51.join('\n');
+        // cursorPos points to start of line 49
+        const cursorPos = lines51.slice(0, 49).reduce((acc, l) => acc + l.length + 1, 0);
+        const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
+        const state: RebaseState = {
+          ...getState([{ action: 'reword', hash: 'abc123', message: msg }], 0),
+          rewordMode: { message: msg, lineIndex: 0, cursorPos }
+        };
+        terminal.render(state);
+        const rendered = mockTerm.getRendered();
+        // scrollOffset=1 → line 0 of screen shows "line1", not "line0"
+        expect(rendered[0]).to.equal('line1');
+        // cursor line (line49) appears at the last content row (cursor on 'l' so rest is 'ine49')
+        expect(rendered[mockTerm.height - 2]).to.include('ine49');
+      });
+
       it('should show first line of message for all lines in rebase mode', function () {
         const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
         const state: RebaseState = {
