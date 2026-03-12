@@ -142,7 +142,7 @@ describe('Main loop', function () {
     });
   });
 
-  it('should enter reword mode on double-press r', function () {
+      it('should enter reword mode on double-press r', function () {
     file.read.returns(Promise.resolve(rebaseText));
     main(args);
     return nextTick()
@@ -150,7 +150,8 @@ describe('Main loop', function () {
         mockTerm.emit('key', 'r');   // first press: reword action
         mockTerm.emit('key', 'r');   // second press: enter reword mode
         const rendered = mockTerm.getRendered();
-        expect(rendered[0]).to.include('ESC to finish');
+        // Footer is on the last line
+        expect(rendered[mockTerm.height - 1]).to.include('ESC to finish');
       });
   });
 

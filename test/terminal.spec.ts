@@ -511,9 +511,12 @@ describe('Terminal renderer', function () {
         };
         terminal.render(state);
         const rendered = mockTerm.getRendered();
-        expect(rendered[0]).to.include('abc123');
-        expect(rendered[0]).to.include('ESC to finish');
-        expect(rendered.join('\n')).to.include('My commit');
+        // Footer is on the last line
+        const footer = rendered[mockTerm.height - 1];
+        expect(footer).to.include('abc123');
+        expect(footer).to.include('ESC to finish');
+        // Message is at the top
+        expect(rendered[0]).to.include('My commit');
       });
 
       it('should render non-cursor lines without highlight in multi-line messages', function () {

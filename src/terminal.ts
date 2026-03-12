@@ -75,7 +75,7 @@ export default class Terminal {
 
   render(state: RebaseState, key?: string, rawKey?: string): void {
     const allLines = state.rewordMode
-      ? renderReword(state)
+      ? renderReword(state, this.term.height)
       : renderRebase(state, this.opts);
 
     let offset = 0;
