@@ -268,6 +268,18 @@ describe('Terminal renderer', function () {
       expect(mockTerm.getRendered().slice(10)).to.deep.equal(['', '']);
     });
 
+    it('should erase lines when new render is shorter than previous', function () {
+      const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
+      terminal.render(getState(5, 0));  // renders 6 lines (5 + blank)
+      mockTerm.reset();
+      terminal.render(getState(2, 0)); // renders 3 lines (2 + blank) — lines 3-5 should be erased
+      const rendered = mockTerm.getRendered();
+      // Lines at index 3, 4, 5 should have been cleared
+      expect(rendered[3]).to.equal('');
+      expect(rendered[4]).to.equal('');
+      expect(rendered[5]).to.equal('');
+    });
+
     describe('with status', function () {
       it('should render if enabled', function () {
         const state = getState(2, 0, 1);

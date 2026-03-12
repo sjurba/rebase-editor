@@ -90,11 +90,12 @@ export default class Terminal {
     allLines.slice(offset, this.term.height + offset).forEach((line, index) => {
       this._writeLine(line, index);
     });
-    if (key === 'resize') {
-      for (let i = this.viewPort.length + 1; i <= this.term.height; i++) {
-        this.term.moveTo(1, i);
-        this.term.eraseLine();
-      }
+    const renderedCount = Math.min(allLines.length - offset, this.term.height);
+    const clearTo = key === 'resize' ? this.term.height : this.viewPort.length;
+    for (let i = renderedCount; i < clearTo; i++) {
+      this._moveTo(i);
+      this.term.eraseLine();
     }
+    this.viewPort = this.viewPort.slice(0, renderedCount);
   }
 }
