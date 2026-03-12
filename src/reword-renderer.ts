@@ -5,7 +5,7 @@ export default function renderReword(state: RebaseState, termHeight: number): st
   const line = state.lines[rewordMode.lineIndex];
   const { message, cursorPos } = rewordMode;
 
-  const footer = `^!Editing commit message for ${line.hash} (ESC to finish):`;
+  const footer = `^!ENTER: save  SHIFT+ENTER: new line  ESC: cancel`;
 
   const messageLines: string[] = [];
   const msgLines = message.split('\n');

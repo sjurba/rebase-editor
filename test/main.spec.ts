@@ -151,7 +151,7 @@ describe('Main loop', function () {
         mockTerm.emit('key', 'r');   // second press: enter reword mode
         const rendered = mockTerm.getRendered();
         // Footer is on the last line
-        expect(rendered[mockTerm.height - 1]).to.include('ESC to finish');
+        expect(rendered[mockTerm.height - 1]).to.include('ENTER: save');
       });
   });
 
@@ -169,14 +169,43 @@ describe('Main loop', function () {
       });
   });
 
-  it('should exit reword mode on ESCAPE and set action to reworded', function () {
+  it('should insert newline on SHIFT_ENTER in reword mode', function () {
+    file.read.returns(Promise.resolve(rebaseText));
+    main(args);
+    return nextTick()
+      .then(() => {
+        mockTerm.emit('key', 'r');
+        mockTerm.emit('key', 'r');
+        mockTerm.emit('key', 'SHIFT_ENTER');
+        mockTerm.emit('key', 'ENTER');    // save
+        const rendered = mockTerm.getRendered();
+        // message now has a newline — only first line shown on rebase view
+        expect(rendered[0]).to.match(/reworded.*/);
+      });
+  });
+
+  it('should cancel reword mode on ESCAPE without saving', function () {
     file.read.returns(Promise.resolve(rebaseText));
     main(args);
     return nextTick()
       .then(() => {
         mockTerm.emit('key', 'r');        // reword
         mockTerm.emit('key', 'r');        // enter reword mode
-        mockTerm.emit('key', 'ESCAPE');   // finish editing
+        mockTerm.emit('key', 'ESCAPE');   // cancel
+        const rendered = mockTerm.getRendered();
+        expect(rendered[0]).to.match(/reword .*/);
+        expect(rendered[0]).not.to.match(/reworded.*/);
+      });
+  });
+
+  it('should save and exit reword mode on ENTER', function () {
+    file.read.returns(Promise.resolve(rebaseText));
+    main(args);
+    return nextTick()
+      .then(() => {
+        mockTerm.emit('key', 'r');        // reword
+        mockTerm.emit('key', 'r');        // enter reword mode
+        mockTerm.emit('key', 'ENTER');    // save
         const rendered = mockTerm.getRendered();
         expect(rendered[0]).to.match(/reworded.*/);
       });

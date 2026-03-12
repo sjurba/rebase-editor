@@ -513,8 +513,8 @@ describe('Terminal renderer', function () {
         const rendered = mockTerm.getRendered();
         // Footer is on the last line
         const footer = rendered[mockTerm.height - 1];
-        expect(footer).to.include('abc123');
-        expect(footer).to.include('ESC to finish');
+        expect(footer).to.include('ENTER: save');
+        expect(footer).to.include('ESC: cancel');
         // Message is at the top
         expect(rendered[0]).to.include('My commit');
       });

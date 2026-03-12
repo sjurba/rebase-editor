@@ -5,10 +5,11 @@ import keyBindings from './key-bindings';
 import { MainArgs, Logger, RebaseState } from './types';
 
 const rewordKeyMap: Record<string, string> = {
-  'ESCAPE': 'rewordDone',
+  'ESCAPE': 'rewordCancel',
   'BACKSPACE': 'rewordBackspace',
   'DELETE': 'rewordDelete',
-  'ENTER': 'rewordEnter',
+  'ENTER': 'rewordDone',
+  'SHIFT_ENTER': 'rewordEnter',
   'LEFT': 'rewordLeft',
   'RIGHT': 'rewordRight',
   'UP': 'rewordUp',

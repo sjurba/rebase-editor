@@ -41,6 +41,10 @@ export default function reducer(state: RebaseState, action: string, param?: unkn
       return deepFreeze(newState);
     }
 
+    if (action === 'rewordCancel') {
+      return deepFreeze({ ...state, rewordMode: undefined });
+    }
+
     const newRewordMode = rewordReducer(state.rewordMode, action, param);
     if (newRewordMode === state.rewordMode) {
       return state;
