@@ -8,22 +8,10 @@ function getBlankLines(n: number): string {
   return new Array(n + 1).join('\n');
 }
 
-function getCursorLine(message: string, cursorPos: number): number {
-  const lines = message.split('\n');
-  let offset = 0;
-  for (let i = 0; i < lines.length - 1; i++) {
-    if (cursorPos <= offset + lines[i].length) return i;
-    offset += lines[i].length + 1;
-  }
-  return lines.length - 1;
-}
-
 export default class Terminal {
   opts: Required<Pick<TerminalOpts, 'status' | 'selectMarker' | 'alternateScreen'>> & TerminalOpts;
   term: TerminalKitTerminal;
   viewPort: string[];
-  _inRewordMode: boolean;
-  _rewordScrollOffset: number;
 
   constructor(term: TerminalKitTerminal, opts?: TerminalOpts) {
     this.opts = Object.assign({
@@ -33,8 +21,6 @@ export default class Terminal {
     }, opts);
     this.term = term;
     this.viewPort = [];
-    this._inRewordMode = false;
-    this._rewordScrollOffset = 0;
     if (this.opts.alternateScreen) {
       this.term.fullscreen(true);
     } else {
@@ -88,27 +74,9 @@ export default class Terminal {
   }
 
   render(state: RebaseState, key?: string, rawKey?: string): void {
-    const inRewordMode = !!state.rewordMode;
-    if (inRewordMode && !this._inRewordMode) {
-      this._rewordScrollOffset = 0;
-      this.viewPort = [];
-    }
-    this._inRewordMode = inRewordMode;
-
-    let allLines: string[];
-    if (state.rewordMode) {
-      const cursorLine = getCursorLine(state.rewordMode.message, state.rewordMode.cursorPos);
-      const contentHeight = this.term.height - 1;
-      if (cursorLine < this._rewordScrollOffset) {
-        this._rewordScrollOffset = cursorLine;
-      }
-      if (cursorLine >= this._rewordScrollOffset + contentHeight) {
-        this._rewordScrollOffset = cursorLine - contentHeight + 1;
-      }
-      allLines = renderReword(state, this.term.height, this._rewordScrollOffset);
-    } else {
-      allLines = renderRebase(state, this.opts);
-    }
+    const allLines = state.rewordMode
+      ? renderReword(state, this.term.height)
+      : renderRebase(state, this.opts);
 
     let offset = 0;
     const pos = Math.max(state.cursor.pos, state.cursor.from) + (this.opts.status ? 1 : 0);

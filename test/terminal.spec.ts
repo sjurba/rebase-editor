@@ -549,66 +549,6 @@ describe('Terminal renderer', function () {
         expect(rendered[0]).to.include('First line');
         expect(rendered[0]).not.to.include('Second line');
       });
-
-      it('should scroll content when cursor moves below the visible area', function () {
-        // Use a small terminal (height=5: 4 content lines + 1 footer)
-        mockTerm.height = 5;
-        const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
-        // 6 lines "a" through "f": cursor at line 5 ("f") → must scroll
-        // char offsets: a=0, b=2, c=4, d=6, e=8, f=10
-        const state: RebaseState = {
-          ...getState([{ action: 'reword', hash: 'abc123', message: 'a\nb\nc\nd\ne\nf' }], 0),
-          rewordMode: { message: 'a\nb\nc\nd\ne\nf', lineIndex: 0, cursorPos: 10 }
-        };
-        terminal.render(state);
-        const rendered = mockTerm.getRendered();
-        // scrollOffset=2 → rendered[0]='c', not 'a' or 'b'
-        expect(rendered[0]).to.include('c');
-        expect(rendered[0]).not.to.include('a');
-        mockTerm.height = 50;
-      });
-
-      it('should scroll content up when cursor moves above visible area', function () {
-        mockTerm.height = 5;
-        const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
-        const state1: RebaseState = {
-          ...getState([{ action: 'reword', hash: 'abc123', message: 'a\nb\nc\nd\ne\nf' }], 0),
-          rewordMode: { message: 'a\nb\nc\nd\ne\nf', lineIndex: 0, cursorPos: 8 }
-        };
-        terminal.render(state1); // scroll down to offset=1
-        // Now move cursor back to line 0
-        const state2: RebaseState = {
-          ...state1,
-          rewordMode: { message: 'a\nb\nc\nd\ne\nf', lineIndex: 0, cursorPos: 0 }
-        };
-        terminal.render(state2);
-        const rendered = mockTerm.getRendered();
-        expect(rendered[0]).to.include('a');
-        mockTerm.height = 50;
-      });
-
-      it('should reset scroll offset when re-entering reword mode', function () {
-        mockTerm.height = 5;
-        const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
-        // First enter reword mode and scroll down
-        const rewordState: RebaseState = {
-          ...getState([{ action: 'reword', hash: 'abc123', message: 'a\nb\nc\nd\ne\nf' }], 0),
-          rewordMode: { message: 'a\nb\nc\nd\ne\nf', lineIndex: 0, cursorPos: 8 }
-        };
-        terminal.render(rewordState);
-        // Exit reword mode
-        const normalState: RebaseState = getState([{ action: 'reword', hash: 'abc123', message: 'a\nb\nc\nd\ne\nf' }], 0);
-        terminal.render(normalState);
-        // Re-enter reword mode with cursor at top
-        const rewordState2: RebaseState = {
-          ...normalState,
-          rewordMode: { message: 'a\nb\nc\nd\ne\nf', lineIndex: 0, cursorPos: 0 }
-        };
-        terminal.render(rewordState2);
-        const rendered = mockTerm.getRendered();
-        expect(rendered[0]).to.include('a');
-        mockTerm.height = 50;
-      });
     });
   });
 });

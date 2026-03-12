@@ -1,6 +1,6 @@
 import { RebaseState } from './types';
 
-export default function renderReword(state: RebaseState, termHeight: number, scrollOffset: number): string[] {
+export default function renderReword(state: RebaseState, termHeight: number): string[] {
   const rewordMode = state.rewordMode!;
   const line = state.lines[rewordMode.lineIndex];
   const { message, cursorPos } = rewordMode;
@@ -29,11 +29,11 @@ export default function renderReword(state: RebaseState, termHeight: number, scr
     offset += msgLine.length + 1; // +1 for the \n
   }
 
-  // Fill content area from scrollOffset, then place footer on the last line
+  // Fill content area, then place footer on the last line
   const contentHeight = termHeight - 1;
   const allLines: string[] = [];
   for (let i = 0; i < contentHeight; i++) {
-    allLines.push(messageLines[i + scrollOffset] ?? '');
+    allLines.push(messageLines[i] ?? '');
   }
   allLines.push(footer);
 
