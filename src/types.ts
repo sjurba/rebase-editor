@@ -27,7 +27,7 @@ export interface RebaseState {
   extraInfo?: ExtraInfoFn;
   undoStack?: UndoEntry[];
   redoStack?: UndoEntry[];
-  rewordMode?: RewordModeState;
+  rewordState?: RewordModeState;
   [key: string]: unknown;
 }
 

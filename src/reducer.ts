@@ -21,9 +21,9 @@ function push(stack: UndoEntry[] | undefined, el: UndoEntry): UndoEntry[] {
 }
 
 export default function reducer(state: RebaseState, action: string, param?: unknown): Readonly<RebaseState> {
-  if (state.rewordMode) {
+  if (state.rewordState) {
     if (action === 'rewordDone') {
-      const { message, lineIndex } = state.rewordMode;
+      const { message, lineIndex } = state.rewordState;
       const updatedLines = state.lines.map((line, idx) => {
         if (idx === lineIndex) {
           return { ...line, action: 'reworded', message };
@@ -34,7 +34,7 @@ export default function reducer(state: RebaseState, action: string, param?: unkn
       const newState: RebaseState = {
         ...state,
         lines: updatedLines,
-        rewordMode: undefined,
+        rewordState: undefined,
         undoStack: push(state.undoStack, undoEntry),
         redoStack: []
       };
@@ -42,14 +42,14 @@ export default function reducer(state: RebaseState, action: string, param?: unkn
     }
 
     if (action === 'rewordCancel') {
-      return deepFreeze({ ...state, rewordMode: undefined });
+      return deepFreeze({ ...state, rewordState: undefined });
     }
 
-    const newRewordMode = rewordReducer(state.rewordMode, action, param);
-    if (newRewordMode === state.rewordMode) {
+    const newRewordState = rewordReducer(state.rewordState, action, param);
+    if (newRewordState === state.rewordState) {
       return state;
     }
-    return deepFreeze({ ...state, rewordMode: newRewordMode });
+    return deepFreeze({ ...state, rewordState: newRewordState });
   }
 
   return rebaseReducer(state, action, param);

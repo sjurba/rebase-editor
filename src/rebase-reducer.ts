@@ -204,12 +204,12 @@ export default function rebaseReducer(state: RebaseState, action: string, param?
     } else if (action === 'reword' && (state.lines[pos]?.action === 'reword' || state.lines[pos]?.action === 'reworded')) {
       // Double-press reword (or press on already-reworded line): enter reword mode
       const line = state.lines[pos];
-      const rewordMode: RewordModeState = {
+      const rewordState: RewordModeState = {
         message: line.message,
         lineIndex: pos,
         cursorPos: line.message.length
       };
-      state = set(state, { rewordMode });
+      state = set(state, { rewordState });
     } else if (actions.includes(action)) {
       const [from, to] = getSelection(state);
       let newState: Partial<RebaseState> & Pick<RebaseState, 'lines'> = { lines: state.lines };

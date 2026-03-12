@@ -706,7 +706,7 @@ describe('Reducer', function () {
     it('should enter reword mode when pressing r on a reworded line', function () {
       const state = getState([{ action: 'reworded', hash: 'abc123', message: 'Edited message\nSecond line' }], 0);
       const newState = reduce(state, 'reword');
-      expect(newState.rewordMode).to.deep.equal({
+      expect(newState.rewordState).to.deep.equal({
         message: 'Edited message\nSecond line',
         lineIndex: 0,
         cursorPos: 26
@@ -716,7 +716,7 @@ describe('Reducer', function () {
     it('should enter reword mode on double-press of reword', function () {
       const state = getState([{ action: 'reword', hash: 'abc123', message: 'My commit' }], 0);
       const newState = reduce(state, 'reword');
-      expect(newState.rewordMode).to.deep.equal({
+      expect(newState.rewordState).to.deep.equal({
         message: 'My commit',
         lineIndex: 0,
         cursorPos: 9
@@ -726,16 +726,16 @@ describe('Reducer', function () {
     it('should not enter reword mode on first press', function () {
       const state = getState([{ action: 'pick', hash: 'abc123', message: 'My commit' }], 0);
       const newState = reduce(state, 'reword');
-      expect(newState.rewordMode).to.be.undefined;
+      expect(newState.rewordState).to.be.undefined;
       expect(newState.lines[0].action).to.equal('reword');
     });
 
     it('should delegate text editing to reword-reducer when in reword mode', function () {
       let state = getState([{ action: 'reword', hash: 'abc123', message: 'My commit' }], 0) as RebaseState;
       state = reduce(state, 'reword') as RebaseState;
-      expect(state.rewordMode).to.exist;
+      expect(state.rewordState).to.exist;
       state = reduce(state, 'rewordChar', '!') as RebaseState;
-      expect(state.rewordMode!.message).to.equal('My commit!');
+      expect(state.rewordState!.message).to.equal('My commit!');
     });
 
     it('should commit message and set action to reworded on rewordDone', function () {
@@ -743,7 +743,7 @@ describe('Reducer', function () {
       state = reduce(state, 'reword') as RebaseState;
       state = reduce(state, 'rewordChar', '!') as RebaseState;
       state = reduce(state, 'rewordDone') as RebaseState;
-      expect(state.rewordMode).to.be.undefined;
+      expect(state.rewordState).to.be.undefined;
       expect(state.lines[0].action).to.equal('reworded');
       expect(state.lines[0].message).to.equal('My commit!');
     });
@@ -763,13 +763,13 @@ describe('Reducer', function () {
     it('should clear reword mode before routing normal actions', function () {
       const state = getState([{ action: 'pick', hash: 'abc123', message: 'My commit' }], 0) as RebaseState;
       const newState = reduce(state, 'down') as RebaseState;
-      expect(newState.rewordMode).to.be.undefined;
+      expect(newState.rewordState).to.be.undefined;
     });
 
     it('should return same state when reword-reducer handles unknown action in reword mode', function () {
       let state = getState([{ action: 'reword', hash: 'abc123', message: 'My commit' }], 0) as RebaseState;
       state = reduce(state, 'reword') as RebaseState;
-      expect(state.rewordMode).to.exist;
+      expect(state.rewordState).to.exist;
       const newState = reduce(state, 'unknownAction');
       expect(newState).to.equal(state);
     });
@@ -779,7 +779,7 @@ describe('Reducer', function () {
       state = reduce(state, 'reword') as RebaseState;
       state = reduce(state, 'rewordChar', '!') as RebaseState;
       state = reduce(state, 'rewordCancel') as RebaseState;
-      expect(state.rewordMode).to.be.undefined;
+      expect(state.rewordState).to.be.undefined;
       expect(state.lines[0].action).to.equal('reword');
       expect(state.lines[0].message).to.equal('My commit');
     });

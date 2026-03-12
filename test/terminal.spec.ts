@@ -499,11 +499,11 @@ describe('Terminal renderer', function () {
     });
 
     describe('reword mode', function () {
-      it('should render reword mode editor when rewordMode is set', function () {
+      it('should render reword mode editor when rewordState is set', function () {
         const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
         const state: RebaseState = {
           ...getState([{ action: 'reword', hash: 'abc123', message: 'My commit' }], 0),
-          rewordMode: {
+          rewordState: {
             message: 'My commit',
             lineIndex: 0,
             cursorPos: 9
@@ -523,7 +523,7 @@ describe('Terminal renderer', function () {
         const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
         const state: RebaseState = {
           ...getState([{ action: 'reword', hash: 'abc123', message: 'First line\nSecond line' }], 0),
-          rewordMode: {
+          rewordState: {
             message: 'First line\nSecond line',
             lineIndex: 0,
             cursorPos: 2  // cursor on first line, col 2
@@ -545,7 +545,7 @@ describe('Terminal renderer', function () {
         const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
         const state: RebaseState = {
           ...getState([{ action: 'reword', hash: 'abc123', message: msg }], 0),
-          rewordMode: { message: msg, lineIndex: 0, cursorPos }
+          rewordState: { message: msg, lineIndex: 0, cursorPos }
         };
         terminal.render(state);
         const rendered = mockTerm.getRendered();

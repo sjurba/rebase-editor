@@ -37,7 +37,7 @@ export default async function main(args: MainArgs, logger: Logger, onExit?: (err
       terminal.render(state);
       terminal.addKeyListener((key, rawKey) => {
         try {
-          if (state.rewordMode) {
+          if (state.rewordState) {
             const rewordAction = rewordKeyMap[rawKey as string];
             if (rewordAction) {
               state = reduce(state, rewordAction) as RebaseState;

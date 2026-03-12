@@ -1,9 +1,7 @@
-import { RebaseState } from './types';
+import { RewordModeState } from './types';
 
-export default function renderReword(state: RebaseState, termHeight: number): string[] {
-  const rewordMode = state.rewordMode!;
-  const line = state.lines[rewordMode.lineIndex];
-  const { message, cursorPos } = rewordMode;
+export default function renderReword(rewordState: RewordModeState, termHeight: number): string[] {
+  const { message, cursorPos } = rewordState;
 
   const footer = `^!ENTER: save  SHIFT+ENTER: new line  ESC: cancel`;
 
