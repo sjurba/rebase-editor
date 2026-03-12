@@ -18,12 +18,12 @@ export default function renderReword(state: RebaseState): string[] {
     if (cursorPos >= lineStart && cursorPos <= lineEnd) {
       // cursor is on this line
       const col = cursorPos - lineStart;
-      const before = msgLine.slice(0, col).replace(/\^/g, '^^');
-      const cursorChar = (msgLine[col] ?? ' ').replace(/\^/g, '^^');
-      const after = msgLine.slice(col + 1).replace(/\^/g, '^^');
+      const before = msgLine.slice(0, col)
+      const cursorChar = (msgLine[col] ?? ' ')
+      const after = msgLine.slice(col + 1)
       allLines.push(before + '^!' + cursorChar + '^' + after);
     } else {
-      allLines.push(msgLine.replace(/\^/g, '^^'));
+      allLines.push(msgLine);
     }
 
     offset += msgLine.length + 1; // +1 for the \n
