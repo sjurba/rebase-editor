@@ -83,9 +83,9 @@ function toFile(state: RebaseState | undefined): string {
   }
   const lines = state.lines.map((line: RebaseLine) => {
     if (line.action === 'reworded') {
-      const parts = line.message.split(/\r?\n/).filter(p => p.length > 0);
+      const parts = line.message.slice(2).split(/\r?\n/).filter(p => p.length > 0);
       const flags = parts.map(p => `-m "${p.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`).join(' ');
-      return `pick ${line.hash} ${parts[0]}\nexec git commit --amend ${flags}`;
+      return `pick ${line.hash} # ${parts[0]}\nexec git commit --amend ${flags}`;
     }
     return [line.action, line.hash, line.message.split('\n')[0]].filter((part) => part).join(' ');
   });

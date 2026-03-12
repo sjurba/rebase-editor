@@ -228,12 +228,12 @@ describe('Rebase file', function () {
         lines: [{
           action: 'reworded',
           hash: 'abc123',
-          message: 'New commit message'
+          message: '# New commit message'
         }],
         info: []
       } as unknown as RebaseState;
       const file = rebaseFile.toFile(state);
-      expect(file).to.include('pick abc123 New commit message');
+      expect(file).to.include('pick abc123 # New commit message');
       expect(file).to.include('exec git commit --amend -m "New commit message"');
     });
 
@@ -242,12 +242,12 @@ describe('Rebase file', function () {
         lines: [{
           action: 'reworded',
           hash: 'abc123',
-          message: 'First line\n\nSecond paragraph'
+          message: '# First line\n\nSecond paragraph'
         }],
         info: []
       } as unknown as RebaseState;
       const file = rebaseFile.toFile(state);
-      expect(file).to.include('pick abc123 First line');
+      expect(file).to.include('pick abc123 # First line');
       expect(file).to.include('exec git commit --amend -m "First line" -m "Second paragraph"');
     });
 
@@ -256,7 +256,7 @@ describe('Rebase file', function () {
         lines: [{
           action: 'reworded',
           hash: 'abc123',
-          message: 'Fix "bug" here'
+          message: '# Fix "bug" here'
         }],
         info: []
       } as unknown as RebaseState;
@@ -269,12 +269,12 @@ describe('Rebase file', function () {
         lines: [{
           action: 'reworded',
           hash: 'abc123',
-          message: 'First line\r\nSecond line'
+          message: '# First line\r\nSecond line'
         }],
         info: []
       } as unknown as RebaseState;
       const file = rebaseFile.toFile(state);
-      expect(file).to.include('pick abc123 First line');
+      expect(file).to.include('pick abc123 # First line');
       expect(file).to.include('exec git commit --amend -m "First line" -m "Second line"');
     });
 
