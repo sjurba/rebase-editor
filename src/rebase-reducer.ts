@@ -206,6 +206,7 @@ export default function rebaseReducer(state: RebaseState, action: string, param?
       const line = state.lines[pos];
       const rewordState: RewordModeState = {
         message: line.message,
+        originalMessage: line.message,
         lineIndex: pos,
         cursorPos: line.message.length
       };

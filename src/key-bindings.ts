@@ -14,6 +14,8 @@ const defaultRewordBindings: KeyBindings = {
   DOWN: 'rewordDown',
   HOME: 'rewordHome',
   END: 'rewordEnd',
+  CTRL_Z: 'rewordUndo',
+  CTRL_C: 'rewordCancel',
 };
 
 async function loadCustom(customKeyBindingsFile?: string): Promise<{ main: KeyBindings, reword: KeyBindings }> {

@@ -3,7 +3,7 @@ import { RewordModeState } from './types';
 export default function renderReword(rewordState: RewordModeState, termHeight: number): string[] {
   const { message, cursorPos } = rewordState;
 
-  const footer = `^!ENTER: new line  ESC: save`;
+  const footer = `^!ENTER: new line  ESC: save  CTRL+Z: restore  CTRL+C: cancel`;
 
   const messageLines: string[] = [];
   const msgLines = message.split('\n');

@@ -37,6 +37,14 @@ function getCurrentLine(message: string, cursorPos: number): { lineIdx: number; 
 export default function rewordReducer(state: RewordModeState, action: string, param?: unknown): RewordModeState {
   const { message, cursorPos } = state;
 
+  if (action === 'rewordUndo') {
+    return {
+      ...state,
+      message: state.originalMessage,
+      cursorPos: state.originalMessage.length
+    };
+  }
+
   if (action === 'rewordChar') {
     const char = param as string;
     return {

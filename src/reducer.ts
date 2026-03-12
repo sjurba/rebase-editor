@@ -41,6 +41,17 @@ export default function reducer(state: RebaseState, action: string, param?: unkn
       return deepFreeze(newState);
     }
 
+    if (action === 'rewordCancel') {
+      const { lineIndex, originalMessage } = state.rewordState;
+      const updatedLines = state.lines.map((line, idx) => {
+        if (idx === lineIndex) {
+          return { ...line, action: 'reword', message: originalMessage };
+        }
+        return line;
+      });
+      return deepFreeze({ ...state, lines: updatedLines, rewordState: undefined });
+    }
+
     const newRewordState = rewordReducer(state.rewordState, action, param);
     if (newRewordState === state.rewordState) {
       return state;

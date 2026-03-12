@@ -5,9 +5,10 @@ export interface RebaseLine {
 }
 
 export interface RewordModeState {
-  message: string;   // full message being edited (may contain \n)
-  lineIndex: number; // index of the RebaseLine being edited
-  cursorPos: number; // character offset within the message string
+  message: string;        // full message being edited (may contain \n)
+  originalMessage: string; // message before entering edit mode (for undo/cancel)
+  lineIndex: number;      // index of the RebaseLine being edited
+  cursorPos: number;      // character offset within the message string
 }
 
 export interface CursorState {

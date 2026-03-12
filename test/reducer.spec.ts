@@ -708,6 +708,7 @@ describe('Reducer', function () {
       const newState = reduce(state, 'reword');
       expect(newState.rewordState).to.deep.equal({
         message: 'Edited message\nSecond line',
+        originalMessage: 'Edited message\nSecond line',
         lineIndex: 0,
         cursorPos: 26
       });
@@ -718,6 +719,7 @@ describe('Reducer', function () {
       const newState = reduce(state, 'reword');
       expect(newState.rewordState).to.deep.equal({
         message: 'My commit',
+        originalMessage: 'My commit',
         lineIndex: 0,
         cursorPos: 9
       });
@@ -764,6 +766,32 @@ describe('Reducer', function () {
       const state = getState([{ action: 'pick', hash: 'abc123', message: 'My commit' }], 0) as RebaseState;
       const newState = reduce(state, 'down') as RebaseState;
       expect(newState.rewordState).to.be.undefined;
+    });
+
+    it('should cancel reword mode and restore original action/message on rewordCancel', function () {
+      let state = getState([
+        { action: 'reword', hash: 'abc123', message: 'My commit' },
+        { action: 'pick', hash: 'def456', message: 'Other commit' }
+      ], 0) as RebaseState;
+      state = reduce(state, 'reword') as RebaseState;
+      state = reduce(state, 'rewordChar', '!') as RebaseState;
+      expect(state.rewordState!.message).to.equal('My commit!');
+      state = reduce(state, 'rewordCancel') as RebaseState;
+      expect(state.rewordState).to.be.undefined;
+      expect(state.lines[0].action).to.equal('reword');
+      expect(state.lines[0].message).to.equal('My commit');
+      expect(state.lines[1].message).to.equal('Other commit');
+    });
+
+    it('should restore original message on rewordUndo without exiting', function () {
+      let state = getState([{ action: 'reword', hash: 'abc123', message: 'My commit' }], 0) as RebaseState;
+      state = reduce(state, 'reword') as RebaseState;
+      state = reduce(state, 'rewordChar', '!') as RebaseState;
+      expect(state.rewordState!.message).to.equal('My commit!');
+      state = reduce(state, 'rewordUndo') as RebaseState;
+      expect(state.rewordState).to.exist;
+      expect(state.rewordState!.message).to.equal('My commit');
+      expect(state.rewordState!.cursorPos).to.equal(9);
     });
 
     it('should return same state when reword-reducer handles unknown action in reword mode', function () {
