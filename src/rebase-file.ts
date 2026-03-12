@@ -41,7 +41,7 @@ function editorCommands(keyBindings: KeyBindings): string[] {
 }
 
 function toState(data: string): RebaseState {
-  const lines = data.split('\n');
+  const lines = data.split(/\r?\n/);
   if (!lines[0].match(/^(noop|pick|break|update-ref|label|# pick)/)) {
     throw 'Not a proper rebase file: \n' + lines.slice(0, 5).join('\n') + '\n ...';
   }

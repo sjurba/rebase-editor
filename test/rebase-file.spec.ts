@@ -19,6 +19,14 @@ describe('Rebase file', function () {
       }]);
     });
 
+    it('should parse lines with Windows-style CRLF line endings', function () {
+      const state = rebaseFile.toState('pick ad3d434 Hello message\r\npick b1c2d3e Goodbye message');
+      expect(state.lines).to.deep.equal([
+        { action: 'pick', hash: 'ad3d434', message: 'Hello message' },
+        { action: 'pick', hash: 'b1c2d3e', message: 'Goodbye message' }
+      ]);
+    });
+
     it('should parse info lines', function () {
       const state = rebaseFile.toState(
         `pick ad3d434 Hello message
