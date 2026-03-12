@@ -774,16 +774,6 @@ describe('Reducer', function () {
       expect(newState).to.equal(state);
     });
 
-    it('should cancel reword mode on rewordCancel without saving', function () {
-      let state = getState([{ action: 'reword', hash: 'abc123', message: 'My commit' }], 0) as RebaseState;
-      state = reduce(state, 'reword') as RebaseState;
-      state = reduce(state, 'rewordChar', '!') as RebaseState;
-      state = reduce(state, 'rewordCancel') as RebaseState;
-      expect(state.rewordState).to.be.undefined;
-      expect(state.lines[0].action).to.equal('reword');
-      expect(state.lines[0].message).to.equal('My commit');
-    });
-
   });
 
 });

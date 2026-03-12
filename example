@@ -1,4 +1,5 @@
 pick ef1a81f 1 test
+exec git commit --amend -m "1 test"
 pick 142a871 2 implemented stuff
 pick 142a871 3 implemented stuff check if ^red
 # pick 142a871 4 Empty commit
