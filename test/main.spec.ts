@@ -195,6 +195,53 @@ describe('Main loop', function () {
         expect(rendered[0]).to.match(/reworded.*/);
       });
   });
+
+  it('should fetch full commit message when entering reword mode', async function () {
+    file.read.returns(Promise.resolve(rebaseText));
+    const getFullCommitMessage = sinon.stub().returns(Promise.resolve('Full commit message\n\nWith body'));
+    args.getFullCommitMessage = getFullCommitMessage;
+    main(args);
+    await nextTick();
+    mockTerm.emit('key', 'r');
+    mockTerm.emit('key', 'r');
+    expect(getFullCommitMessage).to.be.calledWith('142a871');
+    await nextTick();
+    const text = mockTerm.getRendered().join('\n');
+    expect(text).to.include('Full commit message');
+  });
+
+  it('should keep short message if full commit message fetch fails', async function () {
+    file.read.returns(Promise.resolve(rebaseText));
+    const getFullCommitMessage = sinon.stub().returns(Promise.reject(new Error('git error')));
+    args.getFullCommitMessage = getFullCommitMessage;
+    main(args);
+    await nextTick();
+    mockTerm.emit('key', 'r');
+    mockTerm.emit('key', 'r');
+    await nextTick();
+    const text = mockTerm.getRendered().join('\n');
+    expect(text).to.include('1 implemented stuff');
+  });
+
+  it('should not update state if reword mode exited before fetch completes', async function () {
+    file.read.returns(Promise.resolve(rebaseText));
+    let resolveFetch: (msg: string) => void;
+    const getFullCommitMessage = sinon.stub().returns(
+      new Promise<string>((resolve) => { resolveFetch = resolve; })
+    );
+    args.getFullCommitMessage = getFullCommitMessage;
+    main(args);
+    await nextTick();
+    mockTerm.emit('key', 'r');
+    mockTerm.emit('key', 'r');   // enter reword mode
+    mockTerm.emit('key', 'ESCAPE'); // save and exit reword mode
+    resolveFetch!('Full commit message');
+    await nextTick();
+    // Should be back in rebase mode, not reword mode
+    const rendered = mockTerm.getRendered();
+    expect(rendered[mockTerm.height - 1]).not.to.include('ESC: save');
+  });
+
 });
 
 

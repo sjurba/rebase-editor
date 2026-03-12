@@ -2,12 +2,14 @@ import Terminal from './terminal';
 import reduce from './reducer';
 import rebaseFile from './rebase-file';
 import keyBindings, { rewordKeyBindings } from './key-bindings';
+import { getFullCommitMessage as defaultGetFullCommitMessage } from './git-commands';
 import { MainArgs, Logger, RebaseState } from './types';
 
 export default async function main(args: MainArgs, logger: Logger, onExit?: (err?: unknown) => void): Promise<void> {
 
   const file = args.file;
   const rewordMap = await rewordKeyBindings(args.keys);
+  const getFullCommitMessage = args.getFullCommitMessage ?? defaultGetFullCommitMessage;
 
   const terminal = new Terminal(args.term, {
     status: args.status,
@@ -37,7 +39,26 @@ export default async function main(args: MainArgs, logger: Logger, onExit?: (err
           } else if (key === 'abort') {
             resolve(undefined);
           } else {
+            const prevState = state;
             state = reduce(state, key, rawKey) as RebaseState;
+            if (state.rewordState && !prevState.rewordState) {
+              const { hash } = state.lines[state.rewordState.lineIndex];
+              getFullCommitMessage(hash).then((fullMessage) => {
+                if (state.rewordState) {
+                  state = {
+                    ...state,
+                    rewordState: {
+                      ...state.rewordState,
+                      message: fullMessage,
+                      originalMessage: fullMessage,
+                      cursorPos: fullMessage.length,
+                      fullMessage
+                    }
+                  };
+                  terminal.render(state);
+                }
+              }).catch(() => { /* ignore errors, keep short message */ });
+            }
             terminal.render(state, key, rawKey as string);
           }
         } catch (err) {

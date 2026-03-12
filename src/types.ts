@@ -9,6 +9,7 @@ export interface RewordModeState {
   originalMessage: string; // message before entering edit mode (for undo/cancel)
   lineIndex: number;      // index of the RebaseLine being edited
   cursorPos: number;      // character offset within the message string
+  fullMessage?: string;   // full commit message fetched from git (async)
 }
 
 export interface CursorState {
@@ -61,6 +62,7 @@ export interface MainArgs {
   colors?: string[];
   selectMarker?: string;
   alternateScreen?: boolean;
+  getFullCommitMessage?: (sha: string) => Promise<string>;
 }
 
 // Minimal terminal-kit terminal interface used by this project
