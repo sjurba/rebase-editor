@@ -1,30 +1,29 @@
-pick ef1a81f 1 test
-exec git commit --amend -m "1 test"
-pick 142a871 2 implemented stuff
-pick 142a871 3 implemented stuff check if ^red
-# pick 142a871 4 Empty commit
-fixup 142a871 5 implemented stuff with a very very very very very very very very very long line
-reword 142a871 6 implemented stuff
-pick ef1a81f 1 ######## test
-pick 142a871 2 ######## implemented stuff
-pick 142a871 3 ######## implemented stuff
-# pick 142a871 ######## 4 Empty commit
-fixup 142a871 5 ######## implemented stuff with a very very very very very very very very very long line
-reword 142a871 6 ######## implemented stuff
-pick ef1a81f 1 test
-pick 142a871 2 implemented stuff
-pick 142a871 3 implemented stuff
-# pick 142a871 4 Empty commit
-fixup 142a871 5 implemented stuff with a very very very very very very very very very long line
-reword 142a871 6 implemented stuff
-pick ef1a81f 1 test
-pick 142a871 2 implemented stuff
-pick 142a871 3 implemented stuff
-# pick 142a871 4 Empty commit
-fixup 142a871 5 implemented stuff with a very very very very very very very very very long line
-reword 142a871 6 implemented stuff
+pick d7216e3 # feat: add reword mode for inline commit message editing
+pick 40de5f5 # feat: re-enter reword mode when pressing r on a reworded line
+pick e970dd8 # style: use inverted colors for reword mode header and cursor
+pick ab4dd21 # style: remove trailing ^ reset from reword mode header
+pick 6c17f54 # chore: add start script to package.json
+pick 34e36c8 # fix: erase viewport lines not present in new render
+pick cfc9cb2 # fix: remove ^ escaping from reword mode message rendering
+pick ddbcf77 # Move reword mode header to footer (last line of screen)
+pick 2da1d15 # Fix cursor highlight in reword mode
+pick ec5cd81 # Scroll reword content when cursor moves below the visible area
+pick 984394a # Revert "Scroll reword content when cursor moves below the visible area"
+pick 9514af9 # Scroll reword content when cursor moves below terminal height
+pick b36c92c # Change reword keybindings: ENTER saves, SHIFT+ENTER newline, ESC cancels
+pick 2324a99 # Clean up reword: rename rewordMode to rewordState, slim renderReword signature
+pick 4b5ff8f # Revert to ENTER=newline, ESC=save in reword mode
+pick f8471d3 # Fix: only write first line of message for non-reworded lines
+pick 8df6919 # Update README and rebase-file note with reword editor feature
+pick d362868 # 2.2.0-alpha.0
+pick edcecb1 # Move reword keybindings to key-bindings file under rewordMode field
+pick 358669d # Add test for Windows-style CRLF line endings in reworded messages
+pick c18309e # Fix Windows CRLF handling in toState() and add test
+pick 84b569b # Add CTRL+Z (restore) and CTRL+C (cancel) to reword mode
+pick 36557c6 # 2.2.0-alpha.1
+pick bd8cdf8 # Fetch full commit message from git when entering reword mode
 
-# Rebase 98b090ef..928e1806 onto 98b090ef (2 commands)
+# Rebase 40cac5e..bd8cdf8 onto 40cac5e (24 commands)
 #
 # Commands:
 # p, pick = use commit
