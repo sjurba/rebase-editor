@@ -19,7 +19,7 @@ When using the standard commands, the current lines action changes to the corres
 
 Commands:
  - p, pick = use commit
- - r, reword = use commit, but edit the commit message
+ - r, reword = use commit, but edit the commit message. Press `r` a second time to open an inline message editor.
  - e, edit = use commit, but stop for amending
  - s, squash = use commit, but meld into previous commit
  - f, fixup = like "squash", but discard this commit's log message
