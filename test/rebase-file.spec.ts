@@ -256,5 +256,19 @@ describe('Rebase file', function () {
       expect(file).to.include('-m "Fix \\"bug\\" here"');
     });
 
+    it('should serialize reworded lines with Windows-style line endings (CRLF)', function () {
+      const state = {
+        lines: [{
+          action: 'reworded',
+          hash: 'abc123',
+          message: 'First line\r\nSecond line'
+        }],
+        info: []
+      } as unknown as RebaseState;
+      const file = rebaseFile.toFile(state);
+      expect(file).to.include('pick abc123 First line');
+      expect(file).to.include('exec git commit --amend -m "First line" -m "Second line"');
+    });
+
   });
 });
