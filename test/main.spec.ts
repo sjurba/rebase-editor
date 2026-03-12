@@ -198,22 +198,45 @@ describe('Main loop', function () {
 
   it('should fetch full commit message when entering reword mode', async function () {
     file.read.returns(Promise.resolve(rebaseText));
-    const getFullCommitMessage = sinon.stub().returns(Promise.resolve('Full commit message\n\nWith body'));
-    args.getFullCommitMessage = getFullCommitMessage;
+    const getFullCommitMessages = sinon.stub().returns(Promise.resolve('Full commit message\n\nWith body'));
+    args.getFullCommitMessages = getFullCommitMessages;
     main(args);
     await nextTick();
     mockTerm.emit('key', 'r');
     mockTerm.emit('key', 'r');
-    expect(getFullCommitMessage).to.be.calledWith('142a871');
+    expect(getFullCommitMessages).to.be.calledWith(['142a871']);
     await nextTick();
     const text = mockTerm.getRendered().join('\n');
     expect(text).to.include('Full commit message');
   });
 
+  it('should include preceding squash hashes when entering reword mode', async function () {
+    const squashText = `pick sha_x base commit
+squash sha_a squash commit a
+squash sha_b squash commit b
+reword sha_c reword commit c
+
+# Rebase info`;
+    file.read.returns(Promise.resolve(squashText));
+    const getFullCommitMessages = sinon.stub().returns(Promise.resolve('Message C\n\nMessage B\n\nMessage A'));
+    args.getFullCommitMessages = getFullCommitMessages;
+    main(args);
+    await nextTick();
+    mockTerm.emit('key', 'DOWN');
+    mockTerm.emit('key', 'DOWN');
+    mockTerm.emit('key', 'DOWN'); // move to sha_c (index 3)
+    mockTerm.emit('key', 'r');   // reword
+    mockTerm.emit('key', 'r');   // enter reword mode
+    expect(getFullCommitMessages).to.be.calledWith(['sha_c', 'sha_b', 'sha_a']);
+    await nextTick();
+    const text = mockTerm.getRendered().join('\n');
+    expect(text).to.include('Message C');
+  });
+
   it('should keep short message if full commit message fetch fails', async function () {
     file.read.returns(Promise.resolve(rebaseText));
-    const getFullCommitMessage = sinon.stub().returns(Promise.reject(new Error('git error')));
-    args.getFullCommitMessage = getFullCommitMessage;
+    const getFullCommitMessages = sinon.stub().returns(Promise.reject(new Error('git error')));
+    args.getFullCommitMessages = getFullCommitMessages;
     main(args);
     await nextTick();
     mockTerm.emit('key', 'r');
@@ -226,10 +249,10 @@ describe('Main loop', function () {
   it('should not update state if reword mode exited before fetch completes', async function () {
     file.read.returns(Promise.resolve(rebaseText));
     let resolveFetch: (msg: string) => void;
-    const getFullCommitMessage = sinon.stub().returns(
+    const getFullCommitMessages = sinon.stub().returns(
       new Promise<string>((resolve) => { resolveFetch = resolve; })
     );
-    args.getFullCommitMessage = getFullCommitMessage;
+    args.getFullCommitMessages = getFullCommitMessages;
     main(args);
     await nextTick();
     mockTerm.emit('key', 'r');

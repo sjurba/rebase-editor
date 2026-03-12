@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 import childProcess from 'child_process';
-import { getFullCommitMessage } from '../src/git-commands';
+import { getFullCommitMessages } from '../src/git-commands';
 
 describe('git-commands', function () {
 
@@ -9,24 +9,34 @@ describe('git-commands', function () {
     sinon.restore();
   });
 
-  it('should return trimmed commit message', async function () {
-    sinon.stub(childProcess, 'exec').callsFake((_cmd: string, cb: unknown) => {
-      (cb as (err: null, stdout: string) => void)(null, 'My commit message\n\nSecond paragraph\n');
+  it('should return trimmed commit message for a single hash', async function () {
+    sinon.stub(childProcess, 'exec').callsFake((cmd: string, cb: unknown) => {
+      expect(cmd).to.include('abc123');
+      (cb as (err: null, stdout: string) => void)(null, 'My commit message\n\nSecond paragraph\n\x1e');
       return {} as ReturnType<typeof childProcess.exec>;
     });
-    const msg = await getFullCommitMessage('abc123');
+    const msg = await getFullCommitMessages(['abc123']);
     expect(msg).to.equal('My commit message\n\nSecond paragraph');
-    expect((childProcess.exec as sinon.SinonStub).firstCall.args[0]).to.include('abc123');
   });
 
-  it('should reject on exec error', async function () {
+  it('should join messages for multiple hashes in order', async function () {
+    sinon.stub(childProcess, 'exec').callsFake((cmd: string, cb: unknown) => {
+      expect(cmd).to.include('sha_c sha_b sha_a');
+      (cb as (err: null, stdout: string) => void)(null, 'Message C\x1eMessage B\x1eMessage A\x1e');
+      return {} as ReturnType<typeof childProcess.exec>;
+    });
+    const msg = await getFullCommitMessages(['sha_c', 'sha_b', 'sha_a']);
+    expect(msg).to.equal('Message C\n\nMessage B\n\nMessage A');
+  });
+
+  it('should reject if exec call fails', async function () {
     const error = new Error('git not found');
     sinon.stub(childProcess, 'exec').callsFake((_cmd: string, cb: unknown) => {
       (cb as (err: Error) => void)(error);
       return {} as ReturnType<typeof childProcess.exec>;
     });
     try {
-      await getFullCommitMessage('abc123');
+      await getFullCommitMessages(['abc123']);
       throw new Error('Should have rejected');
     } catch (err) {
       expect(err).to.equal(error);

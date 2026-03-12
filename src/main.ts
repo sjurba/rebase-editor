@@ -2,14 +2,14 @@ import Terminal from './terminal';
 import reduce from './reducer';
 import rebaseFile from './rebase-file';
 import keyBindings, { rewordKeyBindings } from './key-bindings';
-import { getFullCommitMessage as defaultGetFullCommitMessage } from './git-commands';
+import { getFullCommitMessages as defaultGetFullCommitMessages } from './git-commands';
 import { MainArgs, Logger, RebaseState } from './types';
 
 export default async function main(args: MainArgs, logger: Logger, onExit?: (err?: unknown) => void): Promise<void> {
 
   const file = args.file;
   const rewordMap = await rewordKeyBindings(args.keys);
-  const getFullCommitMessage = args.getFullCommitMessage ?? defaultGetFullCommitMessage;
+  const getFullCommitMessages = args.getFullCommitMessages ?? defaultGetFullCommitMessages;
 
   const terminal = new Terminal(args.term, {
     status: args.status,
@@ -42,8 +42,16 @@ export default async function main(args: MainArgs, logger: Logger, onExit?: (err
             const prevState = state;
             state = reduce(state, key, rawKey) as RebaseState;
             if (state.rewordState && !prevState.rewordState) {
-              const { hash } = state.lines[state.rewordState.lineIndex];
-              getFullCommitMessage(hash).then((fullMessage) => {
+              const { lineIndex } = state.rewordState;
+              const hashes: string[] = [state.lines[lineIndex].hash];
+              for (let i = lineIndex - 1; i >= 0; i--) {
+                if (state.lines[i].action === 'squash') {
+                  hashes.push(state.lines[i].hash);
+                } else {
+                  break;
+                }
+              }
+              getFullCommitMessages(hashes).then((fullMessage) => {
                 if (state.rewordState) {
                   state = {
                     ...state,

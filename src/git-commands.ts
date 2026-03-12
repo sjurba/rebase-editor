@@ -1,12 +1,15 @@
 import childProcess from 'child_process';
 
-export function getFullCommitMessage(sha: string): Promise<string> {
+export function getFullCommitMessages(hashes: string[]): Promise<string> {
   return new Promise((resolve, reject) => {
-    childProcess.exec(`git log --format=%B -n 1 ${sha}`, (err, stdout) => {
+    childProcess.exec(`git log --no-walk --format=%B%x1E ${hashes.join(' ')}`, (err, stdout) => {
       if (err) {
         return reject(err);
       }
-      resolve(stdout.trimEnd());
+      const messages = stdout.split('\x1e')
+        .map(m => m.trimEnd())
+        .filter(m => m.length > 0);
+      resolve(messages.join('\n\n'));
     });
   });
 }

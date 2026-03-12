@@ -62,7 +62,7 @@ export interface MainArgs {
   colors?: string[];
   selectMarker?: string;
   alternateScreen?: boolean;
-  getFullCommitMessage?: (sha: string) => Promise<string>;
+  getFullCommitMessages?: (hashes: string[]) => Promise<string>;
 }
 
 // Minimal terminal-kit terminal interface used by this project
