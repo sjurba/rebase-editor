@@ -20,7 +20,8 @@ export default function renderReword(state: RebaseState, termHeight: number): st
       const before = msgLine.slice(0, col);
       const cursorChar = (msgLine[col] ?? ' ');
       const after = msgLine.slice(col + 1);
-      messageLines.push(before + '^!' + cursorChar + '^' + after);
+      // We must use ^! and ^: to highlight the character under the cursor
+      messageLines.push(before + '^!' + cursorChar + '^:' + after);
     } else {
       messageLines.push(msgLine);
     }
