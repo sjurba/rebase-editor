@@ -13,7 +13,7 @@ export function getFullCommitMessages(hashes: string[]): Promise<string> {
       if (err) {
         return reject(err);
       }
-      const messages = stdout.split('\x1e')
+      const messages = stdout.replace(/\r/g, '').split('\x1e')
         .map(m => m.trimEnd())
         .filter(m => m.length > 0);
       if (messages.length === 1) {

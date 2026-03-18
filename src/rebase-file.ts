@@ -41,7 +41,7 @@ function editorCommands(keyBindings: KeyBindings): string[] {
 }
 
 function toState(data: string): RebaseState {
-  const lines = data.split(/\r?\n/);
+  const lines = data.replace(/\r/g, '').split('\n');
   if (!lines[0].match(/^(noop|pick|break|update-ref|label|# pick)/)) {
     throw 'Not a proper rebase file: \n' + lines.slice(0, 5).join('\n') + '\n ...';
   }
@@ -85,7 +85,7 @@ function toFile(state: RebaseState | undefined): string {
   const lines = [...state.lines].reverse().map((line: RebaseLine) => {
     if (line.action === 'reworded') {
       convertSquash = true;
-      const parts = line.message.split(/\r?\n/).filter(p => p.length > 0 && !p.startsWith('#'));
+      const parts = line.message.split('\n').filter(p => p.length > 0 && !p.startsWith('#'));
       const flags = parts.map(p => `-m "${p.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`).join(' ');
       const firstLine = parts[0] ?? '';
       return `pick ${line.hash} # ${firstLine}\nexec git commit --amend ${flags}`;

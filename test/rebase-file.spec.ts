@@ -264,12 +264,12 @@ describe('Rebase file', function () {
       expect(file).to.include('-m "Fix \\"bug\\" here"');
     });
 
-    it('should serialize reworded lines with Windows-style line endings (CRLF)', function () {
+    it('should serialize reworded lines with multiple lines in message', function () {
       const state = {
         lines: [{
           action: 'reworded',
           hash: 'abc123',
-          message: 'First line\r\nSecond line'
+          message: 'First line\nSecond line'
         }],
         info: []
       } as unknown as RebaseState;

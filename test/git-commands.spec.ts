@@ -19,6 +19,15 @@ describe('git-commands', function () {
     expect(msg).to.equal('My commit message\n\nSecond paragraph');
   });
 
+  it('should normalize Windows-style CRLF in git output', async function () {
+    sinon.stub(childProcess, 'exec').callsFake((_cmd: string, cb: unknown) => {
+      (cb as (err: null, stdout: string) => void)(null, 'My commit message\r\n\r\nSecond paragraph\r\n\x1e');
+      return {} as ReturnType<typeof childProcess.exec>;
+    });
+    const msg = await getFullCommitMessages(['abc123']);
+    expect(msg).to.equal('My commit message\n\nSecond paragraph');
+  });
+
   it('should join messages for multiple hashes in order', async function () {
     sinon.stub(childProcess, 'exec').callsFake((cmd: string, cb: unknown) => {
       expect(cmd).to.include('sha_c sha_b sha_a');
