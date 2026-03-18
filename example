@@ -1,29 +1,15 @@
-pick d7216e3 # feat: add reword mode for inline commit message editing
-pick 40de5f5 # feat: re-enter reword mode when pressing r on a reworded line
-pick e970dd8 # style: use inverted colors for reword mode header and cursor
-pick ab4dd21 # style: remove trailing ^ reset from reword mode header
-pick 6c17f54 # chore: add start script to package.json
-pick 34e36c8 # fix: erase viewport lines not present in new render
-pick cfc9cb2 # fix: remove ^ escaping from reword mode message rendering
-pick ddbcf77 # Move reword mode header to footer (last line of screen)
-pick 2da1d15 # Fix cursor highlight in reword mode
-pick ec5cd81 # Scroll reword content when cursor moves below the visible area
-pick 984394a # Revert "Scroll reword content when cursor moves below the visible area"
-pick 9514af9 # Scroll reword content when cursor moves below terminal height
-pick b36c92c # Change reword keybindings: ENTER saves, SHIFT+ENTER newline, ESC cancels
-pick 2324a99 # Clean up reword: rename rewordMode to rewordState, slim renderReword signature
-pick 4b5ff8f # Revert to ENTER=newline, ESC=save in reword mode
-pick f8471d3 # Fix: only write first line of message for non-reworded lines
-pick 8df6919 # Update README and rebase-file note with reword editor feature
-pick d362868 # 2.2.0-alpha.0
-pick edcecb1 # Move reword keybindings to key-bindings file under rewordMode field
-pick 358669d # Add test for Windows-style CRLF line endings in reworded messages
-pick c18309e # Fix Windows CRLF handling in toState() and add test
-pick 84b569b # Add CTRL+Z (restore) and CTRL+C (cancel) to reword mode
-pick 36557c6 # 2.2.0-alpha.1
-pick bd8cdf8 # Fetch full commit message from git when entering reword mode
+pick a1b2c3d commit 1 - add user authentication
+pick b2c3d4e commit 2 - fix login redirect bug
+pick c3d4e5f commit 3 - update password validation rules
+pick d4e5f6a commit 4 - add forgot password flow
+pick e5f6a7b commit 5 - refactor auth middleware
+pick f6a7b8c commit 6 - add session timeout handling
+pick a7b8c9d commit 7 - fix token expiry edge case
+pick b8c9d0e commit 8 - add unit tests for auth service
+pick c9d0e1f commit 9 - update API docs for auth endpoints
+pick d0e1f2a commit 10 - bump auth library to v3.2.1
 
-# Rebase 40cac5e..bd8cdf8 onto 40cac5e (24 commands)
+# Rebase e1f2a3b..d0e1f2a onto e1f2a3b (10 commands)
 #
 # Commands:
 # p, pick = use commit
