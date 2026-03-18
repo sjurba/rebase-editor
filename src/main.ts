@@ -44,7 +44,7 @@ export default async function main(args: MainArgs, logger: Logger, onExit?: (err
             if (state.rewordState && !prevState.rewordState) {
               const { lineIndex } = state.rewordState;
               const hashes: string[] = [state.lines[lineIndex].hash];
-              for (let i = lineIndex - 1; i >= 0; i--) {
+              for (let i = lineIndex + 1; i < state.lines.length; i++) {
                 if (state.lines[i].action === 'squash') {
                   hashes.push(state.lines[i].hash);
                 } else {

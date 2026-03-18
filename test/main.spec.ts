@@ -210,11 +210,11 @@ describe('Main loop', function () {
     expect(text).to.include('Full commit message');
   });
 
-  it('should include preceding squash hashes when entering reword mode', async function () {
+  it('should include following squash hashes when entering reword mode', async function () {
     const squashText = `pick sha_x base commit
-squash sha_a squash commit a
-squash sha_b squash commit b
 reword sha_c reword commit c
+squash sha_b squash commit b
+squash sha_a squash commit a
 
 # Rebase info`;
     file.read.returns(Promise.resolve(squashText));
@@ -222,9 +222,7 @@ reword sha_c reword commit c
     args.getFullCommitMessages = getFullCommitMessages;
     main(args);
     await nextTick();
-    mockTerm.emit('key', 'DOWN');
-    mockTerm.emit('key', 'DOWN');
-    mockTerm.emit('key', 'DOWN'); // move to sha_c (index 3)
+    mockTerm.emit('key', 'DOWN'); // move to sha_c (index 1)
     mockTerm.emit('key', 'r');   // reword
     mockTerm.emit('key', 'r');   // enter reword mode
     expect(getFullCommitMessages).to.be.calledWith(['sha_c', 'sha_b', 'sha_a']);
