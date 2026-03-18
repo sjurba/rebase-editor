@@ -331,5 +331,14 @@ describe('Rebase file', function () {
       expect(file).to.include('-m "First commit subject" -m "Second commit subject"');
     });
 
+    it('should handle reworded message with only comment lines', function () {
+      const state = {
+        lines: [{ action: 'reworded', hash: 'abc123', message: '# only comments' }],
+        info: []
+      } as unknown as RebaseState;
+      const file = rebaseFile.toFile(state);
+      expect(file).to.include('pick abc123 # \nexec git commit --amend');
+    });
+
   });
 });

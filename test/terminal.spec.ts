@@ -569,6 +569,20 @@ describe('Terminal renderer', function () {
         expect(rendered[0]).to.include('First line');
         expect(rendered[0]).not.to.include('Second line');
       });
+
+      it('should show empty message for reworded line with only comment lines', function () {
+        const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
+        const state: RebaseState = {
+          ...getState([{
+            action: 'reworded',
+            hash: 'abc123',
+            message: '# only a comment'
+          }], 0)
+        };
+        terminal.render(state);
+        const rendered = mockTerm.getRendered();
+        expect(rendered[0]).to.include('reworded abc123');
+      });
     });
   });
 });
