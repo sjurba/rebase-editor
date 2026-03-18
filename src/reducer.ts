@@ -23,10 +23,10 @@ function push(stack: UndoEntry[] | undefined, el: UndoEntry): UndoEntry[] {
 export default function reducer(state: RebaseState, action: string, param?: unknown): Readonly<RebaseState> {
   if (state.rewordState) {
     if (action === 'rewordDone') {
-      const { message, lineIndex } = state.rewordState;
+      const { message, originalMessage, lineIndex } = state.rewordState;
       const updatedLines = state.lines.map((line, idx) => {
         if (idx === lineIndex) {
-          return { ...line, action: 'reworded', message };
+          return { ...line, action: 'reworded', message, originalMessage };
         }
         return line;
       });

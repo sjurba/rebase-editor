@@ -802,6 +802,26 @@ describe('Reducer', function () {
       expect(newState).to.equal(state);
     });
 
+    it('should store originalMessage on line when rewordDone', function () {
+      let state = getState([{ action: 'reword', hash: 'abc123', message: 'My commit' }], 0) as RebaseState;
+      state = reduce(state, 'reword') as RebaseState;
+      state = reduce(state, 'rewordChar', '!') as RebaseState;
+      state = reduce(state, 'rewordDone') as RebaseState;
+      expect(state.lines[0].originalMessage).to.equal('My commit');
+    });
+
+    it('should restore originalMessage when switching action away from reworded', function () {
+      let state = getState([{ action: 'reword', hash: 'abc123', message: 'My commit' }], 0) as RebaseState;
+      state = reduce(state, 'reword') as RebaseState;
+      state = reduce(state, 'rewordDone') as RebaseState;
+      // Simulate full message being set (as async git fetch would do)
+      state = { ...state, lines: state.lines.map((l, i) => i === 0 ? { ...l, message: '# This is a combination\nMy commit' } : l) };
+      state = reduce(state, 'pick') as RebaseState;
+      expect(state.lines[0].action).to.equal('pick');
+      expect(state.lines[0].message).to.equal('My commit');
+      expect(state.lines[0].originalMessage).to.be.undefined;
+    });
+
   });
 
 });

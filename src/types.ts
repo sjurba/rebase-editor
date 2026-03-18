@@ -2,6 +2,7 @@ export interface RebaseLine {
   action: string;
   hash: string;
   message: string;
+  originalMessage?: string; // preserved short message for when action is changed away from 'reworded'
 }
 
 export interface RewordModeState {
