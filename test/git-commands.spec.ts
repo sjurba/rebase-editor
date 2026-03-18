@@ -26,7 +26,14 @@ describe('git-commands', function () {
       return {} as ReturnType<typeof childProcess.exec>;
     });
     const msg = await getFullCommitMessages(['sha_c', 'sha_b', 'sha_a']);
-    expect(msg).to.equal('Message C\n\nMessage B\n\nMessage A');
+    expect(msg).to.include('# This is a combination of 3 commits');
+    expect(msg).to.include('# This is the 1st commit message:');
+    expect(msg).to.include('Message C');
+    expect(msg).to.include('# This is the 2nd commit message:');
+    expect(msg).to.include('Message B');
+    expect(msg).to.include('# This is the 3rd commit message:');
+    expect(msg).to.include('Message A');
+    expect(msg).to.include('# Please enter the commit message for your changes.');
   });
 
   it('should reject if exec call fails', async function () {

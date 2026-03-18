@@ -228,7 +228,7 @@ describe('Rebase file', function () {
         lines: [{
           action: 'reworded',
           hash: 'abc123',
-          message: '# New commit message'
+          message: 'New commit message'
         }],
         info: []
       } as unknown as RebaseState;
@@ -242,7 +242,7 @@ describe('Rebase file', function () {
         lines: [{
           action: 'reworded',
           hash: 'abc123',
-          message: '# First line\n\nSecond paragraph'
+          message: 'First line\n\nSecond paragraph'
         }],
         info: []
       } as unknown as RebaseState;
@@ -256,7 +256,7 @@ describe('Rebase file', function () {
         lines: [{
           action: 'reworded',
           hash: 'abc123',
-          message: '# Fix "bug" here'
+          message: 'Fix "bug" here'
         }],
         info: []
       } as unknown as RebaseState;
@@ -269,7 +269,7 @@ describe('Rebase file', function () {
         lines: [{
           action: 'reworded',
           hash: 'abc123',
-          message: '# First line\r\nSecond line'
+          message: 'First line\r\nSecond line'
         }],
         info: []
       } as unknown as RebaseState;
@@ -284,7 +284,7 @@ describe('Rebase file', function () {
           { action: 'pick', hash: 'aaa111', message: 'base commit' },
           { action: 'squash', hash: 'bbb222', message: 'squash commit b' },
           { action: 'squash', hash: 'ccc333', message: 'squash commit c' },
-          { action: 'reworded', hash: 'ddd444', message: '# New message' }
+          { action: 'reworded', hash: 'ddd444', message: 'New message' }
         ],
         info: []
       } as unknown as RebaseState;
@@ -307,6 +307,28 @@ describe('Rebase file', function () {
       } as unknown as RebaseState;
       const file = rebaseFile.toFile(state);
       expect(file).to.include('squash bbb222 squash commit b');
+    });
+
+    it('should strip # comment lines from multi-message reworded content', function () {
+      const multiMessage = [
+        '# This is a combination of 2 commits',
+        '# This is the 1st commit message:',
+        '',
+        'First commit subject',
+        '',
+        '# This is the 2nd commit message:',
+        '',
+        'Second commit subject',
+        '',
+        '# Please enter the commit message for your changes.'
+      ].join('\n');
+      const state = {
+        lines: [{ action: 'reworded', hash: 'abc123', message: multiMessage }],
+        info: []
+      } as unknown as RebaseState;
+      const file = rebaseFile.toFile(state);
+      expect(file).to.include('pick abc123 # First commit subject');
+      expect(file).to.include('-m "First commit subject" -m "Second commit subject"');
     });
 
   });

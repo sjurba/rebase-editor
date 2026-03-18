@@ -747,7 +747,7 @@ describe('Reducer', function () {
       state = reduce(state, 'rewordDone') as RebaseState;
       expect(state.rewordState).to.be.undefined;
       expect(state.lines[0].action).to.equal('reworded');
-      expect(state.lines[0].message).to.equal('# My commit!');
+      expect(state.lines[0].message).to.equal('My commit!');
     });
 
     it('should push undo entry on rewordDone', function () {

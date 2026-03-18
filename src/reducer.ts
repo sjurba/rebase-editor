@@ -26,7 +26,7 @@ export default function reducer(state: RebaseState, action: string, param?: unkn
       const { message, lineIndex } = state.rewordState;
       const updatedLines = state.lines.map((line, idx) => {
         if (idx === lineIndex) {
-          return { ...line, action: 'reworded', message: '# ' + message };
+          return { ...line, action: 'reworded', message };
         }
         return line;
       });

@@ -25,7 +25,9 @@ export default function renderRebase(
   state.lines.forEach((line, idx) => {
     const selected = inSelection(state, idx);
     let termStr: string;
-    const firstLine = (line.message || '').split('\n')[0];
+    const firstLine = line.action === 'reworded'
+      ? (line.message.split('\n').find(l => l.length > 0 && !l.startsWith('#')) ?? '')
+      : (line.message || '').split('\n')[0];
     const message = firstLine.replace(/\^/g, '^^');
     if (opts.colors && !selected) {
       termStr = wrapColors([line.action, line.hash, message], opts.colors);
