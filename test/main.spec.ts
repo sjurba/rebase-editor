@@ -263,6 +263,21 @@ squash sha_a squash commit a
     expect(rendered[mockTerm.height - 1]).not.to.include('ESC: save');
   });
 
+  it('should restore original message when cancelling after full message fetch', async function () {
+    file.read.returns(Promise.resolve(rebaseText));
+    const getFullCommitMessages = sinon.stub().returns(Promise.resolve('# This is a combination of 2 commits\nFull message'));
+    args.getFullCommitMessages = getFullCommitMessages;
+    main(args);
+    await nextTick();
+    mockTerm.emit('key', 'r');
+    mockTerm.emit('key', 'r');   // enter reword mode
+    await nextTick();            // full message loaded
+    mockTerm.emit('key', 'CTRL_C'); // cancel
+    const text = mockTerm.getRendered().join('\n');
+    expect(text).to.include('1 implemented stuff');
+    expect(text).not.to.include('This is a combination');
+  });
+
 });
 
 

@@ -58,7 +58,6 @@ export default async function main(args: MainArgs, logger: Logger, onExit?: (err
                     rewordState: {
                       ...state.rewordState,
                       message: fullMessage,
-                      originalMessage: fullMessage,
                       cursorPos: fullMessage.length,
                       fullMessage
                     }
