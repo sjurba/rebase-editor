@@ -145,7 +145,7 @@ npm run build
 
 Using the example file in the repo:
 
-    npx tsx src/index.ts example
+    npx tsx src/index.ts examples/example
 
 Using git:
 
