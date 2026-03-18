@@ -79,9 +79,11 @@ export default class Terminal {
       : renderRebase(state, this.opts);
 
     let offset = 0;
-    const pos = Math.max(state.cursor.pos, state.cursor.from) + (this.opts.status ? 1 : 0);
-    if (pos >= this.term.height) {
-      offset = pos - this.term.height + 1;
+    if (!state.rewordState) {
+      const pos = Math.max(state.cursor.pos, state.cursor.from) + (this.opts.status ? 1 : 0);
+      if (pos >= this.term.height) {
+        offset = pos - this.term.height + 1;
+      }
     }
     if (this.opts.status) {
       const statusLine = `^+^_Cursor: ${state.cursor.pos} From: ${state.cursor.from} Key: ${key}  Raw key: ${rawKey} Height: ${this.term.height}`;

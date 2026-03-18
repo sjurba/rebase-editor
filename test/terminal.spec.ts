@@ -583,6 +583,22 @@ describe('Terminal renderer', function () {
         const rendered = mockTerm.getRendered();
         expect(rendered[0]).to.include('reworded abc123');
       });
+
+      it('should render reword editor from top when rebase cursor is below terminal height', function () {
+        const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
+        const lines = Array.from({ length: mockTerm.height + 5 }, (_, i) =>
+          ({ action: 'pick' as const, hash: `sha${i}`, message: `commit ${i}` })
+        );
+        const cursorPos = mockTerm.height + 4;
+        const msg = 'my commit message';
+        const state: RebaseState = {
+          ...getState(lines, cursorPos),
+          rewordState: { message: msg, lineIndex: cursorPos, cursorPos: msg.length, originalMessage: msg }
+        };
+        terminal.render(state);
+        const rendered = mockTerm.getRendered();
+        expect(rendered[0]).to.include('my commit message');
+      });
     });
   });
 });
