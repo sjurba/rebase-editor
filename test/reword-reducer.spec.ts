@@ -276,6 +276,19 @@ describe('Reword reducer', function () {
         const s = rewordReducer(state('hello', 3, 1), 'rewordUndo');
         expect(s.selectAnchor).to.be.undefined;
       });
+
+      it('should restore fullMessage when available', function () {
+        const base = state('edited message', 5);
+        const withFull: RewordModeState = { ...base, fullMessage: '# Full\nOriginal message' };
+        const s = rewordReducer(withFull, 'rewordUndo');
+        expect(s.message).to.equal('# Full\nOriginal message');
+        expect(s.cursorPos).to.equal('# Full\nOriginal message'.length);
+      });
+
+      it('should fall back to originalMessage when fullMessage is absent', function () {
+        const s = rewordReducer(state('edited', 3), 'rewordUndo');
+        expect(s.message).to.equal('edited'); // originalMessage === message in state()
+      });
     });
   });
 

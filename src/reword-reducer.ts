@@ -69,10 +69,11 @@ export default function rewordReducer(state: RewordModeState, action: string, pa
   const { message, cursorPos } = state;
 
   if (action === 'rewordUndo') {
+    const restored = state.fullMessage ?? state.originalMessage;
     return {
       ...state,
-      message: state.originalMessage,
-      cursorPos: state.originalMessage.length,
+      message: restored,
+      cursorPos: restored.length,
       selectAnchor: undefined
     };
   }
