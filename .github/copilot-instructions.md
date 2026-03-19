@@ -61,6 +61,9 @@ interface RebaseState {
 - No unused vars (prefix with `_` to suppress)
 - No bitwise operators
 
+**Commit conventions:**
+- Do not include `Co-authored-by` trailers in commit messages
+
 ## Testing Conventions
 
 **Framework:** Mocha (BDD) + Chai + Sinon + chai-as-promised + sinon-chai. All configured globally in `test/setup.ts`.
