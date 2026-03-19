@@ -279,6 +279,37 @@ describe('Reword reducer', function () {
     });
   });
 
+  describe('rewordDeleteLine', function () {
+    it('should delete the current line and the following newline', function () {
+      const s = rewordReducer(state('hello\nworld', 2), 'rewordDeleteLine');
+      expect(s.message).to.equal('world');
+      expect(s.cursorPos).to.equal(0);
+    });
+
+    it('should delete last line including preceding newline', function () {
+      const s = rewordReducer(state('hello\nworld', 8), 'rewordDeleteLine');
+      expect(s.message).to.equal('hello');
+      expect(s.cursorPos).to.equal(5);
+    });
+
+    it('should clear message when only one line', function () {
+      const s = rewordReducer(state('hello', 3), 'rewordDeleteLine');
+      expect(s.message).to.equal('');
+      expect(s.cursorPos).to.equal(0);
+    });
+
+    it('should delete a middle line', function () {
+      const s = rewordReducer(state('aaa\nbbb\nccc', 5), 'rewordDeleteLine');
+      expect(s.message).to.equal('aaa\nccc');
+      expect(s.cursorPos).to.equal(4);
+    });
+
+    it('should clear selection', function () {
+      const s = rewordReducer(state('hello\nworld', 2, 1), 'rewordDeleteLine');
+      expect(s.selectAnchor).to.be.undefined;
+    });
+  });
+
   describe('unknown action', function () {
     it('should return state unchanged', function () {
       const s = state('hello', 3);

@@ -19,6 +19,7 @@ const defaultRewordBindings: KeyBindings = {
   SHIFT_UP: 'rewordShiftUp',
   SHIFT_DOWN: 'rewordShiftDown',
   CTRL_A: 'rewordSelectAll',
+  CTRL_K: 'rewordDeleteLine',
   CTRL_Z: 'rewordUndo',
   CTRL_C: 'rewordCancel',
 };

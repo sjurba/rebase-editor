@@ -119,6 +119,21 @@ export default function rewordReducer(state: RewordModeState, action: string, pa
     };
   }
 
+  if (action === 'rewordDeleteLine') {
+    const { lineStart, lineEnd } = getCurrentLine(message, cursorPos);
+    const isLastLine = lineEnd >= message.length;
+    const deleteStart = isLastLine && lineStart > 0 ? lineStart - 1 : lineStart;
+    const deleteCount = isLastLine
+      ? message.length - deleteStart
+      : lineEnd - lineStart + 1; // +1 for the \n
+    return {
+      ...state,
+      message: removeAt(message, deleteStart, deleteCount),
+      cursorPos: deleteStart,
+      selectAnchor: undefined
+    };
+  }
+
   if (action === 'rewordLeft') {
     return { ...state, selectAnchor: undefined, cursorPos: Math.max(0, cursorPos - 1) };
   }
