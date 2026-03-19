@@ -1,4 +1,5 @@
-pick 3f0ed85 Fix CJS interop for terminal-kit in ESM build
+pick 3f0ed85 # jalla `test` jalla2
+exec git commit --amend -m "jalla `test` jalla2"
 pick 49eadeb Merge pull request #50 from sjurba/chore/typescript
 pick dc3bbf4 Bump minimatch from 5.1.6 to 5.1.9
 pick 3f5aecf Update GitHub Actions to Node.js 24-compatible versions
