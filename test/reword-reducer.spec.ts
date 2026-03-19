@@ -2,11 +2,13 @@ import { expect } from 'chai';
 import rewordReducer from '../src/reword-reducer';
 import { RewordModeState } from '../src/types';
 
-function state(message: string, cursorPos?: number): RewordModeState {
+function state(message: string, cursorPos?: number, selectAnchor?: number): RewordModeState {
   return {
     message,
+    originalMessage: message,
     lineIndex: 0,
-    cursorPos: cursorPos ?? message.length
+    cursorPos: cursorPos ?? message.length,
+    selectAnchor
   };
 }
 
@@ -146,6 +148,134 @@ describe('Reword reducer', function () {
     it('should do nothing on last line', function () {
       const s = rewordReducer(state('hello\nworld', 8), 'rewordDown');
       expect(s.cursorPos).to.equal(8);
+    });
+  });
+
+  describe('selection', function () {
+    describe('rewordSelectAll', function () {
+      it('should set selectAnchor to 0 and cursorPos to end', function () {
+        const s = rewordReducer(state('hello', 2), 'rewordSelectAll');
+        expect(s.selectAnchor).to.equal(0);
+        expect(s.cursorPos).to.equal(5);
+      });
+    });
+
+    describe('rewordShiftRight', function () {
+      it('should set anchor at current pos and move cursor right', function () {
+        const s = rewordReducer(state('hello', 2), 'rewordShiftRight');
+        expect(s.selectAnchor).to.equal(2);
+        expect(s.cursorPos).to.equal(3);
+      });
+
+      it('should extend existing selection', function () {
+        const s = rewordReducer(state('hello', 3, 1), 'rewordShiftRight');
+        expect(s.selectAnchor).to.equal(1);
+        expect(s.cursorPos).to.equal(4);
+      });
+    });
+
+    describe('rewordShiftLeft', function () {
+      it('should set anchor at current pos and move cursor left', function () {
+        const s = rewordReducer(state('hello', 3), 'rewordShiftLeft');
+        expect(s.selectAnchor).to.equal(3);
+        expect(s.cursorPos).to.equal(2);
+      });
+
+      it('should clamp at start', function () {
+        const s = rewordReducer(state('hello', 0), 'rewordShiftLeft');
+        expect(s.cursorPos).to.equal(0);
+      });
+    });
+
+    describe('rewordShiftDown', function () {
+      it('should set anchor and move cursor down', function () {
+        const s = rewordReducer(state('hello\nworld', 2), 'rewordShiftDown');
+        expect(s.selectAnchor).to.equal(2);
+        expect(s.cursorPos).to.equal(8); // col 2 on 'world'
+      });
+    });
+
+    describe('rewordShiftUp', function () {
+      it('should set anchor and move cursor up', function () {
+        const s = rewordReducer(state('hello\nworld', 8), 'rewordShiftUp');
+        expect(s.selectAnchor).to.equal(8);
+        expect(s.cursorPos).to.equal(2); // col 2 on 'hello'
+      });
+    });
+
+    describe('clearing selection on non-shift moves', function () {
+      it('rewordLeft should clear selection', function () {
+        const s = rewordReducer(state('hello', 3, 1), 'rewordLeft');
+        expect(s.selectAnchor).to.be.undefined;
+      });
+
+      it('rewordRight should clear selection', function () {
+        const s = rewordReducer(state('hello', 3, 1), 'rewordRight');
+        expect(s.selectAnchor).to.be.undefined;
+      });
+
+      it('rewordUp should clear selection', function () {
+        const s = rewordReducer(state('hello\nworld', 8, 2), 'rewordUp');
+        expect(s.selectAnchor).to.be.undefined;
+      });
+
+      it('rewordDown should clear selection', function () {
+        const s = rewordReducer(state('hello\nworld', 2, 0), 'rewordDown');
+        expect(s.selectAnchor).to.be.undefined;
+      });
+
+      it('rewordHome should clear selection', function () {
+        const s = rewordReducer(state('hello', 3, 1), 'rewordHome');
+        expect(s.selectAnchor).to.be.undefined;
+      });
+
+      it('rewordEnd should clear selection', function () {
+        const s = rewordReducer(state('hello', 2, 0), 'rewordEnd');
+        expect(s.selectAnchor).to.be.undefined;
+      });
+    });
+
+    describe('deleting selection', function () {
+      it('rewordBackspace should delete selection', function () {
+        const s = rewordReducer(state('hello', 4, 1), 'rewordBackspace'); // selects 'ell'
+        expect(s.message).to.equal('ho');
+        expect(s.cursorPos).to.equal(1);
+        expect(s.selectAnchor).to.be.undefined;
+      });
+
+      it('rewordDelete should delete selection', function () {
+        const s = rewordReducer(state('hello', 4, 1), 'rewordDelete');
+        expect(s.message).to.equal('ho');
+        expect(s.cursorPos).to.equal(1);
+        expect(s.selectAnchor).to.be.undefined;
+      });
+
+      it('rewordChar should replace selection with typed character', function () {
+        const s = rewordReducer(state('hello', 4, 1), 'rewordChar', 'x');
+        expect(s.message).to.equal('hxo');
+        expect(s.cursorPos).to.equal(2);
+        expect(s.selectAnchor).to.be.undefined;
+      });
+
+      it('rewordEnter should replace selection with newline', function () {
+        const s = rewordReducer(state('hello', 4, 1), 'rewordEnter');
+        expect(s.message).to.equal('h\no');
+        expect(s.cursorPos).to.equal(2);
+        expect(s.selectAnchor).to.be.undefined;
+      });
+
+      it('should work with reversed selection (anchor > cursor)', function () {
+        const s = rewordReducer(state('hello', 1, 4), 'rewordDelete'); // anchor=4, cursor=1 → delete [1,4)
+        expect(s.message).to.equal('ho');
+        expect(s.cursorPos).to.equal(1);
+      });
+    });
+
+    describe('rewordUndo clears selection', function () {
+      it('should clear selectAnchor on undo', function () {
+        const s = rewordReducer(state('hello', 3, 1), 'rewordUndo');
+        expect(s.selectAnchor).to.be.undefined;
+      });
     });
   });
 

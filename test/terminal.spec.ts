@@ -599,6 +599,52 @@ describe('Terminal renderer', function () {
         const rendered = mockTerm.getRendered();
         expect(rendered[0]).to.include('my commit message');
       });
+
+      it('should highlight selected range with inversion when selection is active', function () {
+        const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
+        const msg = 'hello world';
+        const state: RebaseState = {
+          ...getState([{ action: 'reword', hash: 'abc', message: msg }], 0),
+          rewordState: { message: msg, lineIndex: 0, cursorPos: 8, selectAnchor: 3, originalMessage: msg }
+        };
+        terminal.render(state);
+        const rendered = mockTerm.getRendered();
+        // Selection [3,8) = 'lo wo' should be wrapped in ^!...^:
+        expect(rendered[0]).to.include('^!lo wo^:');
+        expect(rendered[0]).to.match(/^hel/);
+        expect(rendered[0]).to.include('rld');
+      });
+
+      it('should not highlight lines outside the selection range', function () {
+        const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
+        const msg = 'aaa\nbbb\nccc';
+        // Selection only covers second line (4-7)
+        const state: RebaseState = {
+          ...getState([{ action: 'reword', hash: 'abc', message: msg }], 0),
+          rewordState: { message: msg, lineIndex: 0, cursorPos: 7, selectAnchor: 4, originalMessage: msg }
+        };
+        terminal.render(state);
+        const rendered = mockTerm.getRendered();
+        // First and third lines should not have selection highlight
+        expect(rendered[0]).not.to.include('^!');
+        expect(rendered[2]).not.to.include('^!');
+        // Second line should have selection
+        expect(rendered[1]).to.include('^!bbb^:');
+      });
+
+      it('should highlight selection spanning multiple lines', function () {
+        const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
+        const msg = 'hello\nworld';
+        const state: RebaseState = {
+          ...getState([{ action: 'reword', hash: 'abc', message: msg }], 0),
+          rewordState: { message: msg, lineIndex: 0, cursorPos: 8, selectAnchor: 3, originalMessage: msg }
+        };
+        terminal.render(state);
+        const rendered = mockTerm.getRendered();
+        // Selection [3,8): on 'hello' (offsets 0-4) → chars 3-4 = 'lo'; on 'world' (offsets 6-10) → chars 0-1 = 'wo'
+        expect(rendered[0]).to.include('^!lo^:');
+        expect(rendered[1]).to.include('^!wo^:');
+      });
     });
   });
 });

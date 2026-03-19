@@ -10,6 +10,7 @@ export interface RewordModeState {
   originalMessage: string; // message before entering edit mode (for undo/cancel)
   lineIndex: number;      // index of the RebaseLine being edited
   cursorPos: number;      // character offset within the message string
+  selectAnchor?: number;  // start of selection; undefined means no selection
   fullMessage?: string;   // full commit message fetched from git (async)
 }
 

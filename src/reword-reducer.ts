@@ -34,6 +34,37 @@ function getCurrentLine(message: string, cursorPos: number): { lineIdx: number; 
   return { lineIdx, col, lineStart, lineEnd };
 }
 
+function deleteSelection(state: RewordModeState): RewordModeState {
+  const { message, cursorPos, selectAnchor } = state;
+  const selStart = Math.min(selectAnchor!, cursorPos);
+  const selEnd = Math.max(selectAnchor!, cursorPos);
+  return {
+    ...state,
+    message: removeAt(message, selStart, selEnd - selStart),
+    cursorPos: selStart,
+    selectAnchor: undefined
+  };
+}
+
+function moveCursorUp(message: string, cursorPos: number): number {
+  const { lineIdx, col, lineStart } = getCurrentLine(message, cursorPos);
+  if (lineIdx === 0) { return cursorPos; }
+  const offsets = getLineOffsets(message);
+  const prevLineStart = offsets[lineIdx - 1];
+  const prevLineLen = lineStart - 1 - prevLineStart;
+  return prevLineStart + Math.min(col, prevLineLen);
+}
+
+function moveCursorDown(message: string, cursorPos: number): number {
+  const { lineIdx, col } = getCurrentLine(message, cursorPos);
+  const offsets = getLineOffsets(message);
+  if (lineIdx >= offsets.length - 1) { return cursorPos; }
+  const nextLineStart = offsets[lineIdx + 1];
+  const nextLineEnd = (offsets[lineIdx + 2] ?? message.length + 1) - 1;
+  const nextLineLen = nextLineEnd - nextLineStart;
+  return Math.min(nextLineStart + Math.min(col, Math.max(0, nextLineLen)), message.length);
+}
+
 export default function rewordReducer(state: RewordModeState, action: string, param?: unknown): RewordModeState {
   const { message, cursorPos } = state;
 
@@ -41,29 +72,37 @@ export default function rewordReducer(state: RewordModeState, action: string, pa
     return {
       ...state,
       message: state.originalMessage,
-      cursorPos: state.originalMessage.length
+      cursorPos: state.originalMessage.length,
+      selectAnchor: undefined
     };
+  }
+
+  if (action === 'rewordSelectAll') {
+    return { ...state, selectAnchor: 0, cursorPos: message.length };
   }
 
   if (action === 'rewordChar') {
     const char = param as string;
+    const base = state.selectAnchor !== undefined ? deleteSelection(state) : state;
     return {
-      ...state,
-      message: insertAt(message, cursorPos, char),
-      cursorPos: cursorPos + 1
+      ...base,
+      message: insertAt(base.message, base.cursorPos, char),
+      cursorPos: base.cursorPos + 1
     };
   }
 
   if (action === 'rewordEnter') {
+    const base = state.selectAnchor !== undefined ? deleteSelection(state) : state;
     return {
-      ...state,
-      message: insertAt(message, cursorPos, '\n'),
-      cursorPos: cursorPos + 1
+      ...base,
+      message: insertAt(base.message, base.cursorPos, '\n'),
+      cursorPos: base.cursorPos + 1
     };
   }
 
   if (action === 'rewordBackspace') {
-    if (cursorPos === 0) return state;
+    if (state.selectAnchor !== undefined) { return deleteSelection(state); }
+    if (cursorPos === 0) { return state; }
     return {
       ...state,
       message: removeAt(message, cursorPos - 1, 1),
@@ -72,7 +111,8 @@ export default function rewordReducer(state: RewordModeState, action: string, pa
   }
 
   if (action === 'rewordDelete') {
-    if (cursorPos >= message.length) return state;
+    if (state.selectAnchor !== undefined) { return deleteSelection(state); }
+    if (cursorPos >= message.length) { return state; }
     return {
       ...state,
       message: removeAt(message, cursorPos, 1)
@@ -80,43 +120,49 @@ export default function rewordReducer(state: RewordModeState, action: string, pa
   }
 
   if (action === 'rewordLeft') {
-    return { ...state, cursorPos: Math.max(0, cursorPos - 1) };
+    return { ...state, selectAnchor: undefined, cursorPos: Math.max(0, cursorPos - 1) };
   }
 
   if (action === 'rewordRight') {
-    return { ...state, cursorPos: Math.min(message.length, cursorPos + 1) };
+    return { ...state, selectAnchor: undefined, cursorPos: Math.min(message.length, cursorPos + 1) };
   }
 
   if (action === 'rewordHome') {
     const { lineStart } = getCurrentLine(message, cursorPos);
-    return { ...state, cursorPos: lineStart };
+    return { ...state, selectAnchor: undefined, cursorPos: lineStart };
   }
 
   if (action === 'rewordEnd') {
     const { lineEnd } = getCurrentLine(message, cursorPos);
-    return { ...state, cursorPos: Math.min(lineEnd, message.length) };
+    return { ...state, selectAnchor: undefined, cursorPos: Math.min(lineEnd, message.length) };
   }
 
   if (action === 'rewordUp') {
-    const { lineIdx, col, lineStart } = getCurrentLine(message, cursorPos);
-    if (lineIdx === 0) return state;
-    const offsets = getLineOffsets(message);
-    const prevLineStart = offsets[lineIdx - 1];
-    const prevLineEnd = lineStart - 1; // position of the \n before current line
-    const prevLineLen = prevLineEnd - prevLineStart;
-    const newCursorPos = prevLineStart + Math.min(col, prevLineLen);
-    return { ...state, cursorPos: newCursorPos };
+    return { ...state, selectAnchor: undefined, cursorPos: moveCursorUp(message, cursorPos) };
   }
 
   if (action === 'rewordDown') {
-    const { lineIdx, col } = getCurrentLine(message, cursorPos);
-    const offsets = getLineOffsets(message);
-    if (lineIdx >= offsets.length - 1) return state;
-    const nextLineStart = offsets[lineIdx + 1];
-    const nextLineEnd = (offsets[lineIdx + 2] ?? message.length + 1) - 1;
-    const nextLineLen = nextLineEnd - nextLineStart;
-    const newCursorPos = nextLineStart + Math.min(col, Math.max(0, nextLineLen));
-    return { ...state, cursorPos: Math.min(newCursorPos, message.length) };
+    return { ...state, selectAnchor: undefined, cursorPos: moveCursorDown(message, cursorPos) };
+  }
+
+  if (action === 'rewordShiftLeft') {
+    const anchor = state.selectAnchor ?? cursorPos;
+    return { ...state, selectAnchor: anchor, cursorPos: Math.max(0, cursorPos - 1) };
+  }
+
+  if (action === 'rewordShiftRight') {
+    const anchor = state.selectAnchor ?? cursorPos;
+    return { ...state, selectAnchor: anchor, cursorPos: Math.min(message.length, cursorPos + 1) };
+  }
+
+  if (action === 'rewordShiftUp') {
+    const anchor = state.selectAnchor ?? cursorPos;
+    return { ...state, selectAnchor: anchor, cursorPos: moveCursorUp(message, cursorPos) };
+  }
+
+  if (action === 'rewordShiftDown') {
+    const anchor = state.selectAnchor ?? cursorPos;
+    return { ...state, selectAnchor: anchor, cursorPos: moveCursorDown(message, cursorPos) };
   }
 
   return state;

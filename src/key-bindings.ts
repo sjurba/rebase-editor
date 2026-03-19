@@ -14,6 +14,11 @@ const defaultRewordBindings: KeyBindings = {
   DOWN: 'rewordDown',
   HOME: 'rewordHome',
   END: 'rewordEnd',
+  SHIFT_LEFT: 'rewordShiftLeft',
+  SHIFT_RIGHT: 'rewordShiftRight',
+  SHIFT_UP: 'rewordShiftUp',
+  SHIFT_DOWN: 'rewordShiftDown',
+  CTRL_A: 'rewordSelectAll',
   CTRL_Z: 'rewordUndo',
   CTRL_C: 'rewordCancel',
 };
