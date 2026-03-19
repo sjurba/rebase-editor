@@ -555,6 +555,24 @@ describe('Terminal renderer', function () {
         expect(rendered[mockTerm.height - 2]).to.include('ine49');
       });
 
+      it('should scroll to follow cursor when extending selection beyond screen', function () {
+        // Build a tall message, select from top; cursor on a line with no selected chars visible
+        const lines51 = Array.from({ length: 51 }, (_, i) => `line${i}`);
+        const msg = lines51.join('\n');
+        // anchor at start, cursor on line 49 (below fold)
+        const cursorPos = lines51.slice(0, 49).reduce((acc, l) => acc + l.length + 1, 0);
+        const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
+        const state: RebaseState = {
+          ...getState([{ action: 'reword', hash: 'abc123', message: msg }], 0),
+          rewordState: { message: msg, lineIndex: 0, cursorPos, selectAnchor: 0, originalMessage: msg }
+        };
+        terminal.render(state);
+        const rendered = mockTerm.getRendered();
+        // Should scroll so cursor line is visible (not stuck at top)
+        expect(rendered[0]).not.to.equal('line0');
+        expect(rendered[mockTerm.height - 2]).to.include('line49');
+      });
+
       it('should show first line of message for all lines in rebase mode', function () {
         const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
         const state: RebaseState = {

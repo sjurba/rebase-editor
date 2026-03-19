@@ -18,11 +18,11 @@ export default function renderReword(rewordState: RewordModeState, termHeight: n
     const lineEnd = offset + msgLine.length;
 
     if (hasSelection) {
-      // Highlight selection range; no cursor caret within selection
+      if (cursorPos >= lineStart && cursorPos <= lineEnd) { cursorLine = i; }
+      // Highlight selection range
       const lineSelStart = Math.max(selStart, lineStart) - lineStart;
       const lineSelEnd = Math.min(selEnd, lineEnd) - lineStart;
       if (lineSelStart < lineSelEnd) {
-        if (cursorPos >= lineStart && cursorPos <= lineEnd) { cursorLine = i; }
         const before = msgLine.slice(0, lineSelStart);
         const selected = msgLine.slice(lineSelStart, lineSelEnd);
         const after = msgLine.slice(lineSelEnd);
