@@ -81,19 +81,20 @@ function toFile(state: RebaseState | undefined): string {
   if (!state) {
     return '';
   }
-  const lines = state.lines.map((line: RebaseLine, idx: number, arr: RebaseLine[]) => {
+  let inRewordedBlock = false;
+  const lines = state.lines.map((line: RebaseLine) => {
     if (line.action === 'reworded') {
+      inRewordedBlock = true;
       const parts = line.message.split('\n').filter(p => p.length > 0 && !p.startsWith('#'));
       const flags = parts.map(p => `-m "${p.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`).join(' ');
       const firstLine = parts[0] ?? '';
       return `pick ${line.hash} # ${firstLine}\nexec git commit --amend ${flags}`;
     }
-    if (line.action === 'squash') {
-      let next = idx + 1;
-      while (next < arr.length && arr[next].action === 'squash') { next++; }
-      if (arr[next]?.action === 'reworded') {
-        return `fixup ${line.hash} ${line.message.split('\n')[0]}`;
-      }
+    if (line.action === 'squash' && inRewordedBlock) {
+      return `fixup ${line.hash} ${line.message.split('\n')[0]}`;
+    }
+    if (line.action !== 'squash') {
+      inRewordedBlock = false;
     }
     return [line.action, line.hash, line.message.split('\n')[0]].filter((part) => part).join(' ');
   });

@@ -278,21 +278,22 @@ describe('Rebase file', function () {
       expect(file).to.include('exec git commit --amend -m "First line" -m "Second line"');
     });
 
-    it('should convert preceding squash lines to fixup when followed by reworded', function () {
+    it('should convert following squash lines to fixup when preceded by reworded', function () {
       const state = {
         lines: [
           { action: 'pick', hash: 'aaa111', message: 'base commit' },
+          { action: 'reworded', hash: 'ddd444', message: 'New message' },
           { action: 'squash', hash: 'bbb222', message: 'squash commit b' },
-          { action: 'squash', hash: 'ccc333', message: 'squash commit c' },
-          { action: 'reworded', hash: 'ddd444', message: 'New message' }
+          { action: 'squash', hash: 'ccc333', message: 'squash commit c' }
         ],
+
         info: []
       } as unknown as RebaseState;
       const file = rebaseFile.toFile(state);
       expect(file).to.include('pick aaa111 base commit');
+      expect(file).to.include('pick ddd444 # New message');
       expect(file).to.include('fixup bbb222 squash commit b');
       expect(file).to.include('fixup ccc333 squash commit c');
-      expect(file).to.include('pick ddd444 # New message');
       expect(file).to.include('exec git commit --amend -m "New message"');
     });
 
