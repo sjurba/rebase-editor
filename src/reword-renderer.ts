@@ -44,9 +44,9 @@ export default function renderReword(rewordState: RewordModeState, termHeight: n
     offset += msgLine.length + 1; // +1 for the \n
   }
 
-  // Scroll so the cursor line is always visible
+  // Scroll so the cursor stays at least 2 lines from the bottom
   const contentHeight = termHeight - 1;
-  const scrollOffset = Math.max(0, cursorLine - contentHeight + 1);
+  const scrollOffset = Math.max(0, cursorLine - contentHeight + 3);
 
   const allLines: string[] = [];
   for (let i = 0; i < contentHeight; i++) {

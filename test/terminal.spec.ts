@@ -536,7 +536,7 @@ describe('Terminal renderer', function () {
       });
 
       it('should scroll so cursor line is visible when below terminal height', function () {
-        // height=50, contentHeight=49. Put cursor on line 49 (index 49) → scrollOffset=1
+        // height=50, contentHeight=49. Cursor on line 49 → scrollOffset = 49 - 49 + 3 = 3
         // Build a 51-line message: "line0\nline1\n...line50"
         const lines51 = Array.from({ length: 51 }, (_, i) => `line${i}`);
         const msg = lines51.join('\n');
@@ -549,10 +549,10 @@ describe('Terminal renderer', function () {
         };
         terminal.render(state);
         const rendered = mockTerm.getRendered();
-        // scrollOffset=1 → line 0 of screen shows "line1", not "line0"
-        expect(rendered[0]).to.equal('line1');
-        // cursor line (line49) appears at the last content row (cursor on 'l' so rest is 'ine49')
-        expect(rendered[mockTerm.height - 2]).to.include('ine49');
+        // scrollOffset=3 → line 0 of screen shows "line3", not "line0"
+        expect(rendered[0]).to.equal('line3');
+        // cursor line (line49) appears at row 49-3=46 (3rd from bottom of content)
+        expect(rendered[mockTerm.height - 4]).to.include('ine49');
       });
 
       it('should scroll to follow cursor when extending selection beyond screen', function () {
@@ -570,7 +570,7 @@ describe('Terminal renderer', function () {
         const rendered = mockTerm.getRendered();
         // Should scroll so cursor line is visible (not stuck at top)
         expect(rendered[0]).not.to.equal('line0');
-        expect(rendered[mockTerm.height - 2]).to.include('line49');
+        expect(rendered[mockTerm.height - 4]).to.include('line49');
       });
 
       it('should show first line of message for all lines in rebase mode', function () {
