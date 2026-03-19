@@ -6,7 +6,7 @@ export default function renderReword(rewordState: RewordModeState, termHeight: n
   const selStart = hasSelection ? Math.min(selectAnchor, cursorPos) : 0;
   const selEnd = hasSelection ? Math.max(selectAnchor, cursorPos) : 0;
 
-  const footer = `^!ENTER: new line  ESC: save  CTRL+Z: restore  CTRL+C: cancel`;
+  const footer = `^!ENTER: new line  ESC: save  CTRL+A: select all  SHIFT+↑↓←→: select  CTRL+K: del line  CTRL+Z: restore  CTRL+C: cancel`;
 
   const messageLines: string[] = [];
   const msgLines = message.split('\n');
