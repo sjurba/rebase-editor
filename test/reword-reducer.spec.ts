@@ -172,6 +172,11 @@ describe('Reword reducer', function () {
         expect(s.selectAnchor).to.equal(1);
         expect(s.cursorPos).to.equal(4);
       });
+
+      it('should do nothing at end of message', function () {
+        const s0 = state('hello', 5);
+        expect(rewordReducer(s0, 'rewordShiftRight')).to.equal(s0);
+      });
     });
 
     describe('rewordShiftLeft', function () {
@@ -184,6 +189,7 @@ describe('Reword reducer', function () {
       it('should clamp at start', function () {
         const s = rewordReducer(state('hello', 0), 'rewordShiftLeft');
         expect(s.cursorPos).to.equal(0);
+        expect(s.selectAnchor).to.be.undefined; // state unchanged — no phantom anchor
       });
     });
 
@@ -193,6 +199,15 @@ describe('Reword reducer', function () {
         expect(s.selectAnchor).to.equal(2);
         expect(s.cursorPos).to.equal(8); // col 2 on 'world'
       });
+
+      it('should do nothing on last line, preserving existing selection', function () {
+        // On last line with no selection — state returned unchanged
+        const s0 = state('hello\nworld', 8);
+        expect(rewordReducer(s0, 'rewordShiftDown')).to.equal(s0);
+        // On last line with existing selection — state still unchanged
+        const withSel = state('hello\nworld', 8, 2);
+        expect(rewordReducer(withSel, 'rewordShiftDown')).to.equal(withSel);
+      });
     });
 
     describe('rewordShiftUp', function () {
@@ -200,6 +215,11 @@ describe('Reword reducer', function () {
         const s = rewordReducer(state('hello\nworld', 8), 'rewordShiftUp');
         expect(s.selectAnchor).to.equal(8);
         expect(s.cursorPos).to.equal(2); // col 2 on 'hello'
+      });
+
+      it('should do nothing on first line', function () {
+        const s0 = state('hello\nworld', 2);
+        expect(rewordReducer(s0, 'rewordShiftUp')).to.equal(s0);
       });
     });
 

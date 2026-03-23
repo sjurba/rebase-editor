@@ -162,23 +162,29 @@ export default function rewordReducer(state: RewordModeState, action: string, pa
   }
 
   if (action === 'rewordShiftLeft') {
+    if (cursorPos === 0) { return state; }
     const anchor = state.selectAnchor ?? cursorPos;
-    return { ...state, selectAnchor: anchor, cursorPos: Math.max(0, cursorPos - 1) };
+    return { ...state, selectAnchor: anchor, cursorPos: cursorPos - 1 };
   }
 
   if (action === 'rewordShiftRight') {
+    if (cursorPos === message.length) { return state; }
     const anchor = state.selectAnchor ?? cursorPos;
-    return { ...state, selectAnchor: anchor, cursorPos: Math.min(message.length, cursorPos + 1) };
+    return { ...state, selectAnchor: anchor, cursorPos: cursorPos + 1 };
   }
 
   if (action === 'rewordShiftUp') {
+    const newCursorPos = moveCursorUp(message, cursorPos);
+    if (newCursorPos === cursorPos) { return state; }
     const anchor = state.selectAnchor ?? cursorPos;
-    return { ...state, selectAnchor: anchor, cursorPos: moveCursorUp(message, cursorPos) };
+    return { ...state, selectAnchor: anchor, cursorPos: newCursorPos };
   }
 
   if (action === 'rewordShiftDown') {
+    const newCursorPos = moveCursorDown(message, cursorPos);
+    if (newCursorPos === cursorPos) { return state; }
     const anchor = state.selectAnchor ?? cursorPos;
-    return { ...state, selectAnchor: anchor, cursorPos: moveCursorDown(message, cursorPos) };
+    return { ...state, selectAnchor: anchor, cursorPos: newCursorPos };
   }
 
   return state;
