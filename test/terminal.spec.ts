@@ -663,6 +663,20 @@ describe('Terminal renderer', function () {
         expect(rendered[0]).to.include('^!lo^:');
         expect(rendered[1]).to.include('^!wo^:');
       });
+
+      it('should show highlighted space on empty line within selection', function () {
+        const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
+        // 'hello\n\nworld': empty line at offset 6, selection covers it
+        const msg = 'hello\n\nworld';
+        const state: RebaseState = {
+          ...getState([{ action: 'reword', hash: 'abc', message: msg }], 0),
+          rewordState: { message: msg, lineIndex: 0, cursorPos: 9, selectAnchor: 3, originalMessage: msg }
+        };
+        terminal.render(state);
+        const rendered = mockTerm.getRendered();
+        // Empty second line (offset 6) is within selection [3,9) → show highlighted space
+        expect(rendered[1]).to.equal('^! ^:');
+      });
     });
   });
 });

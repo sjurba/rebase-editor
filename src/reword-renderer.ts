@@ -27,6 +27,9 @@ export default function renderReword(rewordState: RewordModeState, termHeight: n
         const selected = msgLine.slice(lineSelStart, lineSelEnd);
         const after = msgLine.slice(lineSelEnd);
         messageLines.push(before + '^!' + selected + '^:' + after);
+      } else if (msgLine.length === 0 && lineStart >= selStart && lineStart < selEnd) {
+        // Empty line within selection: show a highlighted space as visual indicator
+        messageLines.push('^! ^:');
       } else {
         messageLines.push(msgLine);
       }
