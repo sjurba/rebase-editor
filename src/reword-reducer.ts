@@ -175,16 +175,16 @@ export default function rewordReducer(state: RewordModeState, action: string, pa
 
   if (action === 'rewordShiftUp') {
     const newCursorPos = moveCursorUp(message, cursorPos);
-    if (newCursorPos === cursorPos) { return state; }
     const anchor = state.selectAnchor ?? cursorPos;
-    return { ...state, selectAnchor: anchor, cursorPos: newCursorPos };
+    // On first line: jump to start of message
+    return { ...state, selectAnchor: anchor, cursorPos: newCursorPos === cursorPos ? 0 : newCursorPos };
   }
 
   if (action === 'rewordShiftDown') {
     const newCursorPos = moveCursorDown(message, cursorPos);
-    if (newCursorPos === cursorPos) { return state; }
     const anchor = state.selectAnchor ?? cursorPos;
-    return { ...state, selectAnchor: anchor, cursorPos: newCursorPos };
+    // On last line: jump to end of message
+    return { ...state, selectAnchor: anchor, cursorPos: newCursorPos === cursorPos ? message.length : newCursorPos };
   }
 
   return state;

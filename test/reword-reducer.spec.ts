@@ -200,13 +200,17 @@ describe('Reword reducer', function () {
         expect(s.cursorPos).to.equal(8); // col 2 on 'world'
       });
 
-      it('should do nothing on last line, preserving existing selection', function () {
-        // On last line with no selection — state returned unchanged
-        const s0 = state('hello\nworld', 8);
-        expect(rewordReducer(s0, 'rewordShiftDown')).to.equal(s0);
-        // On last line with existing selection — state still unchanged
+      it('should select to end of message when on last line', function () {
+        const s = rewordReducer(state('hello\nworld', 8), 'rewordShiftDown');
+        expect(s.selectAnchor).to.equal(8);
+        expect(s.cursorPos).to.equal(11); // end of message
+      });
+
+      it('should extend existing selection to end when on last line', function () {
         const withSel = state('hello\nworld', 8, 2);
-        expect(rewordReducer(withSel, 'rewordShiftDown')).to.equal(withSel);
+        const s = rewordReducer(withSel, 'rewordShiftDown');
+        expect(s.selectAnchor).to.equal(2); // anchor preserved
+        expect(s.cursorPos).to.equal(11);
       });
     });
 
@@ -217,9 +221,10 @@ describe('Reword reducer', function () {
         expect(s.cursorPos).to.equal(2); // col 2 on 'hello'
       });
 
-      it('should do nothing on first line', function () {
-        const s0 = state('hello\nworld', 2);
-        expect(rewordReducer(s0, 'rewordShiftUp')).to.equal(s0);
+      it('should select to start of message when on first line', function () {
+        const s = rewordReducer(state('hello\nworld', 2), 'rewordShiftUp');
+        expect(s.selectAnchor).to.equal(2);
+        expect(s.cursorPos).to.equal(0);
       });
     });
 
