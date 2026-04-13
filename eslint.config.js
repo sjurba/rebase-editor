@@ -1,6 +1,7 @@
 // @ts-check
 import tseslint from '@typescript-eslint/eslint-plugin';
 import tsparser from '@typescript-eslint/parser';
+import chaiFriendly from 'eslint-plugin-chai-friendly';
 import prettier from 'eslint-config-prettier';
 
 export default [
@@ -18,6 +19,15 @@ export default [
       curly: 'error',
       'no-bitwise': 'error',
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    },
+  },
+  {
+    files: ['test/**/*.ts'],
+    plugins: { 'chai-friendly': chaiFriendly },
+    rules: {
+      'no-unused-expressions': 'off',
+      '@typescript-eslint/no-unused-expressions': 'off',
+      'chai-friendly/no-unused-expressions': 'error',
     },
   },
   prettier,
