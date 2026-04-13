@@ -103,9 +103,8 @@ function getUndo(state: RebaseState, stack: 'undoStack' | 'redoStack'): Partial<
   return partialState;
 }
 
-function popUndo(state: RebaseState, stackName: 'undoStack' | 'redoStack'): Partial<RebaseState> {
+function popUndo(stack: UndoEntry[], stackName: 'undoStack' | 'redoStack'): Partial<RebaseState> {
   const partialState: Partial<RebaseState> = {};
-  const stack = state[stackName] ?? [];
   partialState[stackName] = pop(stack);
   return partialState;
 }
@@ -115,7 +114,7 @@ function undo(state: RebaseState, undoKey: 'undoStack' | 'redoStack', redoKey: '
   const oldState = state;
   if (undoStack && undoStack.length > 0) {
     const undoState = undoStack[undoStack.length - 1];
-    state = set(state, undoState as Partial<RebaseState>, getUndo(oldState, redoKey), popUndo(oldState, undoKey));
+    state = set(state, undoState as Partial<RebaseState>, getUndo(oldState, redoKey), popUndo(undoStack, undoKey));
   }
   return state;
 }

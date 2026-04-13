@@ -92,7 +92,7 @@ export default function rewordReducer(state: RewordModeState, action: string, pa
 
   if (action === 'rewordChar') {
     const char = param as string;
-    const base = state.selectAnchor !== undefined ? deleteSelection(state) : state;
+    const base = deleteSelection(state);
     return {
       ...base,
       message: insertAt(base.message, base.cursorPos, char),
@@ -101,7 +101,7 @@ export default function rewordReducer(state: RewordModeState, action: string, pa
   }
 
   if (action === 'rewordEnter') {
-    const base = state.selectAnchor !== undefined ? deleteSelection(state) : state;
+    const base = deleteSelection(state);
     return {
       ...base,
       message: insertAt(base.message, base.cursorPos, '\n'),
