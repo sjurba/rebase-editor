@@ -22,7 +22,7 @@ export interface MockTerm {
 function createMockTerminal(): MockTerm {
   let lines: string[] = [];
   let linePos: number;
-  let eventListeners: Record<string, ((...args: unknown[]) => void)[]> = {};
+  const eventListeners: Record<string, ((...args: unknown[]) => void)[]> = {};
   let mockError: Error | null;
 
   function term(str: string): MockTerm {
@@ -66,7 +66,7 @@ function createMockTerminal(): MockTerm {
 
   term.emit = (evt: string, ...args: unknown[]): void => {
     const listeners = eventListeners[evt] || [];
-    listeners.forEach((fnc) => fnc(...args));
+    listeners.forEach((fnc) => { fnc(...args); });
   };
 
   term.throwOnRender = (err: Error): void => {

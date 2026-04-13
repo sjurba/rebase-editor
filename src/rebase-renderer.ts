@@ -43,7 +43,7 @@ export default function renderRebase(
   allLines.push('');
 
   let emptyLines = 0;
-  let extraInfo = state.extraInfo && state.extraInfo(opts.keyBindings as KeyBindings);
+  const extraInfo = state.extraInfo?.(opts.keyBindings!);
   state.info.forEach((line) => {
     if (line === '#' && extraInfo) {
       emptyLines++;

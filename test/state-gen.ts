@@ -22,7 +22,7 @@ export default function getState(
       };
     });
   } else if (!Array.isArray(lines)) {
-    ({ lines, cursor, info, height = 20 } = lines as StateInput);
+    ({ lines, cursor, info, height = 20 } = lines);
   }
   if (typeof info === 'number') {
     info = new Array(info || 0).fill(null).map((_val: null, idx: number) => {
@@ -39,12 +39,12 @@ export default function getState(
     };
   }
   return {
-    lines: lines as RebaseLine[],
-    cursor: cursor as CursorState,
+    lines: lines,
+    cursor: cursor,
     otherStateVar: {
       foo: 'bar',
     },
-    info: (info as string[]) || [],
+    info: (info!) || [],
     height: height,
   };
 }

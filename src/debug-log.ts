@@ -14,7 +14,7 @@ const debugLog = {
         });
       }
       return new Promise((resolve) => {
-        file!.write(util.format(...params) + '\n', () => resolve());
+        file!.write(util.format(...params) + '\n', () => { resolve(); });
       });
     };
   },

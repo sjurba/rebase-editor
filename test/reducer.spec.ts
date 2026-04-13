@@ -759,7 +759,7 @@ describe('Reducer', function () {
     });
 
     it('should delegate text editing to reword-reducer when in reword mode', function () {
-      let state = getState([{ action: 'reword', hash: 'abc123', message: 'My commit' }], 0) as RebaseState;
+      let state = getState([{ action: 'reword', hash: 'abc123', message: 'My commit' }], 0);
       state = reduce(state, 'reword') as RebaseState;
       expect(state.rewordState).to.exist;
       state = reduce(state, 'rewordChar', '!') as RebaseState;
@@ -767,7 +767,7 @@ describe('Reducer', function () {
     });
 
     it('should commit message and set action to reworded on rewordDone', function () {
-      let state = getState([{ action: 'reword', hash: 'abc123', message: 'My commit' }], 0) as RebaseState;
+      let state = getState([{ action: 'reword', hash: 'abc123', message: 'My commit' }], 0);
       state = reduce(state, 'reword') as RebaseState;
       state = reduce(state, 'rewordChar', '!') as RebaseState;
       state = reduce(state, 'rewordDone') as RebaseState;
@@ -777,7 +777,7 @@ describe('Reducer', function () {
     });
 
     it('should push undo entry on rewordDone', function () {
-      let state = getState([{ action: 'reword', hash: 'abc123', message: 'My commit' }], 0) as RebaseState;
+      let state = getState([{ action: 'reword', hash: 'abc123', message: 'My commit' }], 0);
       state = reduce(state, 'reword') as RebaseState;
       state = reduce(state, 'rewordChar', '!') as RebaseState;
       const beforeDone = state;
@@ -789,7 +789,7 @@ describe('Reducer', function () {
     });
 
     it('should clear reword mode before routing normal actions', function () {
-      const state = getState([{ action: 'pick', hash: 'abc123', message: 'My commit' }], 0) as RebaseState;
+      const state = getState([{ action: 'pick', hash: 'abc123', message: 'My commit' }], 0);
       const newState = reduce(state, 'down') as RebaseState;
       expect(newState.rewordState).to.be.undefined;
     });
@@ -801,7 +801,7 @@ describe('Reducer', function () {
           { action: 'pick', hash: 'def456', message: 'Other commit' },
         ],
         0,
-      ) as RebaseState;
+      );
       state = reduce(state, 'reword') as RebaseState;
       state = reduce(state, 'rewordChar', '!') as RebaseState;
       expect(state.rewordState!.message).to.equal('My commit!');
@@ -813,7 +813,7 @@ describe('Reducer', function () {
     });
 
     it('should restore original message on rewordUndo without exiting', function () {
-      let state = getState([{ action: 'reword', hash: 'abc123', message: 'My commit' }], 0) as RebaseState;
+      let state = getState([{ action: 'reword', hash: 'abc123', message: 'My commit' }], 0);
       state = reduce(state, 'reword') as RebaseState;
       state = reduce(state, 'rewordChar', '!') as RebaseState;
       expect(state.rewordState!.message).to.equal('My commit!');
@@ -824,7 +824,7 @@ describe('Reducer', function () {
     });
 
     it('should return same state when reword-reducer handles unknown action in reword mode', function () {
-      let state = getState([{ action: 'reword', hash: 'abc123', message: 'My commit' }], 0) as RebaseState;
+      let state = getState([{ action: 'reword', hash: 'abc123', message: 'My commit' }], 0);
       state = reduce(state, 'reword') as RebaseState;
       expect(state.rewordState).to.exist;
       const newState = reduce(state, 'unknownAction');
@@ -832,7 +832,7 @@ describe('Reducer', function () {
     });
 
     it('should store originalMessage on line when rewordDone', function () {
-      let state = getState([{ action: 'reword', hash: 'abc123', message: 'My commit' }], 0) as RebaseState;
+      let state = getState([{ action: 'reword', hash: 'abc123', message: 'My commit' }], 0);
       state = reduce(state, 'reword') as RebaseState;
       state = reduce(state, 'rewordChar', '!') as RebaseState;
       state = reduce(state, 'rewordDone') as RebaseState;
@@ -840,7 +840,7 @@ describe('Reducer', function () {
     });
 
     it('should restore originalMessage when switching action away from reworded', function () {
-      let state = getState([{ action: 'reword', hash: 'abc123', message: 'My commit' }], 0) as RebaseState;
+      let state = getState([{ action: 'reword', hash: 'abc123', message: 'My commit' }], 0);
       state = reduce(state, 'reword') as RebaseState;
       state = reduce(state, 'rewordDone') as RebaseState;
       // Simulate full message being set (as async git fetch would do)

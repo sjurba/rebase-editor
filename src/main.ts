@@ -55,7 +55,7 @@ export default async function main(args: MainArgs, logger: Logger, onExit?: (err
                 const requestLineIndex = lineIndex;
                 getFullCommitMessages(hashes)
                   .then((fullMessage) => {
-                    if (state.rewordState && state.rewordState.lineIndex === requestLineIndex) {
+                    if (state.rewordState?.lineIndex === requestLineIndex) {
                       state = {
                         ...state,
                         rewordState: {

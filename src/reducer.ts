@@ -7,7 +7,7 @@ function deepFreeze<T extends object>(obj: T): Readonly<T> {
   propNames.forEach(function (name) {
     const prop = (obj as Record<string, unknown>)[name];
     if (typeof prop === 'object' && prop !== null) {
-      deepFreeze(prop as object);
+      deepFreeze(prop);
     }
   });
   return Object.freeze(obj);

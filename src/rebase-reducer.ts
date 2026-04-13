@@ -8,7 +8,7 @@ function deepFreeze<T extends object>(obj: T): Readonly<T> {
   propNames.forEach(function (name) {
     const prop = (obj as Record<string, unknown>)[name];
     if (typeof prop === 'object' && prop !== null) {
-      deepFreeze(prop as object);
+      deepFreeze(prop);
     }
   });
   return Object.freeze(obj);
@@ -96,7 +96,7 @@ function getAction(state: RebaseState, action: string): Partial<RebaseState> {
 
 function getUndo(state: RebaseState, stack: 'undoStack' | 'redoStack'): Partial<RebaseState> {
   const partialState: Partial<RebaseState> = {};
-  partialState[stack] = push(state[stack] as UndoEntry[] | undefined, {
+  partialState[stack] = push(state[stack], {
     lines: state.lines,
     cursor: state.cursor,
   });
@@ -105,13 +105,13 @@ function getUndo(state: RebaseState, stack: 'undoStack' | 'redoStack'): Partial<
 
 function popUndo(state: RebaseState, stackName: 'undoStack' | 'redoStack'): Partial<RebaseState> {
   const partialState: Partial<RebaseState> = {};
-  const stack = state[stackName] as UndoEntry[];
+  const stack = state[stackName]!;
   partialState[stackName] = pop(stack);
   return partialState;
 }
 
 function undo(state: RebaseState, undoKey: 'undoStack' | 'redoStack', redoKey: 'undoStack' | 'redoStack'): RebaseState {
-  const undoStack = state[undoKey] as UndoEntry[] | undefined;
+  const undoStack = state[undoKey];
   const oldState = state;
   if (undoStack && undoStack.length > 0) {
     const undoState = undoStack[undoStack.length - 1];
