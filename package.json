@@ -9,7 +9,7 @@
     "test": "mocha",
     "tdd": "mocha --watch --reporter min",
     "coverage": "c8 --reporter=html --reporter=text mocha",
-    "coverage-ci": "c8 --reporter=lcov --reporter=text mocha",
+    "coverage-ci": "c8 --reporter=lcov --reporter=text --100 mocha",
     "start": "tsx src/index.ts"
   },
   "files": [
