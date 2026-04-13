@@ -519,6 +519,23 @@ describe('Terminal renderer', function () {
         expect(rendered[0]).to.include('My commit');
       });
 
+      it('should render a highlighted space when cursor is at end of line', function () {
+        const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
+        const msg = 'My commit';
+        const state: RebaseState = {
+          ...getState([{ action: 'reword', hash: 'abc123', message: msg }], 0),
+          rewordState: {
+            message: msg,
+            lineIndex: 0,
+            cursorPos: msg.length  // cursor at EOL
+          }
+        };
+        terminal.render(state);
+        const rendered = mockTerm.getRendered();
+        // Should show the message text followed by a highlighted space (^! ^:)
+        expect(rendered[0]).to.equal('My commit^! ^:');
+      });
+
       it('should render non-cursor lines without highlight in multi-line messages', function () {
         const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
         const state: RebaseState = {

@@ -1,15 +1,28 @@
 import childProcess from 'child_process';
 
 function ordinal(n: number): string {
-  if (n === 1) { return '1st'; }
-  if (n === 2) { return '2nd'; }
-  if (n === 3) { return '3rd'; }
-  return `${n}th`;
+  const lastTwoDigits = n % 100;
+  if (lastTwoDigits >= 11 && lastTwoDigits <= 13) {
+    return `${n}th`;
+  }
+  switch (n % 10) {
+    case 1: return `${n}st`;
+    case 2: return `${n}nd`;
+    case 3: return `${n}rd`;
+    default: return `${n}th`;
+  }
+}
+
+function isValidCommitHash(hash: string): boolean {
+  return /^[0-9A-Fa-f]{4,64}$/.test(hash);
 }
 
 export function getFullCommitMessages(hashes: string[]): Promise<string> {
   return new Promise((resolve, reject) => {
-    childProcess.exec(`git log --no-walk --format=%B%x1E ${hashes.join(' ')}`, (err, stdout) => {
+    if (!hashes.every(isValidCommitHash)) {
+      return reject(new Error('Invalid commit hash.'));
+    }
+    childProcess.execFile('git', ['log', '--no-walk', '--format=%B%x1E', ...hashes], (err, stdout) => {
       if (err) {
         return reject(err);
       }

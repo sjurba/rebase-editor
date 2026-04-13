@@ -47,7 +47,7 @@ Press `r` on a `reword` line (or `r` again on an already-reworded line) to open 
 Reword mode key bindings:
   - ENTER = Insert newline
   - ESC = Save and exit reword mode
-  - CTRL_Z = Undo last change within the editor
+  - CTRL_Z = Restore the original message for this editor session
   - CTRL_C = Cancel and restore the original message
   - LEFT/RIGHT = Move cursor left/right
   - UP/DOWN = Move cursor up/down across lines
@@ -200,7 +200,7 @@ Using git:
  - **Reword mode**: Press `r` on a `reword` line to open an inline multi-line commit message editor. The full commit message is fetched from git and displayed for editing directly in the terminal.
    - Full cursor movement: arrow keys, HOME/END, CTRL_A (select all), CTRL_K (delete line)
    - Text selection with SHIFT+arrow keys
-   - Undo within the editor with CTRL_Z
+    - CTRL_Z restores the original/full message in the editor
    - ESC to save, CTRL_C to cancel and restore the original message
    - Squash sequences: entering reword mode on a commit with preceding squash lines fetches and combines all messages
    - Re-enter reword mode by pressing `r` again on an already-reworded line

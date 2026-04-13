@@ -8,6 +8,10 @@ export default function renderReword(rewordState: RewordModeState, termHeight: n
 
   const footer = `^!ENTER: new line  ESC: save  CTRL+A: select all  SHIFT+↑↓←→: select  CTRL+K: del line  CTRL+Z: restore  CTRL+C: cancel`;
 
+  const esc = (s: string) => s.replace(/\^/g, '^^');
+  const highlight = (line: string, start: number, end: number) =>
+    esc(line.slice(0, start)) + '^!' + (esc(line.slice(start, end)) || ' ') + '^:' + esc(line.slice(end));
+
   const messageLines: string[] = [];
   const msgLines = message.split('\n');
   let offset = 0;
@@ -23,25 +27,19 @@ export default function renderReword(rewordState: RewordModeState, termHeight: n
       const lineSelStart = Math.max(selStart, lineStart) - lineStart;
       const lineSelEnd = Math.min(selEnd, lineEnd) - lineStart;
       if (lineSelStart < lineSelEnd) {
-        const before = msgLine.slice(0, lineSelStart);
-        const selected = msgLine.slice(lineSelStart, lineSelEnd);
-        const after = msgLine.slice(lineSelEnd);
-        messageLines.push(before + '^!' + selected + '^:' + after);
+        messageLines.push(highlight(msgLine, lineSelStart, lineSelEnd));
       } else if (msgLine.length === 0 && lineStart >= selStart && lineStart < selEnd) {
         // Empty line within selection: show a highlighted space as visual indicator
         messageLines.push('^! ^:');
       } else {
-        messageLines.push(msgLine);
+        messageLines.push(esc(msgLine));
       }
     } else if (cursorPos >= lineStart && cursorPos <= lineEnd) {
       cursorLine = i;
       const col = cursorPos - lineStart;
-      const before = msgLine.slice(0, col);
-      const cursorChar = (msgLine[col] ?? ' ');
-      const after = msgLine.slice(col + 1);
-      messageLines.push(before + '^!' + cursorChar + '^:' + after);
+      messageLines.push(highlight(msgLine, col, col + 1));
     } else {
-      messageLines.push(msgLine);
+      messageLines.push(esc(msgLine));
     }
 
     offset += msgLine.length + 1; // +1 for the \n

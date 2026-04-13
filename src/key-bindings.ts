@@ -1,7 +1,5 @@
 import path from 'path';
-import { createRequire } from 'module';
 import { KeyBindings } from './types';
-const require = createRequire(import.meta.url);
 
 const defaultRewordBindings: KeyBindings = {
   ESCAPE: 'rewordDone',
