@@ -18,10 +18,14 @@ jobs:
         with:
           node-version: 24.x
 
+      - name: Install
+        run: npm install
+
       - name: Type check
         run: npx tsc --noEmit
 
+      - name: Format check
+        run: npm run format:check
+
       - name: Test
-        run: |
-          npm install
-          npm run coverage-ci
+        run: npm run coverage-ci

@@ -10,6 +10,8 @@
     "tdd": "mocha --watch --reporter min",
     "coverage": "c8 --reporter=html --reporter=text mocha",
     "coverage-ci": "c8 --reporter=lcov --reporter=text --100 mocha",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "tsx src/index.ts"
   },
   "files": [
@@ -55,6 +57,7 @@
     "chai": "^6.2.2",
     "chai-as-promised": "^8.0.2",
     "mocha": "^11.3.0",
+    "prettier": "^3.8.2",
     "sinon": "^21.0.1",
     "sinon-chai": "^4.0.1",
     "tsup": "^8.5.1",
