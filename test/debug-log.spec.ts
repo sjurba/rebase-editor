@@ -4,14 +4,17 @@ import sinon from 'sinon';
 import { expect } from 'chai';
 
 describe('Debug log', function () {
-
   const origLog = console.log;
   const logFile = 'console.log';
 
   afterEach(function () {
     debugLog.untrapConsole();
     console.log = origLog;
-    try { fs.unlinkSync(logFile); } catch (_e) { /* ignore */ }
+    try {
+      fs.unlinkSync(logFile);
+    } catch (_e) {
+      /* ignore */
+    }
   });
 
   it('should not untrap console log if never trapped', function () {

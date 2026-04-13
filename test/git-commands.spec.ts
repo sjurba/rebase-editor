@@ -4,7 +4,6 @@ import childProcess from 'child_process';
 import { getFullCommitMessages } from '../src/git-commands';
 
 describe('git-commands', function () {
-
   afterEach(function () {
     sinon.restore();
   });
@@ -92,5 +91,4 @@ describe('git-commands', function () {
       expect((err as Error).message).to.equal('Invalid commit hash.');
     }
   });
-
 });

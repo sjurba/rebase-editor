@@ -36,7 +36,7 @@ export default function reducer(state: RebaseState, action: string, param?: unkn
         lines: updatedLines,
         rewordState: undefined,
         undoStack: push(state.undoStack, undoEntry),
-        redoStack: []
+        redoStack: [],
       };
       return deepFreeze(newState);
     }

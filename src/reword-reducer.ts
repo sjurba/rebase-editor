@@ -18,7 +18,10 @@ function getLineOffsets(message: string): number[] {
   return offsets;
 }
 
-function getCurrentLine(message: string, cursorPos: number): { lineIdx: number; col: number; lineStart: number; lineEnd: number } {
+function getCurrentLine(
+  message: string,
+  cursorPos: number,
+): { lineIdx: number; col: number; lineStart: number; lineEnd: number } {
   const offsets = getLineOffsets(message);
   let lineIdx = 0;
   for (let i = offsets.length - 1; i >= 0; i--) {
@@ -42,13 +45,15 @@ function deleteSelection(state: RewordModeState): RewordModeState {
     ...state,
     message: removeAt(message, selStart, selEnd - selStart),
     cursorPos: selStart,
-    selectAnchor: undefined
+    selectAnchor: undefined,
   };
 }
 
 function moveCursorUp(message: string, cursorPos: number): number {
   const { lineIdx, col, lineStart } = getCurrentLine(message, cursorPos);
-  if (lineIdx === 0) { return cursorPos; }
+  if (lineIdx === 0) {
+    return cursorPos;
+  }
   const offsets = getLineOffsets(message);
   const prevLineStart = offsets[lineIdx - 1];
   const prevLineLen = lineStart - 1 - prevLineStart;
@@ -58,7 +63,9 @@ function moveCursorUp(message: string, cursorPos: number): number {
 function moveCursorDown(message: string, cursorPos: number): number {
   const { lineIdx, col } = getCurrentLine(message, cursorPos);
   const offsets = getLineOffsets(message);
-  if (lineIdx >= offsets.length - 1) { return cursorPos; }
+  if (lineIdx >= offsets.length - 1) {
+    return cursorPos;
+  }
   const nextLineStart = offsets[lineIdx + 1];
   const nextLineEnd = (offsets[lineIdx + 2] ?? message.length + 1) - 1;
   const nextLineLen = nextLineEnd - nextLineStart;
@@ -74,7 +81,7 @@ export default function rewordReducer(state: RewordModeState, action: string, pa
       ...state,
       message: restored,
       cursorPos: restored.length,
-      selectAnchor: undefined
+      selectAnchor: undefined,
     };
   }
 
@@ -88,7 +95,7 @@ export default function rewordReducer(state: RewordModeState, action: string, pa
     return {
       ...base,
       message: insertAt(base.message, base.cursorPos, char),
-      cursorPos: base.cursorPos + 1
+      cursorPos: base.cursorPos + 1,
     };
   }
 
@@ -97,26 +104,34 @@ export default function rewordReducer(state: RewordModeState, action: string, pa
     return {
       ...base,
       message: insertAt(base.message, base.cursorPos, '\n'),
-      cursorPos: base.cursorPos + 1
+      cursorPos: base.cursorPos + 1,
     };
   }
 
   if (action === 'rewordBackspace') {
-    if (state.selectAnchor !== undefined) { return deleteSelection(state); }
-    if (cursorPos === 0) { return state; }
+    if (state.selectAnchor !== undefined) {
+      return deleteSelection(state);
+    }
+    if (cursorPos === 0) {
+      return state;
+    }
     return {
       ...state,
       message: removeAt(message, cursorPos - 1, 1),
-      cursorPos: cursorPos - 1
+      cursorPos: cursorPos - 1,
     };
   }
 
   if (action === 'rewordDelete') {
-    if (state.selectAnchor !== undefined) { return deleteSelection(state); }
-    if (cursorPos >= message.length) { return state; }
+    if (state.selectAnchor !== undefined) {
+      return deleteSelection(state);
+    }
+    if (cursorPos >= message.length) {
+      return state;
+    }
     return {
       ...state,
-      message: removeAt(message, cursorPos, 1)
+      message: removeAt(message, cursorPos, 1),
     };
   }
 
@@ -124,14 +139,12 @@ export default function rewordReducer(state: RewordModeState, action: string, pa
     const { lineStart, lineEnd } = getCurrentLine(message, cursorPos);
     const isLastLine = lineEnd >= message.length;
     const deleteStart = isLastLine && lineStart > 0 ? lineStart - 1 : lineStart;
-    const deleteCount = isLastLine
-      ? message.length - deleteStart
-      : lineEnd - lineStart + 1; // +1 for the \n
+    const deleteCount = isLastLine ? message.length - deleteStart : lineEnd - lineStart + 1; // +1 for the \n
     return {
       ...state,
       message: removeAt(message, deleteStart, deleteCount),
       cursorPos: deleteStart,
-      selectAnchor: undefined
+      selectAnchor: undefined,
     };
   }
 
@@ -162,13 +175,17 @@ export default function rewordReducer(state: RewordModeState, action: string, pa
   }
 
   if (action === 'rewordShiftLeft') {
-    if (cursorPos === 0) { return state; }
+    if (cursorPos === 0) {
+      return state;
+    }
     const anchor = state.selectAnchor ?? cursorPos;
     return { ...state, selectAnchor: anchor, cursorPos: cursorPos - 1 };
   }
 
   if (action === 'rewordShiftRight') {
-    if (cursorPos === message.length) { return state; }
+    if (cursorPos === message.length) {
+      return state;
+    }
     const anchor = state.selectAnchor ?? cursorPos;
     return { ...state, selectAnchor: anchor, cursorPos: cursorPos + 1 };
   }

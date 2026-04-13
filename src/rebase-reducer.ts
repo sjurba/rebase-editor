@@ -18,8 +18,8 @@ function cursor(from: number, pos: number): { cursor: CursorState } {
   return {
     cursor: {
       from: from,
-      pos: pos
-    }
+      pos: pos,
+    },
   };
 }
 
@@ -33,7 +33,7 @@ function insertAfterCurrentPosition(state: RebaseState, action: string, hash = '
   newLines = insertInto(newLines, line, state.cursor.pos + 1);
   return {
     lines: newLines,
-    ...cursor(state.cursor.pos + 1, state.cursor.pos + 1)
+    ...cursor(state.cursor.pos + 1, state.cursor.pos + 1),
   };
 }
 
@@ -76,7 +76,7 @@ function moveSelection(state: RebaseState, dir: number): Partial<RebaseState> {
   newLines = insertInto(newLines, el, dstIdx);
   return {
     lines: newLines,
-    ...cursor(state.cursor.from + dir, state.cursor.pos + dir)
+    ...cursor(state.cursor.from + dir, state.cursor.pos + dir),
   };
 }
 
@@ -85,13 +85,12 @@ function getAction(state: RebaseState, action: string): Partial<RebaseState> {
   return {
     lines: state.lines.map((line, idx) => {
       if (from <= idx && idx <= to && isEditable(line.action)) {
-        const message = line.action === 'reworded' && line.originalMessage != null
-          ? line.originalMessage
-          : line.message;
+        const message =
+          line.action === 'reworded' && line.originalMessage != null ? line.originalMessage : line.message;
         line = Object.assign({}, line, { action: action, message, originalMessage: undefined });
       }
       return line;
-    })
+    }),
   };
 }
 
@@ -99,7 +98,7 @@ function getUndo(state: RebaseState, stack: 'undoStack' | 'redoStack'): Partial<
   const partialState: Partial<RebaseState> = {};
   partialState[stack] = push(state[stack] as UndoEntry[] | undefined, {
     lines: state.lines,
-    cursor: state.cursor
+    cursor: state.cursor,
   });
   return partialState;
 }
@@ -123,15 +122,11 @@ function undo(state: RebaseState, undoKey: 'undoStack' | 'redoStack', redoKey: '
 
 function limitCursor(state: RebaseState, pos: number, from: number): { cursor: CursorState } {
   const max = state.lines.length - 1;
-  return cursor(
-    from < 0 ? 0 : from > max ? max : from,
-    pos < 0 ? 0 : pos > max ? max : pos
-  );
+  return cursor(from < 0 ? 0 : from > max ? max : from, pos < 0 ? 0 : pos > max ? max : pos);
 }
 
 function isSelectionSame(a: CursorState, b: CursorState): boolean {
-  return (a.pos === b.pos && a.from === b.from) ||
-    (a.pos === b.from && a.from === b.pos);
+  return (a.pos === b.pos && a.from === b.from) || (a.pos === b.from && a.from === b.pos);
 }
 
 function updateCursor(state: RebaseState, pos: number, from: number): RebaseState {
@@ -140,7 +135,7 @@ function updateCursor(state: RebaseState, pos: number, from: number): RebaseStat
     return state;
   } else {
     return set(state, {
-      ...cur
+      ...cur,
     });
   }
 }
@@ -202,16 +197,19 @@ export default function rebaseReducer(state: RebaseState, action: string, param?
       }
     } else if (action === 'resize') {
       state = set(state, {
-        height: param as number
+        height: param as number,
       });
-    } else if (action === 'reword' && (state.lines[pos]?.action === 'reword' || state.lines[pos]?.action === 'reworded')) {
+    } else if (
+      action === 'reword' &&
+      (state.lines[pos]?.action === 'reword' || state.lines[pos]?.action === 'reworded')
+    ) {
       // Double-press reword (or press on already-reworded line): enter reword mode
       const line = state.lines[pos];
       const rewordState: RewordModeState = {
         message: line.message,
         originalMessage: line.message,
         lineIndex: pos,
-        cursorPos: line.message.length
+        cursorPos: line.message.length,
       };
       state = set(state, { rewordState });
     } else if (actions.includes(action)) {
@@ -220,7 +218,7 @@ export default function rebaseReducer(state: RebaseState, action: string, param?
       if (state.lines.slice(from, to + 1).some((line) => line.action !== action && line.hash)) {
         newState = getAction(state, action) as Partial<RebaseState> & Pick<RebaseState, 'lines'>;
       }
-      if (action === 'drop' && state.lines.slice(from, to + 1).some(line => !isEditable(line.action))) {
+      if (action === 'drop' && state.lines.slice(from, to + 1).some((line) => !isEditable(line.action))) {
         const newLines = newState.lines.filter((_line, idx) => idx < from || idx > to || isEditable(_line.action));
         const removedLines = newState.lines.length - newLines.length;
         newState = {
@@ -228,7 +226,7 @@ export default function rebaseReducer(state: RebaseState, action: string, param?
           ...cursor(
             state.cursor.from < state.cursor.pos ? state.cursor.from : state.cursor.from - removedLines,
             state.cursor.pos < state.cursor.from ? state.cursor.pos : state.cursor.pos - removedLines,
-          )
+          ),
         };
       }
       if (newState.lines !== state.lines || newState.cursor) {
@@ -239,14 +237,14 @@ export default function rebaseReducer(state: RebaseState, action: string, param?
         state = set(state, insertAfterCurrentPosition(state, 'break'));
       } else if (getLineAction(state, state.cursor.pos + 1) === 'break') {
         state = set(state, {
-          ...cursor(pos + 1, pos + 1)
+          ...cursor(pos + 1, pos + 1),
         });
       }
     }
 
     if (oldState !== state && oldState.lines !== state.lines) {
       state = set(state, getUndo(oldState, 'undoStack'), {
-        redoStack: []
+        redoStack: [],
       });
     }
   }

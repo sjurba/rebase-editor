@@ -7,27 +7,26 @@ import { MockTerm } from './mock-terminal';
 
 const debugLog = {
   trapConsole: sinon.stub(),
-  untrapConsole: sinon.stub()
+  untrapConsole: sinon.stub(),
 };
 
 function main(args: MainArgs, onExit?: (err?: unknown) => void) {
-    return orgMain(args, debugLog, onExit);
+  return orgMain(args, debugLog, onExit);
 }
 
 describe('Main loop', function () {
-
   let mockTerm: MockTerm, args: MainArgs, file: { read: sinon.SinonStub; write: sinon.SinonStub };
 
   beforeEach(function () {
     mockTerm = mockTerminal.create();
     file = {
       read: sinon.stub(),
-      write: sinon.stub()
+      write: sinon.stub(),
     };
     args = {
       term: mockTerm as unknown as TerminalKitTerminal,
       file: file,
-      alternateScreen: true
+      alternateScreen: true,
     };
   });
 
@@ -85,20 +84,18 @@ describe('Main loop', function () {
     file.read.returns(Promise.resolve(rebaseText));
     file.write.returns(Promise.resolve);
     main(args, done);
-    nextTick()
-      .then(() => {
-        mockTerm.emit('key', 'q');
-      });
+    nextTick().then(() => {
+      mockTerm.emit('key', 'q');
+    });
   });
 
   it('should render changes', function () {
     file.read.returns(Promise.resolve(rebaseText));
     main(args);
-    return nextTick()
-      .then(() => {
-        mockTerm.emit('key', 'f');
-        expect(mockTerm.getRendered()[0]).to.match(/fixup.*/);
-      });
+    return nextTick().then(() => {
+      mockTerm.emit('key', 'f');
+      expect(mockTerm.getRendered()[0]).to.match(/fixup.*/);
+    });
   });
 
   it('should exit on render errors', function (done) {
@@ -107,11 +104,10 @@ describe('Main loop', function () {
       expect(err).to.equal('Error');
       done();
     });
-    nextTick()
-      .then(() => {
-        mockTerm.throwOnRender('Error' as unknown as Error);
-        mockTerm.emit('key', 'f');
-      });
+    nextTick().then(() => {
+      mockTerm.throwOnRender('Error' as unknown as Error);
+      mockTerm.emit('key', 'f');
+    });
   });
 
   it('should trap debug messages', function () {
@@ -142,58 +138,54 @@ describe('Main loop', function () {
     });
   });
 
-      it('should enter reword mode on double-press r', function () {
+  it('should enter reword mode on double-press r', function () {
     file.read.returns(Promise.resolve(rebaseText));
     main(args);
-    return nextTick()
-      .then(() => {
-        mockTerm.emit('key', 'r');   // first press: reword action
-        mockTerm.emit('key', 'r');   // second press: enter reword mode
-        const rendered = mockTerm.getRendered();
-        // Footer is on the last line
-        expect(rendered[mockTerm.height - 1]).to.include('ESC: save');
-      });
+    return nextTick().then(() => {
+      mockTerm.emit('key', 'r'); // first press: reword action
+      mockTerm.emit('key', 'r'); // second press: enter reword mode
+      const rendered = mockTerm.getRendered();
+      // Footer is on the last line
+      expect(rendered[mockTerm.height - 1]).to.include('ESC: save');
+    });
   });
 
   it('should route characters to reword mode when active', function () {
     file.read.returns(Promise.resolve(rebaseText));
     main(args);
-    return nextTick()
-      .then(() => {
-        mockTerm.emit('key', 'r');      // reword
-        mockTerm.emit('key', 'r');      // enter reword mode
-        mockTerm.emit('key', 'A');      // type a character
-        const rendered = mockTerm.getRendered();
-        const text = rendered.join('\n');
-        expect(text).to.include('1 implemented stuffA');
-      });
+    return nextTick().then(() => {
+      mockTerm.emit('key', 'r'); // reword
+      mockTerm.emit('key', 'r'); // enter reword mode
+      mockTerm.emit('key', 'A'); // type a character
+      const rendered = mockTerm.getRendered();
+      const text = rendered.join('\n');
+      expect(text).to.include('1 implemented stuffA');
+    });
   });
 
   it('should insert newline on ENTER in reword mode', function () {
     file.read.returns(Promise.resolve(rebaseText));
     main(args);
-    return nextTick()
-      .then(() => {
-        mockTerm.emit('key', 'r');
-        mockTerm.emit('key', 'r');
-        mockTerm.emit('key', 'ENTER');    // newline
-        mockTerm.emit('key', 'ESCAPE');   // save
-        const rendered = mockTerm.getRendered();
-        expect(rendered[0]).to.match(/reworded.*/);
-      });
+    return nextTick().then(() => {
+      mockTerm.emit('key', 'r');
+      mockTerm.emit('key', 'r');
+      mockTerm.emit('key', 'ENTER'); // newline
+      mockTerm.emit('key', 'ESCAPE'); // save
+      const rendered = mockTerm.getRendered();
+      expect(rendered[0]).to.match(/reworded.*/);
+    });
   });
 
   it('should save and exit reword mode on ESCAPE', function () {
     file.read.returns(Promise.resolve(rebaseText));
     main(args);
-    return nextTick()
-      .then(() => {
-        mockTerm.emit('key', 'r');        // reword
-        mockTerm.emit('key', 'r');        // enter reword mode
-        mockTerm.emit('key', 'ESCAPE');   // save
-        const rendered = mockTerm.getRendered();
-        expect(rendered[0]).to.match(/reworded.*/);
-      });
+    return nextTick().then(() => {
+      mockTerm.emit('key', 'r'); // reword
+      mockTerm.emit('key', 'r'); // enter reword mode
+      mockTerm.emit('key', 'ESCAPE'); // save
+      const rendered = mockTerm.getRendered();
+      expect(rendered[0]).to.match(/reworded.*/);
+    });
   });
 
   it('should fetch full commit message when entering reword mode', async function () {
@@ -223,8 +215,8 @@ squash sha_a squash commit a
     main(args);
     await nextTick();
     mockTerm.emit('key', 'DOWN'); // move to sha_c (index 1)
-    mockTerm.emit('key', 'r');   // reword
-    mockTerm.emit('key', 'r');   // enter reword mode
+    mockTerm.emit('key', 'r'); // reword
+    mockTerm.emit('key', 'r'); // enter reword mode
     expect(getFullCommitMessages).to.be.calledWith(['sha_c', 'sha_b', 'sha_a']);
     await nextTick();
     const text = mockTerm.getRendered().join('\n');
@@ -248,13 +240,15 @@ squash sha_a squash commit a
     file.read.returns(Promise.resolve(rebaseText));
     let resolveFetch: (msg: string) => void;
     const getFullCommitMessages = sinon.stub().returns(
-      new Promise<string>((resolve) => { resolveFetch = resolve; })
+      new Promise<string>((resolve) => {
+        resolveFetch = resolve;
+      }),
     );
     args.getFullCommitMessages = getFullCommitMessages;
     main(args);
     await nextTick();
     mockTerm.emit('key', 'r');
-    mockTerm.emit('key', 'r');   // enter reword mode
+    mockTerm.emit('key', 'r'); // enter reword mode
     mockTerm.emit('key', 'ESCAPE'); // save and exit reword mode
     resolveFetch!('Full commit message');
     await nextTick();
@@ -265,21 +259,21 @@ squash sha_a squash commit a
 
   it('should restore original message when cancelling after full message fetch', async function () {
     file.read.returns(Promise.resolve(rebaseText));
-    const getFullCommitMessages = sinon.stub().returns(Promise.resolve('# This is a combination of 2 commits\nFull message'));
+    const getFullCommitMessages = sinon
+      .stub()
+      .returns(Promise.resolve('# This is a combination of 2 commits\nFull message'));
     args.getFullCommitMessages = getFullCommitMessages;
     main(args);
     await nextTick();
     mockTerm.emit('key', 'r');
-    mockTerm.emit('key', 'r');   // enter reword mode
-    await nextTick();            // full message loaded
+    mockTerm.emit('key', 'r'); // enter reword mode
+    await nextTick(); // full message loaded
     mockTerm.emit('key', 'CTRL_C'); // cancel
     const text = mockTerm.getRendered().join('\n');
     expect(text).to.include('1 implemented stuff');
     expect(text).not.to.include('This is a combination');
   });
-
 });
-
 
 const rebaseText = `
 pick 142a871 1 implemented stuff

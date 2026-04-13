@@ -10,7 +10,7 @@ const debugLog = {
     console.log = (...params: unknown[]): Promise<void> => {
       if (!file) {
         file = fs.createWriteStream('console.log', {
-          flags: 'w'
+          flags: 'w',
         });
       }
       return new Promise((resolve) => {
@@ -26,7 +26,7 @@ const debugLog = {
       file.close();
       file = null;
     }
-  }
+  },
 };
 
 export default debugLog;

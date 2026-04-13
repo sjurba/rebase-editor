@@ -6,10 +6,14 @@ function ordinal(n: number): string {
     return `${n}th`;
   }
   switch (n % 10) {
-    case 1: return `${n}st`;
-    case 2: return `${n}nd`;
-    case 3: return `${n}rd`;
-    default: return `${n}th`;
+    case 1:
+      return `${n}st`;
+    case 2:
+      return `${n}nd`;
+    case 3:
+      return `${n}rd`;
+    default:
+      return `${n}th`;
   }
 }
 
@@ -26,23 +30,21 @@ export function getFullCommitMessages(hashes: string[]): Promise<string> {
       if (err) {
         return reject(err);
       }
-      const messages = stdout.replace(/\r/g, '').split('\x1e')
-        .map(m => m.trimEnd())
-        .filter(m => m.length > 0)
-          .reverse()
+      const messages = stdout
+        .replace(/\r/g, '')
+        .split('\x1e')
+        .map((m) => m.trimEnd())
+        .filter((m) => m.length > 0)
+        .reverse();
       if (messages.length === 1) {
         return resolve(messages[0]);
       }
       const parts: string[] = [
         `# This is a combination of ${messages.length} commits`,
-        ...messages.flatMap((msg, i) => [
-          `# This is the ${ordinal(i + 1)} commit message:`,
-          '',
-          msg
-        ]),
+        ...messages.flatMap((msg, i) => [`# This is the ${ordinal(i + 1)} commit message:`, '', msg]),
         '',
         '# Please enter the commit message for your changes. Lines starting',
-        '# with \'#\' will be ignored, and an empty message aborts the commit.'
+        "# with '#' will be ignored, and an empty message aborts the commit.",
       ];
       resolve(parts.join('\n'));
     });

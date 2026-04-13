@@ -8,12 +8,11 @@ function state(message: string, cursorPos?: number, selectAnchor?: number): Rewo
     originalMessage: message,
     lineIndex: 0,
     cursorPos: cursorPos ?? message.length,
-    selectAnchor
+    selectAnchor,
   };
 }
 
 describe('Reword reducer', function () {
-
   describe('rewordChar', function () {
     it('should insert character at cursor position', function () {
       const s = rewordReducer(state('hello', 3), 'rewordChar', 'X');
@@ -355,5 +354,4 @@ describe('Reword reducer', function () {
       expect(result).to.equal(s);
     });
   });
-
 });

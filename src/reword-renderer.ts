@@ -22,7 +22,9 @@ export default function renderReword(rewordState: RewordModeState, termHeight: n
     const lineEnd = offset + msgLine.length;
 
     if (hasSelection) {
-      if (cursorPos >= lineStart && cursorPos <= lineEnd) { cursorLine = i; }
+      if (cursorPos >= lineStart && cursorPos <= lineEnd) {
+        cursorLine = i;
+      }
       // Highlight selection range
       const lineSelStart = Math.max(selStart, lineStart) - lineStart;
       const lineSelEnd = Math.min(selEnd, lineEnd) - lineStart;

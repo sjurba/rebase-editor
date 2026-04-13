@@ -12,11 +12,11 @@ const args = minimist(process.argv, {
     s: 'status',
     k: 'keys',
     c: 'colors',
-    m: 'marker'
+    m: 'marker',
   },
   default: {
-    'alternate-screen': true
-  }
+    'alternate-screen': true,
+  },
 });
 
 if (args._.length < 3) {
@@ -45,7 +45,7 @@ const progArgs = {
   selectMarker: marker || '^!',
   alternateScreen: args['alternate-screen'],
   file: new FileHandle(file),
-  term: terminal as unknown as TerminalKitTerminal
+  term: terminal as unknown as TerminalKitTerminal,
 };
 main(progArgs, debugLog, (err) => {
   let status = 0;

@@ -33,13 +33,13 @@ describe('Key bindings', function () {
 
   it('should override reword bindings from rewordMode field in custom file', async function () {
     const bindings = await rewordKeyBindings('test/testfiles/customKeybindingsWithReword.json');
-    expect(bindings.ESCAPE).to.equal('rewordDone');      // default unchanged
+    expect(bindings.ESCAPE).to.equal('rewordDone'); // default unchanged
     expect(bindings.CTRL_ENTER).to.equal('rewordEnter'); // custom added
   });
 
   it('should provide helpful error message when importing common js file', async function () {
     try {
-     await keyBindings('test/testfiles/customKeyBindingsCommonJs.js');
+      await keyBindings('test/testfiles/customKeyBindingsCommonJs.js');
       expect.fail('Should have thrown error');
     } catch (err) {
       expect((err as Error).message).to.include('If this is a CommonJS module');

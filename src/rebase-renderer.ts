@@ -6,33 +6,37 @@ function inSelection(state: RebaseState, idx: number): boolean {
 }
 
 function wrapColors(arr: string[], colors: string[]): string {
-  return arr.map((txt, idx) => {
-    const color = colors[idx];
-    if (color) {
-      return color + txt + '^';
-    } else {
-      return txt;
-    }
-  }).join(' ');
+  return arr
+    .map((txt, idx) => {
+      const color = colors[idx];
+      if (color) {
+        return color + txt + '^';
+      } else {
+        return txt;
+      }
+    })
+    .join(' ');
 }
 
 export default function renderRebase(
   state: RebaseState,
-  opts: Required<Pick<TerminalOpts, 'status' | 'selectMarker'>> & TerminalOpts
+  opts: Required<Pick<TerminalOpts, 'status' | 'selectMarker'>> & TerminalOpts,
 ): string[] {
   const allLines: string[] = [];
 
   state.lines.forEach((line, idx) => {
     const selected = inSelection(state, idx);
     let termStr: string;
-    const firstLine = line.action === 'reworded'
-      ? '# ' + (line.message.split('\n').find(l => l.length > 0 && !l.startsWith('#')) ?? '')
-      : (line.message || '').split('\n')[0];
+    const firstLine =
+      line.action === 'reworded'
+        ? '# ' + (line.message.split('\n').find((l) => l.length > 0 && !l.startsWith('#')) ?? '')
+        : (line.message || '').split('\n')[0];
     const message = firstLine.replace(/\^/g, '^^');
     if (opts.colors && !selected) {
       termStr = wrapColors([line.action, line.hash, message], opts.colors);
     } else {
-      termStr = (selected ? opts.selectMarker : '') + [line.action, line.hash, message].filter(part => part).join(' ');
+      termStr =
+        (selected ? opts.selectMarker : '') + [line.action, line.hash, message].filter((part) => part).join(' ');
     }
     allLines.push(termStr);
   });

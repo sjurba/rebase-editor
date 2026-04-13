@@ -14,11 +14,14 @@ export default class Terminal {
   viewPort: string[];
 
   constructor(term: TerminalKitTerminal, opts?: TerminalOpts) {
-    this.opts = Object.assign({
-      status: false,
-      selectMarker: '^!',
-      alternateScreen: true
-    }, opts);
+    this.opts = Object.assign(
+      {
+        status: false,
+        selectMarker: '^!',
+        alternateScreen: true,
+      },
+      opts,
+    );
     this.term = term;
     this.viewPort = [];
     if (this.opts.alternateScreen) {
@@ -35,16 +38,19 @@ export default class Terminal {
       cb(this.opts.keyBindings![key as string], key as string);
     });
     let oldHeight = this.term.height;
-    this.term.on('resize', debounce(() => {
-      this.viewPort = [];
-      const height = this.term.height;
-      if (height > oldHeight) {
-        this.term.moveTo(1, height);
-        this.term(getBlankLines(height - oldHeight));
-        oldHeight = height;
-      }
-      cb('resize', this.term.height);
-    }, 100));
+    this.term.on(
+      'resize',
+      debounce(() => {
+        this.viewPort = [];
+        const height = this.term.height;
+        if (height > oldHeight) {
+          this.term.moveTo(1, height);
+          this.term(getBlankLines(height - oldHeight));
+          oldHeight = height;
+        }
+        cb('resize', this.term.height);
+      }, 100),
+    );
     cb('resize', this.term.height);
   }
 
@@ -57,7 +63,6 @@ export default class Terminal {
     }
     this.term.hideCursor(false);
   }
-
 
   _writeLine(line: string, index: number): void {
     line = utils.trimTo(line, this.term.width);

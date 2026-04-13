@@ -4,7 +4,6 @@ import { expect } from 'chai';
 import { RebaseState } from '../src/types';
 
 describe('Reducer', function () {
-
   it('should return same state on unknown command', function () {
     const state = getState(0);
     const newState = reduce(state, 'foobar');
@@ -50,7 +49,7 @@ describe('Reducer', function () {
         let state: RebaseState | Readonly<RebaseState> = getState({
           lines: 10,
           cursor: 0,
-          height: 5
+          height: 5,
         });
         state = reduce(state as RebaseState, 'pageDown');
         expect(state.cursor.pos).to.equal(5);
@@ -62,7 +61,7 @@ describe('Reducer', function () {
         let state: RebaseState | Readonly<RebaseState> = getState({
           lines: 10,
           cursor: 9,
-          height: 5
+          height: 5,
         });
         state = reduce(state as RebaseState, 'pageUp');
         expect(state.cursor.pos).to.equal(4);
@@ -99,7 +98,6 @@ describe('Reducer', function () {
   });
 
   describe('select', function () {
-
     describe('down', function () {
       it('should increase selection', function () {
         let state: RebaseState | Readonly<RebaseState> = getState(3, 0);
@@ -107,7 +105,7 @@ describe('Reducer', function () {
         state = reduce(state as RebaseState, 'selectDown');
         expect(state.cursor).to.deep.equal({
           from: 0,
-          pos: 2
+          pos: 2,
         });
       });
       it('should do nothing when on last line', function () {
@@ -118,12 +116,12 @@ describe('Reducer', function () {
       it('should reduce selection', function () {
         const state = getState(3, {
           from: 2,
-          pos: 0
+          pos: 0,
         });
         const newState = reduce(state, 'selectDown');
         expect(newState.cursor).to.deep.equal({
           from: 2,
-          pos: 1
+          pos: 1,
         });
       });
     });
@@ -135,7 +133,7 @@ describe('Reducer', function () {
         state = reduce(state as RebaseState, 'selectUp');
         expect(state.cursor).to.deep.equal({
           from: 2,
-          pos: 0
+          pos: 0,
         });
       });
       it('should do nothing when on last line', function () {
@@ -146,16 +144,15 @@ describe('Reducer', function () {
       it('should reduce selection', function () {
         const state = getState(2, {
           from: 0,
-          pos: 2
+          pos: 2,
         });
         const newState = reduce(state, 'selectUp');
         expect(newState.cursor).to.deep.equal({
           from: 0,
-          pos: 1
+          pos: 1,
         });
       });
     });
-
 
     describe('home', function () {
       it('should do nothing if on top', function () {
@@ -169,7 +166,7 @@ describe('Reducer', function () {
         const newState = reduce(state, 'selectHome');
         expect(newState.cursor).to.deep.equal({
           from: 2,
-          pos: 0
+          pos: 0,
         });
       });
     });
@@ -186,7 +183,7 @@ describe('Reducer', function () {
         const newState = reduce(state, 'selectEnd');
         expect(newState.cursor).to.deep.equal({
           from: 0,
-          pos: 2
+          pos: 2,
         });
       });
     });
@@ -196,12 +193,12 @@ describe('Reducer', function () {
         const state = getState({
           lines: 5,
           cursor: 0,
-          height: 3
+          height: 3,
         });
         const newState = reduce(state, 'selectPageDown');
         expect(newState.cursor).to.deep.equal({
           from: 0,
-          pos: 3
+          pos: 3,
         });
       });
     });
@@ -211,16 +208,15 @@ describe('Reducer', function () {
         const state = getState({
           lines: 5,
           cursor: 4,
-          height: 3
+          height: 3,
         });
         const newState = reduce(state, 'selectPageUp');
         expect(newState.cursor).to.deep.equal({
           from: 4,
-          pos: 1
+          pos: 1,
         });
       });
     });
-
   });
 
   describe('moving line', function () {
@@ -274,7 +270,7 @@ describe('Reducer', function () {
     it('down', function () {
       const state = getState(4, {
         from: 2,
-        pos: 1
+        pos: 1,
       });
       const newState = reduce(state, 'moveDown');
       expect(newState.lines[0]).to.equal(state.lines[0]);
@@ -288,7 +284,7 @@ describe('Reducer', function () {
     it('up when selection is from the bottom', function () {
       const state = getState(4, {
         from: 3,
-        pos: 2
+        pos: 2,
       });
       const newState = reduce(state, 'moveDown');
       expect(newState).to.equal(state);
@@ -297,7 +293,7 @@ describe('Reducer', function () {
     it('up', function () {
       const state = getState(4, {
         from: 1,
-        pos: 2
+        pos: 2,
       });
       const newState = reduce(state, 'moveUp');
       expect(newState.lines[0]).to.equal(state.lines[1]);
@@ -311,7 +307,7 @@ describe('Reducer', function () {
     it('up when selection is from the top', function () {
       const state = getState(4, {
         from: 0,
-        pos: 2
+        pos: 2,
       });
       const newState = reduce(state, 'moveUp');
       expect(newState).to.equal(state);
@@ -326,37 +322,51 @@ describe('Reducer', function () {
     });
 
     it('should do nothing if line has no hash', function () {
-      const state = getState([{
-        action: 'noop',
-        hash: '',
-        message: ''
-      }], 0);
+      const state = getState(
+        [
+          {
+            action: 'noop',
+            hash: '',
+            message: '',
+          },
+        ],
+        0,
+      );
       const newState = reduce(state, 'pick');
       expect(newState).to.equal(state);
     });
 
     ['break', 'update-ref', 'label', 'reset', 'merge', '# Comment'].forEach(function (action) {
       it(`should not allow pick if ${action} line`, function () {
-        const state = getState([{
-          action: action,
-          hash: 'some text',
-          message: ''
-        }], 0);
+        const state = getState(
+          [
+            {
+              action: action,
+              hash: 'some text',
+              message: '',
+            },
+          ],
+          0,
+        );
         const newState = reduce(state, 'pick');
         expect(newState.lines[0]).to.equal(state.lines[0]);
       });
 
       it(`should delete ${action} line`, function () {
-        const state = getState([{
-          action: action,
-          hash: 'some text',
-          message: ''
-        }], 0);
+        const state = getState(
+          [
+            {
+              action: action,
+              hash: 'some text',
+              message: '',
+            },
+          ],
+          0,
+        );
         const newState = reduce(state, 'drop');
         expect(newState.lines).to.be.empty;
       });
     });
-
 
     it('should change on fixup', function () {
       const state = getState(3, 1);
@@ -388,32 +398,37 @@ describe('Reducer', function () {
     });
 
     it('should change entire selection', function () {
-      const state = getState([{
-        action: 'pick',
-        hash: '123',
-        message: ''
-      }, {
-        action: 'fixup',
-        hash: '123',
-        message: ''
-      }, {
-        action: 'pick',
-        hash: '123',
-        message: ''
-      }], {
-        from: 2,
-        pos: 1
-      });
+      const state = getState(
+        [
+          {
+            action: 'pick',
+            hash: '123',
+            message: '',
+          },
+          {
+            action: 'fixup',
+            hash: '123',
+            message: '',
+          },
+          {
+            action: 'pick',
+            hash: '123',
+            message: '',
+          },
+        ],
+        {
+          from: 2,
+          pos: 1,
+        },
+      );
       const newState = reduce(state, 'fixup');
       expect(newState.lines[0].action).to.equal('pick');
       expect(newState.lines[1].action).to.equal('fixup');
       expect(newState.lines[2].action).to.equal('fixup');
     });
-
   });
 
   describe('break', function () {
-
     it('should add a new line with break', function () {
       const state = getState(1, 0);
       const newState = reduce(state, 'break');
@@ -604,7 +619,6 @@ describe('Reducer', function () {
   });
 
   describe('corner cases', function () {
-
     it('should add break after last line', function () {
       const state = getState(3, 2);
       const newState = reduce(state, 'break');
@@ -614,21 +628,27 @@ describe('Reducer', function () {
     });
 
     it('should drop all non-editable lines in selection', function () {
-      const state = getState([
-        { action: 'update-ref', hash: 'refs/heads/branch', message: '' },
-        { action: 'break', hash: '', message: '' },
-        { action: 'label', hash: 'onto', message: '' }
-      ], { from: 0, pos: 2 });
+      const state = getState(
+        [
+          { action: 'update-ref', hash: 'refs/heads/branch', message: '' },
+          { action: 'break', hash: '', message: '' },
+          { action: 'label', hash: 'onto', message: '' },
+        ],
+        { from: 0, pos: 2 },
+      );
       const newState = reduce(state, 'drop');
       expect(newState.lines).to.be.empty;
     });
 
     it('should handle drop of non-editable lines with mixed selection', function () {
-      const state = getState([
-        { action: 'pick', hash: '123', message: 'First' },
-        { action: 'update-ref', hash: 'refs/heads/branch', message: '' },
-        { action: 'pick', hash: '456', message: 'Third' }
-      ], { from: 0, pos: 2 });
+      const state = getState(
+        [
+          { action: 'pick', hash: '123', message: 'First' },
+          { action: 'update-ref', hash: 'refs/heads/branch', message: '' },
+          { action: 'pick', hash: '456', message: 'Third' },
+        ],
+        { from: 0, pos: 2 },
+      );
       const newState = reduce(state, 'drop');
       expect(newState.lines.length).to.equal(2);
       expect(newState.lines[0].action).to.equal('drop');
@@ -672,19 +692,27 @@ describe('Reducer', function () {
     });
 
     it('should handle pageDown with height 0', function () {
-      const state = getState({ lines: [
-        { action: 'pick', hash: '123', message: 'First' },
-        { action: 'pick', hash: '456', message: 'Second' }
-      ], cursor: 0, height: 0 });
+      const state = getState({
+        lines: [
+          { action: 'pick', hash: '123', message: 'First' },
+          { action: 'pick', hash: '456', message: 'Second' },
+        ],
+        cursor: 0,
+        height: 0,
+      });
       const newState = reduce(state, 'pageDown');
       expect(newState).to.equal(state);
     });
 
     it('should handle pageUp with height 0', function () {
-      const state = getState({ lines: [
-        { action: 'pick', hash: '123', message: 'First' },
-        { action: 'pick', hash: '456', message: 'Second' }
-      ], cursor: 1, height: 0 });
+      const state = getState({
+        lines: [
+          { action: 'pick', hash: '123', message: 'First' },
+          { action: 'pick', hash: '456', message: 'Second' },
+        ],
+        cursor: 1,
+        height: 0,
+      });
       const newState = reduce(state, 'pageUp');
       expect(newState).to.equal(state);
     });
@@ -698,11 +726,9 @@ describe('Reducer', function () {
       expect(reduce(state, 'selectDown')).to.equal(state);
       expect(reduce(state, 'selectUp')).to.equal(state);
     });
-
   });
 
   describe('reword mode', function () {
-
     it('should enter reword mode when pressing r on a reworded line', function () {
       const state = getState([{ action: 'reworded', hash: 'abc123', message: 'Edited message\nSecond line' }], 0);
       const newState = reduce(state, 'reword');
@@ -710,7 +736,7 @@ describe('Reducer', function () {
         message: 'Edited message\nSecond line',
         originalMessage: 'Edited message\nSecond line',
         lineIndex: 0,
-        cursorPos: 26
+        cursorPos: 26,
       });
     });
 
@@ -721,7 +747,7 @@ describe('Reducer', function () {
         message: 'My commit',
         originalMessage: 'My commit',
         lineIndex: 0,
-        cursorPos: 9
+        cursorPos: 9,
       });
     });
 
@@ -769,10 +795,13 @@ describe('Reducer', function () {
     });
 
     it('should cancel reword mode and restore original action/message on rewordCancel', function () {
-      let state = getState([
-        { action: 'reword', hash: 'abc123', message: 'My commit' },
-        { action: 'pick', hash: 'def456', message: 'Other commit' }
-      ], 0) as RebaseState;
+      let state = getState(
+        [
+          { action: 'reword', hash: 'abc123', message: 'My commit' },
+          { action: 'pick', hash: 'def456', message: 'Other commit' },
+        ],
+        0,
+      ) as RebaseState;
       state = reduce(state, 'reword') as RebaseState;
       state = reduce(state, 'rewordChar', '!') as RebaseState;
       expect(state.rewordState!.message).to.equal('My commit!');
@@ -815,13 +844,14 @@ describe('Reducer', function () {
       state = reduce(state, 'reword') as RebaseState;
       state = reduce(state, 'rewordDone') as RebaseState;
       // Simulate full message being set (as async git fetch would do)
-      state = { ...state, lines: state.lines.map((l, i) => i === 0 ? { ...l, message: '# This is a combination\nMy commit' } : l) };
+      state = {
+        ...state,
+        lines: state.lines.map((l, i) => (i === 0 ? { ...l, message: '# This is a combination\nMy commit' } : l)),
+      };
       state = reduce(state, 'pick') as RebaseState;
       expect(state.lines[0].action).to.equal('pick');
       expect(state.lines[0].message).to.equal('My commit');
       expect(state.lines[0].originalMessage).to.be.undefined;
     });
-
   });
-
 });

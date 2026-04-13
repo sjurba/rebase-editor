@@ -6,11 +6,13 @@ import { expect } from 'chai';
 import { RebaseLine, TerminalKitTerminal, RebaseState } from '../src/types';
 import { MockTerm } from './mock-terminal';
 
-const noopLines: RebaseLine[] = [{
-  action: 'noop',
-  hash: '',
-  message: ''
-}];
+const noopLines: RebaseLine[] = [
+  {
+    action: 'noop',
+    hash: '',
+    message: '',
+  },
+];
 
 const colors = ['^r', '^y'];
 
@@ -22,7 +24,6 @@ describe('Terminal renderer', function () {
   });
 
   describe('on construct', function () {
-
     describe('when alternate screen enabled', function () {
       it('should call fullscreen', function () {
         new Terminal(mockTerm as unknown as TerminalKitTerminal);
@@ -33,14 +34,12 @@ describe('Terminal renderer', function () {
         new Terminal(mockTerm as unknown as TerminalKitTerminal);
         expect(mockTerm.hideCursor).to.be.calledWith(true);
       });
-
     });
 
     describe('when alternate screen disabled', function () {
-
       it('should not call fullscreen', function () {
         new Terminal(mockTerm as unknown as TerminalKitTerminal, {
-          alternateScreen: false
+          alternateScreen: false,
         });
         expect(mockTerm.fullscreen).to.not.be.called;
       });
@@ -48,7 +47,7 @@ describe('Terminal renderer', function () {
       it('should scroll to top', function () {
         mockTerm.height = 10;
         new Terminal(mockTerm as unknown as TerminalKitTerminal, {
-          alternateScreen: false
+          alternateScreen: false,
         });
         expect(mockTerm.initialScroll).to.equal(10);
       });
@@ -56,9 +55,12 @@ describe('Terminal renderer', function () {
   });
 
   describe('render', function () {
-
     function trim(str: string): string {
-      return str.trim().split('\n').map((line) => line.trimStart()).join('\n');
+      return str
+        .trim()
+        .split('\n')
+        .map((line) => line.trimStart())
+        .join('\n');
     }
 
     function expectRendered(str: string | string[], from?: number, to?: number): void {
@@ -88,13 +90,16 @@ describe('Terminal renderer', function () {
     it('should only render changed line', function () {
       const oldState = getState(2, 0, 1);
       const state = {
-        lines: [{
-          action: 'fixup',
-          hash: '123',
-          message: 'Hello'
-        }, oldState.lines[1]],
+        lines: [
+          {
+            action: 'fixup',
+            hash: '123',
+            message: 'Hello',
+          },
+          oldState.lines[1],
+        ],
         info: oldState.info,
-        cursor: oldState.cursor
+        cursor: oldState.cursor,
       } as RebaseState;
       const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
       terminal.render(oldState);
@@ -119,10 +124,14 @@ describe('Terminal renderer', function () {
     });
 
     it('should highligt selected lines', function () {
-      const state = getState(4, {
-        from: 2,
-        pos: 1
-      }, 1);
+      const state = getState(
+        4,
+        {
+          from: 2,
+          pos: 1,
+        },
+        1,
+      );
       const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
       terminal.render(state);
       expectRendered(`
@@ -136,11 +145,17 @@ describe('Terminal renderer', function () {
     });
 
     it('should truncate lines to screen width', function () {
-      const state = getState([{
-        action: 'pick',
-        hash: '6',
-        message: '8^01234567890'
-      }], 0, 2);
+      const state = getState(
+        [
+          {
+            action: 'pick',
+            hash: '6',
+            message: '8^01234567890',
+          },
+        ],
+        0,
+        2,
+      );
       const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
       mockTerm.width = 15;
       terminal.render(state);
@@ -148,17 +163,24 @@ describe('Terminal renderer', function () {
     });
 
     it('should truncate color lines to screen width', function () {
-      const state = getState([{
-        action: 'pick',
-        hash: '6',
-        message: '8^01234567890'
-      }, {
-        action: 'pick',
-        hash: '123',
-        message: 'Line 2'
-      }], 1, 2);
+      const state = getState(
+        [
+          {
+            action: 'pick',
+            hash: '6',
+            message: '8^01234567890',
+          },
+          {
+            action: 'pick',
+            hash: '123',
+            message: 'Line 2',
+          },
+        ],
+        1,
+        2,
+      );
       const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal, {
-        colors: colors
+        colors: colors,
       });
       mockTerm.width = 15;
       terminal.render(state);
@@ -166,29 +188,43 @@ describe('Terminal renderer', function () {
     });
 
     it('should escape ^ in message', function () {
-      const state = getState([{
-        action: 'pick',
-        hash: '123',
-        message: 'Unexpected ^red'
-      }], 0, 2);
+      const state = getState(
+        [
+          {
+            action: 'pick',
+            hash: '123',
+            message: 'Unexpected ^red',
+          },
+        ],
+        0,
+        2,
+      );
       const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
       terminal.render(state);
       expect(mockTerm.getRendered()[0]).to.equal('^!pick 123 Unexpected ^^red');
     });
 
     it('should highligt selected lines crossing 10', function () {
-      const state = getState(15, {
-        from: 9,
-        pos: 10
-      }, 1);
+      const state = getState(
+        15,
+        {
+          from: 9,
+          pos: 10,
+        },
+        1,
+      );
       const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
       terminal.render(state);
-      expectRendered(`
+      expectRendered(
+        `
         pick 123 Line 8
         ^!pick 123 Line 9
         ^!pick 123 Line 10
         pick 123 Line 11
-        `, 8, 12);
+        `,
+        8,
+        12,
+      );
     });
 
     it('should only render visible lines', function () {
@@ -228,10 +264,10 @@ describe('Terminal renderer', function () {
       const newState = {
         cursor: {
           pos: 7,
-          from: 7
+          from: 7,
         },
         lines: state.lines,
-        info: state.info
+        info: state.info,
       } as RebaseState;
       terminal.render(newState);
       expectRendered(`
@@ -245,7 +281,7 @@ describe('Terminal renderer', function () {
     it('should scroll down on bottom of selection', function () {
       const state = getState(8, {
         from: 6,
-        pos: 5
+        pos: 5,
       });
       const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
       mockTerm.height = 4;
@@ -270,7 +306,7 @@ describe('Terminal renderer', function () {
 
     it('should erase lines when new render is shorter than previous', function () {
       const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
-      terminal.render(getState(5, 0));  // renders 6 lines (5 + blank)
+      terminal.render(getState(5, 0)); // renders 6 lines (5 + blank)
       mockTerm.reset();
       terminal.render(getState(2, 0)); // renders 3 lines (2 + blank) — lines 3-5 should be erased
       const rendered = mockTerm.getRendered();
@@ -284,7 +320,7 @@ describe('Terminal renderer', function () {
       it('should render if enabled', function () {
         const state = getState(2, 0, 1);
         const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal, {
-          status: true
+          status: true,
         });
         mockTerm.height = 20;
         terminal.render(state, 'up', 'UP');
@@ -300,7 +336,7 @@ describe('Terminal renderer', function () {
       it('should scroll on last line', function () {
         const state = getState(4, 2);
         const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal, {
-          status: true
+          status: true,
         });
         mockTerm.height = 3;
         terminal.render(state, 'up', 'UP');
@@ -316,7 +352,7 @@ describe('Terminal renderer', function () {
       it('should render colors if enabled', function () {
         const state = getState(2, 0, 1);
         const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal, {
-          colors: colors
+          colors: colors,
         });
         terminal.render(state);
         expectRendered(`
@@ -330,7 +366,7 @@ describe('Terminal renderer', function () {
       it('should render noop', function () {
         const state = getState(noopLines, 0, 1);
         const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal, {
-          colors: colors
+          colors: colors,
         });
         terminal.render(state);
         expectRendered(`
@@ -339,16 +375,14 @@ describe('Terminal renderer', function () {
             # Info 0
             `);
       });
-
     });
 
     describe('events', function () {
-
       it('should fire on key', function () {
         const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal, {
           keyBindings: {
-            f: 'foobar'
-          }
+            f: 'foobar',
+          },
         });
         const spy = sinon.spy();
         terminal.addKeyListener(spy);
@@ -365,7 +399,6 @@ describe('Terminal renderer', function () {
       });
 
       describe('on resize', function () {
-
         let clock: sinon.SinonFakeTimers;
 
         beforeEach(function () {
@@ -404,7 +437,9 @@ describe('Terminal renderer', function () {
         it('should append blank lines to bottom when increasing window height', function () {
           const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
           mockTerm.height = 5;
-          terminal.addKeyListener(() => { /* noop */ });
+          terminal.addKeyListener(() => {
+            /* noop */
+          });
           mockTerm.height = 7;
           mockTerm.emit('resize');
           clock.tick(1000);
@@ -414,7 +449,9 @@ describe('Terminal renderer', function () {
         it('should not append blank lines to bottom when they have already been added', function () {
           const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
           mockTerm.height = 5;
-          terminal.addKeyListener(() => { /* noop */ });
+          terminal.addKeyListener(() => {
+            /* noop */
+          });
           mockTerm.height = 10;
           mockTerm.emit('resize');
           clock.tick(1000);
@@ -431,7 +468,6 @@ describe('Terminal renderer', function () {
     });
 
     describe('close', function () {
-
       it('should restore screen', function () {
         const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
         terminal.close();
@@ -445,12 +481,11 @@ describe('Terminal renderer', function () {
       });
 
       describe('on disabled alternate screen', function () {
-
         let terminal: Terminal;
 
         beforeEach(function () {
           terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal, {
-            alternateScreen: false
+            alternateScreen: false,
           });
         });
 
@@ -463,12 +498,14 @@ describe('Terminal renderer', function () {
           mockTerm.height = 15;
           const state = getState(5, 2, 10);
           terminal.render(state);
-          terminal.render(Object.assign({}, state, {
-            cursor: {
-              from: 3,
-              to: 3
-            }
-          }));
+          terminal.render(
+            Object.assign({}, state, {
+              cursor: {
+                from: 3,
+                to: 3,
+              },
+            }),
+          );
           terminal.close();
           expect(mockTerm.getCursorPos()).to.equal(16);
         });
@@ -482,11 +519,10 @@ describe('Terminal renderer', function () {
       });
     });
 
-
     describe('custom select marker', function () {
       it('should display custom select marker', function () {
         const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal, {
-          selectMarker: '> '
+          selectMarker: '> ',
         });
         terminal.render(getState(2, 0, 1));
         expectRendered(`
@@ -506,8 +542,8 @@ describe('Terminal renderer', function () {
           rewordState: {
             message: 'My commit',
             lineIndex: 0,
-            cursorPos: 9
-          }
+            cursorPos: 9,
+          },
         };
         terminal.render(state);
         const rendered = mockTerm.getRendered();
@@ -527,8 +563,8 @@ describe('Terminal renderer', function () {
           rewordState: {
             message: msg,
             lineIndex: 0,
-            cursorPos: msg.length  // cursor at EOL
-          }
+            cursorPos: msg.length, // cursor at EOL
+          },
         };
         terminal.render(state);
         const rendered = mockTerm.getRendered();
@@ -543,8 +579,8 @@ describe('Terminal renderer', function () {
           rewordState: {
             message: 'First line\nSecond line',
             lineIndex: 0,
-            cursorPos: 2  // cursor on first line, col 2
-          }
+            cursorPos: 2, // cursor on first line, col 2
+          },
         };
         terminal.render(state);
         const rendered = mockTerm.getRendered();
@@ -562,7 +598,7 @@ describe('Terminal renderer', function () {
         const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
         const state: RebaseState = {
           ...getState([{ action: 'reword', hash: 'abc123', message: msg }], 0),
-          rewordState: { message: msg, lineIndex: 0, cursorPos }
+          rewordState: { message: msg, lineIndex: 0, cursorPos },
         };
         terminal.render(state);
         const rendered = mockTerm.getRendered();
@@ -581,7 +617,7 @@ describe('Terminal renderer', function () {
         const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
         const state: RebaseState = {
           ...getState([{ action: 'reword', hash: 'abc123', message: msg }], 0),
-          rewordState: { message: msg, lineIndex: 0, cursorPos, selectAnchor: 0, originalMessage: msg }
+          rewordState: { message: msg, lineIndex: 0, cursorPos, selectAnchor: 0, originalMessage: msg },
         };
         terminal.render(state);
         const rendered = mockTerm.getRendered();
@@ -593,11 +629,16 @@ describe('Terminal renderer', function () {
       it('should show first line of message for all lines in rebase mode', function () {
         const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
         const state: RebaseState = {
-          ...getState([{
-            action: 'reworded',
-            hash: 'abc123',
-            message: 'First line\nSecond line'
-          }], 0)
+          ...getState(
+            [
+              {
+                action: 'reworded',
+                hash: 'abc123',
+                message: 'First line\nSecond line',
+              },
+            ],
+            0,
+          ),
         };
         terminal.render(state);
         const rendered = mockTerm.getRendered();
@@ -608,11 +649,16 @@ describe('Terminal renderer', function () {
       it('should show empty message for reworded line with only comment lines', function () {
         const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
         const state: RebaseState = {
-          ...getState([{
-            action: 'reworded',
-            hash: 'abc123',
-            message: '# only a comment'
-          }], 0)
+          ...getState(
+            [
+              {
+                action: 'reworded',
+                hash: 'abc123',
+                message: '# only a comment',
+              },
+            ],
+            0,
+          ),
         };
         terminal.render(state);
         const rendered = mockTerm.getRendered();
@@ -621,14 +667,16 @@ describe('Terminal renderer', function () {
 
       it('should render reword editor from top when rebase cursor is below terminal height', function () {
         const terminal = new Terminal(mockTerm as unknown as TerminalKitTerminal);
-        const lines = Array.from({ length: mockTerm.height + 5 }, (_, i) =>
-          ({ action: 'pick' as const, hash: `sha${i}`, message: `commit ${i}` })
-        );
+        const lines = Array.from({ length: mockTerm.height + 5 }, (_, i) => ({
+          action: 'pick' as const,
+          hash: `sha${i}`,
+          message: `commit ${i}`,
+        }));
         const cursorPos = mockTerm.height + 4;
         const msg = 'my commit message';
         const state: RebaseState = {
           ...getState(lines, cursorPos),
-          rewordState: { message: msg, lineIndex: cursorPos, cursorPos: msg.length, originalMessage: msg }
+          rewordState: { message: msg, lineIndex: cursorPos, cursorPos: msg.length, originalMessage: msg },
         };
         terminal.render(state);
         const rendered = mockTerm.getRendered();
@@ -640,7 +688,7 @@ describe('Terminal renderer', function () {
         const msg = 'hello world';
         const state: RebaseState = {
           ...getState([{ action: 'reword', hash: 'abc', message: msg }], 0),
-          rewordState: { message: msg, lineIndex: 0, cursorPos: 8, selectAnchor: 3, originalMessage: msg }
+          rewordState: { message: msg, lineIndex: 0, cursorPos: 8, selectAnchor: 3, originalMessage: msg },
         };
         terminal.render(state);
         const rendered = mockTerm.getRendered();
@@ -656,7 +704,7 @@ describe('Terminal renderer', function () {
         // Selection only covers second line (4-7)
         const state: RebaseState = {
           ...getState([{ action: 'reword', hash: 'abc', message: msg }], 0),
-          rewordState: { message: msg, lineIndex: 0, cursorPos: 7, selectAnchor: 4, originalMessage: msg }
+          rewordState: { message: msg, lineIndex: 0, cursorPos: 7, selectAnchor: 4, originalMessage: msg },
         };
         terminal.render(state);
         const rendered = mockTerm.getRendered();
@@ -672,7 +720,7 @@ describe('Terminal renderer', function () {
         const msg = 'hello\nworld';
         const state: RebaseState = {
           ...getState([{ action: 'reword', hash: 'abc', message: msg }], 0),
-          rewordState: { message: msg, lineIndex: 0, cursorPos: 8, selectAnchor: 3, originalMessage: msg }
+          rewordState: { message: msg, lineIndex: 0, cursorPos: 8, selectAnchor: 3, originalMessage: msg },
         };
         terminal.render(state);
         const rendered = mockTerm.getRendered();
@@ -687,7 +735,7 @@ describe('Terminal renderer', function () {
         const msg = 'hello\n\nworld';
         const state: RebaseState = {
           ...getState([{ action: 'reword', hash: 'abc', message: msg }], 0),
-          rewordState: { message: msg, lineIndex: 0, cursorPos: 9, selectAnchor: 3, originalMessage: msg }
+          rewordState: { message: msg, lineIndex: 0, cursorPos: 9, selectAnchor: 3, originalMessage: msg },
         };
         terminal.render(state);
         const rendered = mockTerm.getRendered();

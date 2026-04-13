@@ -20,7 +20,6 @@ export interface MockTerm {
 }
 
 function createMockTerminal(): MockTerm {
-
   let lines: string[] = [];
   let linePos: number;
   let eventListeners: Record<string, ((...args: unknown[]) => void)[]> = {};
@@ -92,7 +91,6 @@ function createMockTerminal(): MockTerm {
   term.width = 150;
 
   return term as unknown as MockTerm;
-
 }
 
 export default { create: createMockTerminal };
