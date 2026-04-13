@@ -3,7 +3,7 @@ export default function debounce<T extends (...args: unknown[]) => void>(
   wait: number,
 ): (...args: Parameters<T>) => void {
   let timeout: ReturnType<typeof setTimeout> | null;
-  let args: Parameters<T> | null;
+  let args: Parameters<T>;
   let timestamp: number;
 
   function later(): void {
@@ -11,9 +11,9 @@ export default function debounce<T extends (...args: unknown[]) => void>(
     if (last < wait && last > 0) {
       timeout = setTimeout(later, wait - last);
     } else {
-      if (!args) return;
       func(...args);
-      timeout = args = null;
+      timeout = null;
+      args = [] as unknown as Parameters<T>
     }
   }
 
