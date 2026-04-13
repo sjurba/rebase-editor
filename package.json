@@ -59,6 +59,7 @@
     "chai": "^6.2.2",
     "chai-as-promised": "^8.0.2",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-chai-friendly": "^1.2.0",
     "mocha": "^11.3.0",
     "prettier": "^3.8.2",
     "sinon": "^21.0.1",
