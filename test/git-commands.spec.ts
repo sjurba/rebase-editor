@@ -57,6 +57,19 @@ describe('git-commands', function () {
     expect(msg).to.include('# This is the 4th commit message:');
   });
 
+  it('should use th ordinal for 11th/12th/13th commits', async function () {
+    const hashes = Array.from({ length: 13 }, (_, i) => `aaaa${String(i).padStart(4, '0')}`);
+    sinon.stub(childProcess, 'execFile').callsFake((_cmd: string, _args: unknown, cb: unknown) => {
+      const stdout = hashes.map(() => 'msg').join('\x1e') + '\x1e';
+      (cb as (err: null, stdout: string) => void)(null, stdout);
+      return {} as ReturnType<typeof childProcess.execFile>;
+    });
+    const msg = await getFullCommitMessages(hashes);
+    expect(msg).to.include('# This is the 11th commit message:');
+    expect(msg).to.include('# This is the 12th commit message:');
+    expect(msg).to.include('# This is the 13th commit message:');
+  });
+
   it('should reject if exec call fails', async function () {
     const error = new Error('git not found');
     sinon.stub(childProcess, 'execFile').callsFake((_cmd: string, _args: unknown, cb: unknown) => {
