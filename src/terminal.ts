@@ -91,7 +91,7 @@ export default class Terminal {
       }
     }
     if (this.opts.status) {
-      const statusLine = `^+^_Cursor: ${state.cursor.pos} From: ${state.cursor.from} Key: ${key}  Raw key: ${rawKey} Height: ${this.term.height}`;
+      const statusLine = `^+^_Cursor: ${state.cursor.pos} From: ${state.cursor.from} Key: ${key ?? ''}  Raw key: ${rawKey ?? ''} Height: ${this.term.height}`;
       allLines.splice(offset, 0, statusLine);
     }
     allLines.slice(offset, this.term.height + offset).forEach((line, index) => {
