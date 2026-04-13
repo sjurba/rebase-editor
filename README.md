@@ -40,6 +40,23 @@ Supported extra commands are:
   - ENTER, q = Save and quit
   - ESC, CTRL_C = Abort
 
+### Reword mode
+
+Press `r` on a `reword` line (or `r` again on an already-reworded line) to open an inline message editor. The full commit message is fetched from git and displayed for editing.
+
+Reword mode key bindings:
+  - ENTER = Insert newline
+  - ESC = Save and exit reword mode
+  - CTRL_Z = Undo last change within the editor
+  - CTRL_C = Cancel and restore the original message
+  - LEFT/RIGHT = Move cursor left/right
+  - UP/DOWN = Move cursor up/down across lines
+  - HOME/END = Move to start/end of current line
+  - SHIFT_LEFT/SHIFT_RIGHT/SHIFT_UP/SHIFT_DOWN = Extend selection
+  - CTRL_A = Select all text
+  - CTRL_K = Delete current line
+  - BACKSPACE/DELETE = Delete character
+
 To use a different editor for one time only you can use the `GIT_SEQUENCE_EDITOR` environment variable (replace `vi` with your favorite editor):
 
     GIT_SEQUENCE_EDITOR="vi" git rebase -i master
@@ -100,6 +117,31 @@ The specials keys that are supported are defined by [terminal-kit](https://githu
       "ESCAPE": "abort"
     }
 
+Reword mode key bindings can be customized using the `rewordMode` field in your key bindings file:
+
+    {
+      "rewordMode": {
+        "ESCAPE": "rewordDone",
+        "BACKSPACE": "rewordBackspace",
+        "DELETE": "rewordDelete",
+        "ENTER": "rewordEnter",
+        "LEFT": "rewordLeft",
+        "RIGHT": "rewordRight",
+        "UP": "rewordUp",
+        "DOWN": "rewordDown",
+        "HOME": "rewordHome",
+        "END": "rewordEnd",
+        "SHIFT_LEFT": "rewordShiftLeft",
+        "SHIFT_RIGHT": "rewordShiftRight",
+        "SHIFT_UP": "rewordShiftUp",
+        "SHIFT_DOWN": "rewordShiftDown",
+        "CTRL_A": "rewordSelectAll",
+        "CTRL_K": "rewordDeleteLine",
+        "CTRL_Z": "rewordUndo",
+        "CTRL_C": "rewordCancel"
+      }
+    }
+
 
 #### A note on key bindings for Mac
 >Not all key combinations work on Mac by default. Most notably, no modifier keys work with UP/DOWN (Like SHIFT, CTRL, ALT, META/CMD). Fn works kind of but it translates to PAGE_UP/DOWN. Therefor I decided to use the LEFT/RIGHT combinations as a fallback for Mac. You can however configure your terminal manually. [See #8 for a guide how to do that.](https://github.com/sjurba/rebase-editor/issues/8)
@@ -152,6 +194,17 @@ Using git:
     GIT_SEQUENCE_EDITOR="npx tsx src/index.ts" git rebase -i HEAD^^^
 
 ## Changelog
+
+### v2.2.0
+#### New features
+ - **Reword mode**: Press `r` on a `reword` line to open an inline multi-line commit message editor. The full commit message is fetched from git and displayed for editing directly in the terminal.
+   - Full cursor movement: arrow keys, HOME/END, CTRL_A (select all), CTRL_K (delete line)
+   - Text selection with SHIFT+arrow keys
+   - Undo within the editor with CTRL_Z
+   - ESC to save, CTRL_C to cancel and restore the original message
+   - Squash sequences: entering reword mode on a commit with preceding squash lines fetches and combines all messages
+   - Re-enter reword mode by pressing `r` again on an already-reworded line
+ - Reword mode key bindings are customizable via the `rewordMode` field in a custom key bindings file
 
 ### v2.1.0
 Migrated to TypeScript with strict mode. No functional changes.
