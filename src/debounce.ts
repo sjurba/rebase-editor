@@ -11,7 +11,8 @@ export default function debounce<T extends (...args: unknown[]) => void>(
     if (last < wait && last > 0) {
       timeout = setTimeout(later, wait - last);
     } else {
-      func(...args!);
+      if (!args) return;
+      func(...args);
       timeout = args = null;
     }
   }

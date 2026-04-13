@@ -13,8 +13,11 @@ const debugLog = {
           flags: 'w',
         });
       }
+      const f = file;
       return new Promise((resolve) => {
-        file!.write(util.format(...params) + '\n', () => { resolve(); });
+        f.write(util.format(...params) + '\n', () => {
+          resolve();
+        });
       });
     };
   },

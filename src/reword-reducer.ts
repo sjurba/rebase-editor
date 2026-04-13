@@ -39,8 +39,9 @@ function getCurrentLine(
 
 function deleteSelection(state: RewordModeState): RewordModeState {
   const { message, cursorPos, selectAnchor } = state;
-  const selStart = Math.min(selectAnchor!, cursorPos);
-  const selEnd = Math.max(selectAnchor!, cursorPos);
+  if (selectAnchor === undefined) return state;
+  const selStart = Math.min(selectAnchor, cursorPos);
+  const selEnd = Math.max(selectAnchor, cursorPos);
   return {
     ...state,
     message: removeAt(message, selStart, selEnd - selStart),

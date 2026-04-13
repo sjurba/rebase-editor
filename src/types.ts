@@ -49,7 +49,7 @@ export interface TerminalOpts {
   status?: boolean;
   selectMarker?: string;
   alternateScreen?: boolean;
-  keyBindings?: KeyBindings;
+  keyBindings: KeyBindings;
   colors?: string[];
 }
 

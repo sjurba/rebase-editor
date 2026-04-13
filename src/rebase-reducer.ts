@@ -105,7 +105,7 @@ function getUndo(state: RebaseState, stack: 'undoStack' | 'redoStack'): Partial<
 
 function popUndo(state: RebaseState, stackName: 'undoStack' | 'redoStack'): Partial<RebaseState> {
   const partialState: Partial<RebaseState> = {};
-  const stack = state[stackName]!;
+  const stack = state[stackName] ?? [];
   partialState[stackName] = pop(stack);
   return partialState;
 }

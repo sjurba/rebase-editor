@@ -35,7 +35,7 @@ export default class Terminal {
   addKeyListener(cb: (key: string, param: string | number) => void): void {
     this.term.grabInput();
     this.term.on('key', (key: unknown) => {
-      cb(this.opts.keyBindings![key as string], key as string);
+      cb(this.opts.keyBindings[key as string], key as string);
     });
     let oldHeight = this.term.height;
     this.term.on(
