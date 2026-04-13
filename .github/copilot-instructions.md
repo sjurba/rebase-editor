@@ -12,7 +12,7 @@ npm test                               # Run all tests (Mocha + tsx)
 npm test -- test/reducer.spec.ts       # Run a single test file
 npm test -- --grep "should move"       # Run tests matching a pattern
 npm run tdd                            # Watch mode with minimal output
-npm run cover                          # Coverage report (HTML + text, via c8)
+npm run coverage                       # Coverage report (HTML + text, via c8)
 ```
 
 ## Architecture
@@ -76,4 +76,4 @@ interface RebaseState {
 
 **Mocha config** is in `.mocharc.yaml` at the project root. Tests run via `tsx` for ESM TypeScript support.
 
-**Coverage** is collected with `c8`. Run `npm run cover` to generate an HTML report in `coverage/`.
+**Coverage** is collected with `c8`. Run `npm run coverage` to generate an HTML report in `coverage/`.

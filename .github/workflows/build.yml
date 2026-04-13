@@ -21,7 +21,7 @@ jobs:
       - name: Test
         run: |
           npm install
-          npm run cover-ci
+          npm run coverage-ci
 
       - name: Coveralls
         uses: coverallsapp/github-action@v2

@@ -180,7 +180,7 @@ npm run build
 ### Commands
 - `npm test` — Run all tests
 - `npm run tdd` — Watch mode with minimal output
-- `npm run cover` — Coverage report (100% required)
+- `npm run coverage` — Coverage report (100% required)
 - `npm run build` — Compile TypeScript (`src/` → `dist/`)
 
 ### Manual testing
@@ -255,7 +255,7 @@ Contributions and comments are welcome, just make an issue and/or pull req.
 
 To get started just clone the repo and run `npm install`.
 
-Make sure to run the tests `npm test` and check the testing coverage `npm run cover` before you create a PR.
+Make sure to run the tests `npm test` and check the testing coverage `npm run coverage` before you create a PR.
 Full test coverage is required.
 
 ## Credits

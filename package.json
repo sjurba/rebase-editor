@@ -8,8 +8,8 @@
     "build": "tsup",
     "test": "mocha",
     "tdd": "mocha --watch --reporter min",
-    "cover": "c8 --reporter=html --reporter=text mocha",
-    "cover-ci": "c8 --reporter=lcov --reporter=text mocha",
+    "coverage": "c8 --reporter=html --reporter=text mocha",
+    "coverage-ci": "c8 --reporter=lcov --reporter=text mocha",
     "start": "tsx src/index.ts"
   },
   "files": [
