@@ -12,6 +12,8 @@
     "coverage-ci": "c8 --reporter=lcov --reporter=text --100 mocha",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
+    "lint": "eslint \"src/**/*.ts\" \"test/**/*.ts\"",
+    "lint:fix": "eslint --fix \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "tsx src/index.ts"
   },
   "files": [
@@ -56,6 +58,7 @@
     "c8": "^10.1.3",
     "chai": "^6.2.2",
     "chai-as-promised": "^8.0.2",
+    "eslint-config-prettier": "^10.1.8",
     "mocha": "^11.3.0",
     "prettier": "^3.8.2",
     "sinon": "^21.0.1",
