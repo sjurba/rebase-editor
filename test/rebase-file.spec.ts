@@ -101,7 +101,7 @@ describe('Rebase file', function () {
       expect(state.extraInfo(bindings)).to.deep.equal([
         '# NOTE: execute (x) is not supported by rebase editor',
         '# You cannot add update-ref (u), label (l), reset (t) or merge (m), but you can move them around',
-        '# Press r twice to open an inline message editor (ENTER=new line, ESC=save).',
+        '# Press the reword key twice to open an inline message editor (ENTER=new line, ESC=save).',
         '#',
         '# Rebase Editor Commands:',
         '# UP = Moves cursor up',

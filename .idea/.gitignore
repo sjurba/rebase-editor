@@ -6,3 +6,5 @@
 /dataSources.local.xml
 # Editor-based HTTP Client requests
 /httpRequests/
+# IDE plugin migration state
+/copilot.data.migration.ask2agent.xml

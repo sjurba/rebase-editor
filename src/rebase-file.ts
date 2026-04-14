@@ -24,7 +24,7 @@ function editorCommands(keyBindings: KeyBindings): string[] {
   const extraInfo = [
     '# NOTE: execute (x) is not supported by rebase editor',
     '# You cannot add update-ref (u), label (l), reset (t) or merge (m), but you can move them around',
-    '# Press r twice to open an inline message editor (ENTER=new line, ESC=save).',
+    '# Press the reword key twice to open an inline message editor (ENTER=new line, ESC=save).',
     '#',
     '# Rebase Editor Commands:',
   ];

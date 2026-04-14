@@ -815,6 +815,18 @@ describe('Reducer', function () {
       expect(state.lines[1].message).to.equal('Other commit');
     });
 
+    it('should cancel reword mode and preserve reworded action on rewordCancel from reworded line', function () {
+      let state = getState([{ action: 'reworded', hash: 'abc123', message: 'Edited message' }], 0);
+      state = reduce(state, 'reword') as RebaseState; // enter reword mode from reworded line
+      state = reduce(state, 'rewordChar', '!') as RebaseState;
+      assert.isDefined(state.rewordState);
+      expect(state.rewordState.message).to.equal('Edited message!');
+      state = reduce(state, 'rewordCancel') as RebaseState;
+      expect(state.rewordState).to.be.undefined;
+      expect(state.lines[0].action).to.equal('reworded'); // action preserved, not downgraded to 'reword'
+      expect(state.lines[0].message).to.equal('Edited message');
+    });
+
     it('should restore original message on rewordUndo without exiting', function () {
       let state = getState([{ action: 'reword', hash: 'abc123', message: 'My commit' }], 0);
       state = reduce(state, 'reword') as RebaseState;
