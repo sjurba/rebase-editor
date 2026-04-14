@@ -1,6 +1,6 @@
 import reduce from '../src/reducer';
 import getState from './state-gen';
-import { expect } from 'chai';
+import { expect, assert } from 'chai';
 import { RebaseState } from '../src/types';
 
 describe('Reducer', function () {
@@ -763,7 +763,8 @@ describe('Reducer', function () {
       state = reduce(state, 'reword') as RebaseState;
       expect(state.rewordState).to.exist;
       state = reduce(state, 'rewordChar', '!') as RebaseState;
-      expect(state.rewordState!.message).to.equal('My commit!');
+      assert.isDefined(state.rewordState);
+      expect(state.rewordState.message).to.equal('My commit!');
     });
 
     it('should commit message and set action to reworded on rewordDone', function () {
@@ -782,7 +783,8 @@ describe('Reducer', function () {
       state = reduce(state, 'rewordChar', '!') as RebaseState;
       const beforeDone = state;
       state = reduce(state, 'rewordDone') as RebaseState;
-      const undoStack = state.undoStack!;
+      assert.isDefined(state.undoStack);
+      const undoStack = state.undoStack;
       expect(undoStack.length).to.be.greaterThan(0);
       const undoState = reduce(state, 'undo') as RebaseState;
       expect(undoState.lines[0].action).to.equal(beforeDone.lines[0].action);
@@ -804,7 +806,8 @@ describe('Reducer', function () {
       );
       state = reduce(state, 'reword') as RebaseState;
       state = reduce(state, 'rewordChar', '!') as RebaseState;
-      expect(state.rewordState!.message).to.equal('My commit!');
+      assert.isDefined(state.rewordState);
+      expect(state.rewordState.message).to.equal('My commit!');
       state = reduce(state, 'rewordCancel') as RebaseState;
       expect(state.rewordState).to.be.undefined;
       expect(state.lines[0].action).to.equal('reword');
@@ -816,11 +819,13 @@ describe('Reducer', function () {
       let state = getState([{ action: 'reword', hash: 'abc123', message: 'My commit' }], 0);
       state = reduce(state, 'reword') as RebaseState;
       state = reduce(state, 'rewordChar', '!') as RebaseState;
-      expect(state.rewordState!.message).to.equal('My commit!');
+      assert.isDefined(state.rewordState);
+      expect(state.rewordState.message).to.equal('My commit!');
       state = reduce(state, 'rewordUndo') as RebaseState;
       expect(state.rewordState).to.exist;
-      expect(state.rewordState!.message).to.equal('My commit');
-      expect(state.rewordState!.cursorPos).to.equal(9);
+      assert.isDefined(state.rewordState);
+      expect(state.rewordState.message).to.equal('My commit');
+      expect(state.rewordState.cursorPos).to.equal(9);
     });
 
     it('should return same state when reword-reducer handles unknown action in reword mode', function () {
