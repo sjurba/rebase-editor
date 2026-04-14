@@ -18,7 +18,7 @@ export default function getState(
       return {
         action: 'pick',
         hash: '123',
-        message: 'Line ' + idx,
+        message: `Line ${idx}`,
       };
     });
   } else if (!Array.isArray(lines)) {
@@ -26,12 +26,10 @@ export default function getState(
   }
   if (typeof info === 'number') {
     info = new Array(info || 0).fill(null).map((_val: null, idx: number) => {
-      return '# Info ' + idx;
+      return `# Info ${idx}`;
     });
   }
-  if (!cursor) {
-    cursor = 0;
-  }
+  cursor ??= 0;
   if (typeof cursor === 'number') {
     cursor = {
       pos: cursor,
@@ -44,7 +42,7 @@ export default function getState(
     otherStateVar: {
       foo: 'bar',
     },
-    info: (info!) || [],
+    info: info ?? [],
     height: height,
   };
 }

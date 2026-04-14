@@ -13,15 +13,13 @@ export default function debounce<T extends (...args: unknown[]) => void>(
     } else {
       func(...args);
       timeout = null;
-      args = [] as unknown as Parameters<T>
+      args = [] as unknown as Parameters<T>;
     }
   }
 
   return function debounced(...funcArgs: Parameters<T>): void {
     args = funcArgs;
     timestamp = Date.now();
-    if (!timeout) {
-      timeout = setTimeout(later, wait);
-    }
+    timeout ??= setTimeout(later, wait);
   };
 }

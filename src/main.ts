@@ -86,7 +86,7 @@ export default async function main(args: MainArgs, logger: Logger, onExit?: (err
     .then(() => {
       closeAndExit();
     })
-    .catch((err) => {
+    .catch((err: unknown) => {
       closeAndExit(err);
     });
 

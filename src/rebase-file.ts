@@ -40,8 +40,8 @@ function editorCommands(keyBindings: KeyBindings): string[] {
 
 function toState(data: string): RebaseState {
   const lines = data.replace(/\r/g, '').split('\n');
-  if (!(/^(noop|pick|break|update-ref|label|# pick)/.exec(lines[0]))) {
-    throw 'Not a proper rebase file: \n' + lines.slice(0, 5).join('\n') + '\n ...';
+  if (!/^(noop|pick|break|update-ref|label|# pick)/.exec(lines[0])) {
+    throw new Error('Not a proper rebase file: \n' + lines.slice(0, 5).join('\n') + '\n ...');
   }
   return lines.reduce<RebaseState>(
     (state, line) => {

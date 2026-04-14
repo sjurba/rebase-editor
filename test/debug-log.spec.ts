@@ -12,7 +12,7 @@ describe('Debug log', function () {
     console.log = origLog;
     try {
       fs.unlinkSync(logFile);
-    } catch (_e) {
+    } catch {
       /* ignore */
     }
   });

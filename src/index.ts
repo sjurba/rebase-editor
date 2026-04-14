@@ -42,12 +42,12 @@ const progArgs = {
   status: args.status,
   keys: args.keys,
   colors: colors,
-  selectMarker: marker || '^!',
+  selectMarker: marker ?? '^!',
   alternateScreen: args['alternate-screen'],
   file: new FileHandle(file),
   term: terminal as unknown as TerminalKitTerminal,
 };
-main(progArgs, debugLog, (err) => {
+void main(progArgs, debugLog, (err) => {
   let status = 0;
   if (err) {
     console.error(err);

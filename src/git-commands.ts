@@ -24,11 +24,13 @@ function isValidCommitHash(hash: string): boolean {
 export function getFullCommitMessages(hashes: string[]): Promise<string> {
   return new Promise((resolve, reject) => {
     if (!hashes.every(isValidCommitHash)) {
-      reject(new Error('Invalid commit hash.')); return;
+      reject(new Error('Invalid commit hash.'));
+      return;
     }
     childProcess.execFile('git', ['log', '--no-walk', '--format=%B%x1E', ...hashes], (err, stdout) => {
       if (err) {
-        reject(err); return;
+        reject(new Error(err.message));
+        return;
       }
       const messages = stdout
         .replace(/\r/g, '')
@@ -37,7 +39,8 @@ export function getFullCommitMessages(hashes: string[]): Promise<string> {
         .filter((m) => m.length > 0)
         .reverse();
       if (messages.length === 1) {
-        resolve(messages[0]); return;
+        resolve(messages[0]);
+        return;
       }
       const parts: string[] = [
         `# This is a combination of ${messages.length} commits`,

@@ -38,9 +38,7 @@ function insertAfterCurrentPosition(state: RebaseState, action: string, hash = '
 }
 
 function push(stack: UndoEntry[] | undefined, el: UndoEntry): UndoEntry[] {
-  if (!stack) {
-    stack = [];
-  }
+  stack ??= [];
   return [...stack, el];
 }
 
@@ -86,7 +84,7 @@ function getAction(state: RebaseState, action: string): Partial<RebaseState> {
     lines: state.lines.map((line, idx) => {
       if (from <= idx && idx <= to && isEditable(line.action)) {
         const message =
-          line.action === 'reworded' && line.originalMessage != null ? line.originalMessage : line.message;
+          line.action === 'reworded' && line.originalMessage !== undefined ? line.originalMessage : line.message;
         line = Object.assign({}, line, { action: action, message, originalMessage: undefined });
       }
       return line;

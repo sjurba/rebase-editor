@@ -1,7 +1,6 @@
 import bindingsFactory from '../src/key-bindings';
 import reducer from '../src/reducer';
 import getState from './state-gen';
-import { expect } from 'chai';
 import { RebaseState } from '../src/types';
 
 const bindings = await bindingsFactory();

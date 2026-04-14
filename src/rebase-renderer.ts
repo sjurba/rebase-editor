@@ -1,4 +1,4 @@
-import { RebaseState, TerminalOpts, KeyBindings } from './types';
+import { RebaseState, TerminalOpts } from './types';
 
 function inSelection(state: RebaseState, idx: number): boolean {
   const [from, to] = [state.cursor.from, state.cursor.pos].sort((a, b) => a - b);

@@ -14,9 +14,7 @@ function deepFreeze<T extends object>(obj: T): Readonly<T> {
 }
 
 function push(stack: UndoEntry[] | undefined, el: UndoEntry): UndoEntry[] {
-  if (!stack) {
-    stack = [];
-  }
+  stack ??= [];
   return [...stack, el];
 }
 

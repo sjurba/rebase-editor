@@ -1,6 +1,6 @@
 import debounce from './debounce';
 import utils from './utils';
-import { RebaseState, TerminalKitTerminal, TerminalOpts, KeyBindings } from './types';
+import { RebaseState, TerminalKitTerminal, TerminalOpts } from './types';
 import renderRebase from './rebase-renderer';
 import renderReword from './reword-renderer';
 
