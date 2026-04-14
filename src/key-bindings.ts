@@ -27,14 +27,14 @@ async function loadCustom(customKeyBindingsFile?: string): Promise<{ main: KeyBi
     return { main: {}, reword: {} };
   }
   const modulePath = path.resolve(customKeyBindingsFile);
-  let loaded: { default: Record<string, string | KeyBindings> };
+  let loaded: { default: Record<string, string | KeyBindings | undefined> };
   if (modulePath.endsWith('.json')) {
     /* c8 ignore next */
-    loaded = await import(modulePath, { with: { type: 'json' } });
+    loaded = (await import(modulePath, { with: { type: 'json' } })) as typeof loaded;
   } else {
     try {
       /* c8 ignore next */
-      loaded = await import(modulePath);
+      loaded = (await import(modulePath)) as typeof loaded;
     } catch (e) {
       throw new Error(
         `Failed to load custom key bindings from ${customKeyBindingsFile}. If this is a CommonJS module, please change the file extension to .cjs. Error: ${(e as Error).message}`,
