@@ -1,6 +1,6 @@
 import rebaseFile from '../src/rebase-file';
 import keyBindings from '../src/key-bindings';
-import { expect } from 'chai';
+import { expect, assert } from 'chai';
 import { RebaseState } from '../src/types';
 
 function trim(str: string): string {
@@ -96,7 +96,9 @@ describe('Rebase file', function () {
 
     it('should print key bindings as help', async function () {
       const state = rebaseFile.toState('pick ad3d434 Hello message');
-      expect(state.extraInfo!(await keyBindings())).to.deep.equal([
+      const bindings = await keyBindings();
+      assert.isDefined(state.extraInfo);
+      expect(state.extraInfo(bindings)).to.deep.equal([
         '# NOTE: execute (x) is not supported by rebase editor',
         '# You cannot add update-ref (u), label (l), reset (t) or merge (m), but you can move them around',
         '# Press r twice to open an inline message editor (ENTER=new line, ESC=save).',

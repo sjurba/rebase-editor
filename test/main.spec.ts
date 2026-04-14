@@ -33,7 +33,7 @@ describe('Main loop', function () {
 
   it('should render file to terminal', function (done) {
     file.read.returns(Promise.resolve(rebaseText));
-    main(args);
+    void main(args);
     setImmediate(() => {
       expect(mockTerm.getRendered().length).to.be.greaterThan(10);
       done();
@@ -50,7 +50,7 @@ describe('Main loop', function () {
         try {
           resolve(func());
         } catch (e) {
-          reject(e);
+          reject(e instanceof Error ? e : new Error(String(e)));
         }
       });
     });
@@ -58,8 +58,8 @@ describe('Main loop', function () {
 
   it('should write file on quit', function () {
     file.read.returns(Promise.resolve(rebaseText));
-    file.write.returns(Promise.resolve);
-    main(args);
+    file.write.returns(Promise.resolve());
+    void main(args);
     return nextTick()
       .then(() => {
         mockTerm.emit('key', 'q');
@@ -71,8 +71,8 @@ describe('Main loop', function () {
   });
   it('should write blank file on abort', function () {
     file.read.returns(Promise.resolve(rebaseText));
-    file.write.returns(Promise.resolve);
-    main(args);
+    file.write.returns(Promise.resolve());
+    void main(args);
     return nextTick()
       .then(() => {
         mockTerm.emit('key', 'ESCAPE');
@@ -84,16 +84,16 @@ describe('Main loop', function () {
   });
   it('should exit on quit', function (done) {
     file.read.returns(Promise.resolve(rebaseText));
-    file.write.returns(Promise.resolve);
-    main(args, done);
-    nextTick().then(() => {
+    file.write.returns(Promise.resolve());
+    void main(args, done);
+    void nextTick().then(() => {
       mockTerm.emit('key', 'q');
     });
   });
 
   it('should render changes', function () {
     file.read.returns(Promise.resolve(rebaseText));
-    main(args);
+    void main(args);
     return nextTick().then(() => {
       mockTerm.emit('key', 'f');
       expect(mockTerm.getRendered()[0]).to.match(/fixup.*/);
@@ -102,11 +102,11 @@ describe('Main loop', function () {
 
   it('should exit on render errors', function (done) {
     file.read.returns(Promise.resolve(rebaseText));
-    main(args, (err) => {
+    void main(args, (err) => {
       expect(err).to.equal('Error');
       done();
     });
-    nextTick().then(() => {
+    void nextTick().then(() => {
       mockTerm.throwOnRender('Error' as unknown as Error);
       mockTerm.emit('key', 'f');
     });
@@ -114,14 +114,14 @@ describe('Main loop', function () {
 
   it('should trap debug messages', function () {
     file.read.returns(Promise.resolve(rebaseText));
-    main(args);
+    void main(args);
     expect(debugLog.trapConsole).to.be.called;
   });
 
   it('should untrap debug messages on close', function () {
     file.read.returns(Promise.resolve(rebaseText));
-    file.write.returns(Promise.resolve);
-    main(args);
+    file.write.returns(Promise.resolve());
+    void main(args);
     return nextTick()
       .then(() => {
         mockTerm.emit('key', 'q');
@@ -133,16 +133,16 @@ describe('Main loop', function () {
   });
 
   it('should exit with error when file read fails', function (done) {
-    file.read.returns(Promise.reject('File not found'));
-    main(args, (err) => {
-      expect(err).to.equal('File not found');
+    file.read.returns(Promise.reject(new Error('File not found')));
+    void main(args, (err) => {
+      expect((err as Error).message).to.equal('File not found');
       done();
     });
   });
 
   it('should enter reword mode on double-press r', function () {
     file.read.returns(Promise.resolve(rebaseText));
-    main(args);
+    void main(args);
     return nextTick().then(() => {
       mockTerm.emit('key', 'r'); // first press: reword action
       mockTerm.emit('key', 'r'); // second press: enter reword mode
@@ -154,7 +154,7 @@ describe('Main loop', function () {
 
   it('should route characters to reword mode when active', function () {
     file.read.returns(Promise.resolve(rebaseText));
-    main(args);
+    void main(args);
     return nextTick().then(() => {
       mockTerm.emit('key', 'r'); // reword
       mockTerm.emit('key', 'r'); // enter reword mode
@@ -167,7 +167,7 @@ describe('Main loop', function () {
 
   it('should insert newline on ENTER in reword mode', function () {
     file.read.returns(Promise.resolve(rebaseText));
-    main(args);
+    void main(args);
     return nextTick().then(() => {
       mockTerm.emit('key', 'r');
       mockTerm.emit('key', 'r');
@@ -180,7 +180,7 @@ describe('Main loop', function () {
 
   it('should save and exit reword mode on ESCAPE', function () {
     file.read.returns(Promise.resolve(rebaseText));
-    main(args);
+    void main(args);
     return nextTick().then(() => {
       mockTerm.emit('key', 'r'); // reword
       mockTerm.emit('key', 'r'); // enter reword mode
@@ -194,7 +194,7 @@ describe('Main loop', function () {
     file.read.returns(Promise.resolve(rebaseText));
     const getFullCommitMessages = sinon.stub().returns(Promise.resolve('Full commit message\n\nWith body'));
     args.getFullCommitMessages = getFullCommitMessages;
-    main(args);
+    void main(args);
     await nextTick();
     mockTerm.emit('key', 'r');
     mockTerm.emit('key', 'r');
@@ -214,7 +214,7 @@ squash sha_a squash commit a
     file.read.returns(Promise.resolve(squashText));
     const getFullCommitMessages = sinon.stub().returns(Promise.resolve('Message C\n\nMessage B\n\nMessage A'));
     args.getFullCommitMessages = getFullCommitMessages;
-    main(args);
+    void main(args);
     await nextTick();
     mockTerm.emit('key', 'DOWN'); // move to sha_c (index 1)
     mockTerm.emit('key', 'r'); // reword
@@ -229,7 +229,7 @@ squash sha_a squash commit a
     file.read.returns(Promise.resolve(rebaseText));
     const getFullCommitMessages = sinon.stub().returns(Promise.reject(new Error('git error')));
     args.getFullCommitMessages = getFullCommitMessages;
-    main(args);
+    void main(args);
     await nextTick();
     mockTerm.emit('key', 'r');
     mockTerm.emit('key', 'r');
@@ -247,12 +247,12 @@ squash sha_a squash commit a
       }),
     );
     args.getFullCommitMessages = getFullCommitMessages;
-    main(args);
+    void main(args);
     await nextTick();
     mockTerm.emit('key', 'r');
     mockTerm.emit('key', 'r'); // enter reword mode
     mockTerm.emit('key', 'ESCAPE'); // save and exit reword mode
-    resolveFetch!('Full commit message');
+    resolveFetch('Full commit message');
     await nextTick();
     // Should be back in rebase mode, not reword mode
     const rendered = mockTerm.getRendered();
@@ -265,7 +265,7 @@ squash sha_a squash commit a
       .stub()
       .returns(Promise.resolve('# This is a combination of 2 commits\nFull message'));
     args.getFullCommitMessages = getFullCommitMessages;
-    main(args);
+    void main(args);
     await nextTick();
     mockTerm.emit('key', 'r');
     mockTerm.emit('key', 'r'); // enter reword mode
