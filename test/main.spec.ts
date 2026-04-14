@@ -103,11 +103,11 @@ describe('Main loop', function () {
   it('should exit on render errors', function (done) {
     file.read.returns(Promise.resolve(rebaseText));
     void main(args, (err) => {
-      expect(err).to.equal('Error');
+      expect((err as Error).message).to.equal('Error');
       done();
     });
     void nextTick().then(() => {
-      mockTerm.throwOnRender('Error' as unknown as Error);
+      mockTerm.throwOnRender(new Error('Error'));
       mockTerm.emit('key', 'f');
     });
   });

@@ -79,7 +79,7 @@ describe('git-commands', function () {
       await getFullCommitMessages(['abc123def456']);
       throw new Error('Should have rejected');
     } catch (err) {
-      expect(err).to.equal(error);
+      expect((err as Error).message).to.equal(error.message);
     }
   });
 
