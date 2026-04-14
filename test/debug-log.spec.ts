@@ -27,14 +27,16 @@ describe('Debug log', function () {
   it('should trap console log', async function () {
     const spy = sinon.spy(console, 'log');
     debugLog.trapConsole();
-    await (console.log('Jalla') as unknown as Promise<void>);
+    console.log('Jalla');
+    await debugLog.flush();
     expect(spy).not.to.be.called;
   });
 
   it('should write console log to file', async function () {
     debugLog.trapConsole();
-    await (console.log('Jalla1') as unknown as Promise<void>);
-    await (console.log('Jalla2') as unknown as Promise<void>);
+    console.log('Jalla1');
+    console.log('Jalla2');
+    await debugLog.flush();
     expect(fs.readFileSync(logFile, 'utf-8')).to.equal('Jalla1\nJalla2\n');
   });
 

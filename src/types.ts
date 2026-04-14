@@ -42,6 +42,7 @@ export interface UndoEntry {
 
 export interface Logger {
   trapConsole: () => void;
+  flush: () => Promise<void>;
   untrapConsole: () => void;
 }
 

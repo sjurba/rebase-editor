@@ -24,7 +24,7 @@ function cursor(from: number, pos: number): { cursor: CursorState } {
 }
 
 function set(state: RebaseState, ...props: Partial<RebaseState>[]): RebaseState {
-  return Object.assign({}, state, ...props);
+  return Object.assign({}, state, ...props) as RebaseState;
 }
 
 function insertAfterCurrentPosition(state: RebaseState, action: string, hash = '', message = ''): Partial<RebaseState> {

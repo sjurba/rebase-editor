@@ -21,16 +21,12 @@ export interface MockTerm {
 
 function createMockTerminal(): MockTerm {
   let lines: string[] = [];
-  let linePos: number;
-  const eventListeners: Record<string, ((...args: unknown[]) => void)[]> = {};
+  let linePos = 1;
+  const eventListeners: Record<string, ((...args: unknown[]) => void)[] | undefined> = {};
   let mockError: Error | null;
 
-  let term: MockTerm;
-
   const base = (str: string): MockTerm => {
-    if (linePos === undefined && term.initialScroll === undefined) {
-      term.initialScroll = str.split('\n').length;
-    }
+    term.initialScroll ??= str.split('\n').length;
     if (linePos < 1) {
       throw new Error('Should not write to pos < 1');
     }
@@ -43,7 +39,7 @@ function createMockTerminal(): MockTerm {
 
   const controlFncs = ['fullscreen', 'grabInput', 'clear', 'hideCursor'] as const;
 
-  term = Object.assign(base, {
+  const term = Object.assign(base, {
     moveTo: (col: number, row: number): void => {
       if (row < 1) {
         throw new Error('Should not move to row < 1');
@@ -66,7 +62,7 @@ function createMockTerminal(): MockTerm {
       listeners.push(listener);
     },
     emit: (evt: string, ...args: unknown[]): void => {
-      const listeners = eventListeners[evt] || [];
+      const listeners = eventListeners[evt] ?? [];
       listeners.forEach((fnc) => {
         fnc(...args);
       });
@@ -77,7 +73,7 @@ function createMockTerminal(): MockTerm {
     getRendered: (): string[] => lines,
     getCursorPos: (): number => linePos,
     reset: (): void => {
-      linePos = 0;
+      linePos = 1;
       lines = [];
       controlFncs.forEach((fnc) => {
         term[fnc].resetHistory();

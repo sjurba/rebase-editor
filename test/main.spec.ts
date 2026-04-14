@@ -7,6 +7,7 @@ import { MockTerm } from './mock-terminal';
 
 const debugLog = {
   trapConsole: sinon.stub(),
+  flush: sinon.stub().resolves(),
   untrapConsole: sinon.stub(),
 };
 
@@ -44,9 +45,10 @@ describe('Main loop', function () {
       setImmediate(() => {
         if (!func) {
           resolve(undefined);
+          return;
         }
         try {
-          resolve(func!());
+          resolve(func());
         } catch (e) {
           reject(e);
         }
@@ -238,7 +240,7 @@ squash sha_a squash commit a
 
   it('should not update state if reword mode exited before fetch completes', async function () {
     file.read.returns(Promise.resolve(rebaseText));
-    let resolveFetch: (msg: string) => void;
+    let resolveFetch: (msg: string) => void = () => undefined;
     const getFullCommitMessages = sinon.stub().returns(
       new Promise<string>((resolve) => {
         resolveFetch = resolve;

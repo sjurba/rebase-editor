@@ -75,7 +75,7 @@ export default async function main(args: MainArgs, logger: Logger, onExit?: (err
               terminal.render(state, key, rawKey as string);
             }
           } catch (err) {
-            reject(err);
+            reject(err instanceof Error ? err : new Error(String(err)));
           }
         });
       });
