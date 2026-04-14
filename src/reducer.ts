@@ -19,6 +19,9 @@ function push(stack: UndoEntry[] | undefined, el: UndoEntry): UndoEntry[] {
 }
 
 export default function reducer(state: RebaseState, action: string, param?: unknown): Readonly<RebaseState> {
+  if (action === 'resize') {
+    return deepFreeze({ ...rebaseReducer(state, action, param), rewordState: state.rewordState });
+  }
   if (state.rewordState) {
     if (action === 'rewordDone') {
       const { message, originalMessage, lineIndex } = state.rewordState;

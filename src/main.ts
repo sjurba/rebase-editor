@@ -28,11 +28,15 @@ export default async function main(args: MainArgs, logger: Logger, onExit?: (err
         terminal.addKeyListener((key, rawKey) => {
           try {
             if (state.rewordState) {
-              const rewordAction = rewordMap[rawKey as string];
-              if (rewordAction) {
-                state = reduce(state, rewordAction) as RebaseState;
-              } else if ((rawKey as string).length === 1) {
-                state = reduce(state, 'rewordChar', rawKey) as RebaseState;
+              if (key === 'resize') {
+                state = reduce(state, key, rawKey) as RebaseState;
+              } else {
+                const rewordAction = rewordMap[rawKey as string];
+                if (rewordAction) {
+                  state = reduce(state, rewordAction) as RebaseState;
+                } else if ((rawKey as string).length === 1) {
+                  state = reduce(state, 'rewordChar', rawKey) as RebaseState;
+                }
               }
               terminal.render(state, key, rawKey as string);
             } else if (key === 'quit') {

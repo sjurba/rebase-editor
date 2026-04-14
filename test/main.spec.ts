@@ -28,6 +28,7 @@ describe('Main loop', function () {
       term: mockTerm as unknown as TerminalKitTerminal,
       file: file,
       alternateScreen: true,
+      selectMarker: '^!',
     };
   });
 
@@ -269,6 +270,34 @@ squash sha_a squash commit a
     // Should be back in rebase mode, not reword mode
     const rendered = mockTerm.getRendered();
     expect(rendered[mockTerm.height - 1]).not.to.include('ESC: save');
+  });
+
+  it('should handle resize events while in reword mode', async function () {
+    const clock = sinon.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout', 'Date'] });
+    try {
+      // 60-line rebase list so pageDown with height=15 lands at line 15,
+      // whereas with the stale height=50 it would land at line 50.
+      const longRebaseText =
+        Array.from({ length: 60 }, (_, i) => `pick abc${String(i).padStart(4, '0')} commit ${i}`).join('\n') +
+        '\n\n# Rebase info';
+      file.read.returns(Promise.resolve(longRebaseText));
+      void main(args);
+      await nextTick();
+      mockTerm.emit('key', 'r'); // mark line 0 as reword
+      mockTerm.emit('key', 'r'); // enter reword mode
+      mockTerm.height = 15;
+      mockTerm.emit('resize', 15, 15);
+      clock.tick(1000);
+      mockTerm.emit('key', 'ESCAPE'); // save and exit reword mode
+      mockTerm.emit('key', 'HOME'); // ensure cursor is at 0
+      mockTerm.emit('key', 'PAGE_DOWN'); // should move by new height (15), not old (50)
+      const rendered = mockTerm.getRendered();
+      // With height=15, pageDown from 0 lands at line 15 → viewport scrolls, line 15 is at index 14
+      // If height were stale (50), cursor would land at line 50 and rendered[14] would not be selected
+      expect(rendered[14]).to.include('^!');
+    } finally {
+      clock.restore();
+    }
   });
 
   it('should restore original message when cancelling after full message fetch', async function () {
