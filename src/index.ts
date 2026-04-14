@@ -6,6 +6,15 @@ import minimist from 'minimist';
 import debugLog from './debug-log';
 import { TerminalKitTerminal } from './types';
 
+interface ParsedArgs {
+  _: string[];
+  status: boolean;
+  keys?: string;
+  colors?: string | boolean;
+  marker?: string;
+  'alternate-screen': boolean;
+}
+
 const args = minimist(process.argv, {
   boolean: ['s', 'alternate-screen'],
   alias: {
@@ -17,7 +26,7 @@ const args = minimist(process.argv, {
   default: {
     'alternate-screen': true,
   },
-});
+}) as unknown as ParsedArgs;
 
 if (args._.length < 3) {
   console.error('No input file specified.');
