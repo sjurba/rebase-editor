@@ -25,7 +25,9 @@ function createMockTerminal(): MockTerm {
   const eventListeners: Record<string, ((...args: unknown[]) => void)[]> = {};
   let mockError: Error | null;
 
-  function term(str: string): MockTerm {
+  let term: MockTerm;
+
+  const base = (str: string): MockTerm => {
     if (linePos === undefined && term.initialScroll === undefined) {
       term.initialScroll = str.split('\n').length;
     }
@@ -37,60 +39,55 @@ function createMockTerminal(): MockTerm {
     }
     lines[linePos - 1] = (lines[linePos - 1] || '') + str;
     return term;
-  }
-
-  term.moveTo = (col: number, row: number): void => {
-    if (row < 1) {
-      throw new Error('Should not move to row < 1');
-    }
-    linePos = row;
-  };
-
-  term.eraseLine = (): void => {
-    lines[linePos - 1] = '';
   };
 
   const controlFncs = ['fullscreen', 'grabInput', 'clear', 'hideCursor'] as const;
-  controlFncs.forEach((funcName) => {
-    (term as unknown as Record<string, sinon.SinonSpy>)[funcName] = sinon.spy();
-  });
 
-  term.on = (evt: string, listener: (...args: unknown[]) => void): void => {
-    let listeners = eventListeners[evt];
-    if (!listeners) {
-      listeners = [];
-      eventListeners[evt] = listeners;
-    }
-    listeners.push(listener);
-  };
+  term = Object.assign(base, {
+    moveTo: (col: number, row: number): void => {
+      if (row < 1) {
+        throw new Error('Should not move to row < 1');
+      }
+      linePos = row;
+    },
+    eraseLine: (): void => {
+      lines[linePos - 1] = '';
+    },
+    fullscreen: sinon.spy(),
+    grabInput: sinon.spy(),
+    clear: sinon.spy(),
+    hideCursor: sinon.spy(),
+    on: (evt: string, listener: (...args: unknown[]) => void): void => {
+      let listeners = eventListeners[evt];
+      if (!listeners) {
+        listeners = [];
+        eventListeners[evt] = listeners;
+      }
+      listeners.push(listener);
+    },
+    emit: (evt: string, ...args: unknown[]): void => {
+      const listeners = eventListeners[evt] || [];
+      listeners.forEach((fnc) => {
+        fnc(...args);
+      });
+    },
+    throwOnRender: (err: Error): void => {
+      mockError = err;
+    },
+    getRendered: (): string[] => lines,
+    getCursorPos: (): number => linePos,
+    reset: (): void => {
+      linePos = 0;
+      lines = [];
+      controlFncs.forEach((fnc) => {
+        term[fnc].resetHistory();
+      });
+    },
+    height: 50,
+    width: 150,
+  }) as unknown as MockTerm;
 
-  term.emit = (evt: string, ...args: unknown[]): void => {
-    const listeners = eventListeners[evt] || [];
-    listeners.forEach((fnc) => { fnc(...args); });
-  };
-
-  term.throwOnRender = (err: Error): void => {
-    mockError = err;
-  };
-
-  term.getRendered = (): string[] => {
-    return lines;
-  };
-
-  term.getCursorPos = (): number => linePos;
-
-  term.reset = (): void => {
-    linePos = 0;
-    lines = [];
-    controlFncs.forEach((fnc) => {
-      (term as unknown as Record<string, sinon.SinonSpy>)[fnc].resetHistory();
-    });
-  };
-
-  term.height = 50;
-  term.width = 150;
-
-  return term as unknown as MockTerm;
+  return term;
 }
 
 export default { create: createMockTerminal };

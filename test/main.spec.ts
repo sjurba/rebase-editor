@@ -124,7 +124,7 @@ describe('Main loop', function () {
       .then(() => {
         mockTerm.emit('key', 'q');
       })
-      .then(nextTick)
+      .then(() => nextTick())
       .then(() => {
         expect(debugLog.untrapConsole).to.be.called;
       });
