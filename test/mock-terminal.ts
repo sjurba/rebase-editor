@@ -10,7 +10,7 @@ export interface MockTerm {
   hideCursor: sinon.SinonSpy;
   on: (evt: string, listener: (...args: unknown[]) => void) => void;
   emit: (evt: string, ...args: unknown[]) => void;
-  throwOnRender: (err: Error) => void;
+  throwOnRender: (err: unknown) => void;
   getRendered: () => string[];
   getCursorPos: () => number;
   reset: () => void;
@@ -23,7 +23,7 @@ function createMockTerminal(): MockTerm {
   let lines: string[] = [];
   let linePos = 1;
   const eventListeners: Record<string, ((...args: unknown[]) => void)[] | undefined> = {};
-  let mockError: Error | null;
+  let mockError: unknown;
 
   const base = (str: string): MockTerm => {
     term.initialScroll ??= str.split('\n').length;
@@ -31,7 +31,7 @@ function createMockTerminal(): MockTerm {
       throw new Error('Should not write to pos < 1');
     }
     if (mockError) {
-      throw mockError;
+      throw mockError as Error;
     }
     lines[linePos - 1] = (lines[linePos - 1] || '') + str;
     return term;
@@ -67,7 +67,7 @@ function createMockTerminal(): MockTerm {
         fnc(...args);
       });
     },
-    throwOnRender: (err: Error): void => {
+    throwOnRender: (err: unknown): void => {
       mockError = err;
     },
     getRendered: (): string[] => lines,

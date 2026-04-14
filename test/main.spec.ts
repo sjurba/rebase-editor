@@ -112,6 +112,18 @@ describe('Main loop', function () {
     });
   });
 
+  it('should wrap non-Error render errors', function (done) {
+    file.read.returns(Promise.resolve(rebaseText));
+    void main(args, (err) => {
+      expect((err as Error).message).to.equal('string error');
+      done();
+    });
+    void nextTick().then(() => {
+      mockTerm.throwOnRender('string error');
+      mockTerm.emit('key', 'f');
+    });
+  });
+
   it('should trap debug messages', function () {
     file.read.returns(Promise.resolve(rebaseText));
     void main(args);
