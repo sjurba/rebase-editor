@@ -1,5 +1,5 @@
 import reduce from '../src/reducer';
-import getState from './state-gen';
+import { getState, getLines } from './state-gen';
 import { expect, assert } from 'chai';
 import { RebaseState } from '../src/types';
 
@@ -47,7 +47,7 @@ describe('Reducer', function () {
     describe('page down', function () {
       it('should move term height down', function () {
         let state: RebaseState | Readonly<RebaseState> = getState({
-          lines: 10,
+          lines: getLines(10),
           cursor: 0,
           height: 5,
         });
@@ -59,7 +59,7 @@ describe('Reducer', function () {
     describe('page up', function () {
       it('should move term height up', function () {
         let state: RebaseState | Readonly<RebaseState> = getState({
-          lines: 10,
+          lines: getLines(10),
           cursor: 9,
           height: 5,
         });
@@ -191,7 +191,7 @@ describe('Reducer', function () {
     describe('page down', function () {
       it('should select page down', function () {
         const state = getState({
-          lines: 5,
+          lines: getLines(5),
           cursor: 0,
           height: 3,
         });
@@ -206,7 +206,7 @@ describe('Reducer', function () {
     describe('page up', function () {
       it('should select page down', function () {
         const state = getState({
-          lines: 5,
+          lines: getLines(5),
           cursor: 4,
           height: 3,
         });

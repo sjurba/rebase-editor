@@ -1,6 +1,6 @@
 import Terminal from '../src/terminal';
 import mockTerminal from './mock-terminal';
-import getState from './state-gen';
+import { getState, getRewordState } from './state-gen';
 import sinon from 'sinon';
 import { expect } from 'chai';
 import { RebaseLine, TerminalKitTerminal, RebaseState, TerminalOpts } from '../src/types';
@@ -536,11 +536,7 @@ describe('Terminal renderer', function () {
         const terminal = createTerminal();
         const state: RebaseState = {
           ...getState([{ action: 'reword', hash: 'abc123', message: 'My commit' }], 0),
-          rewordState: {
-            message: 'My commit',
-            lineIndex: 0,
-            cursorPos: 9,
-          },
+          rewordState: getRewordState({ cursorPos: 9 }),
         };
         terminal.render(state);
         const rendered = mockTerm.getRendered();
@@ -557,11 +553,7 @@ describe('Terminal renderer', function () {
         const msg = 'My commit';
         const state: RebaseState = {
           ...getState([{ action: 'reword', hash: 'abc123', message: msg }], 0),
-          rewordState: {
-            message: msg,
-            lineIndex: 0,
-            cursorPos: msg.length, // cursor at EOL
-          },
+          rewordState: getRewordState({ message: msg, cursorPos: msg.length }),
         };
         terminal.render(state);
         const rendered = mockTerm.getRendered();
@@ -573,11 +565,7 @@ describe('Terminal renderer', function () {
         const terminal = createTerminal();
         const state: RebaseState = {
           ...getState([{ action: 'reword', hash: 'abc123', message: 'First line\nSecond line' }], 0),
-          rewordState: {
-            message: 'First line\nSecond line',
-            lineIndex: 0,
-            cursorPos: 2, // cursor on first line, col 2
-          },
+          rewordState: getRewordState({ message: 'First line\nSecond line', cursorPos: 2 }),
         };
         terminal.render(state);
         const rendered = mockTerm.getRendered();
@@ -595,7 +583,7 @@ describe('Terminal renderer', function () {
         const terminal = createTerminal();
         const state: RebaseState = {
           ...getState([{ action: 'reword', hash: 'abc123', message: msg }], 0),
-          rewordState: { message: msg, lineIndex: 0, cursorPos },
+          rewordState: getRewordState({ message: msg, cursorPos }),
         };
         terminal.render(state);
         const rendered = mockTerm.getRendered();
@@ -614,7 +602,7 @@ describe('Terminal renderer', function () {
         const terminal = createTerminal();
         const state: RebaseState = {
           ...getState([{ action: 'reword', hash: 'abc123', message: msg }], 0),
-          rewordState: { message: msg, lineIndex: 0, cursorPos, selectAnchor: 0, originalMessage: msg },
+          rewordState: getRewordState({ message: msg, cursorPos, selectAnchor: 0 }),
         };
         terminal.render(state);
         const rendered = mockTerm.getRendered();
@@ -673,7 +661,7 @@ describe('Terminal renderer', function () {
         const msg = 'my commit message';
         const state: RebaseState = {
           ...getState(lines, cursorPos),
-          rewordState: { message: msg, lineIndex: cursorPos, cursorPos: msg.length, originalMessage: msg },
+          rewordState: getRewordState({ message: msg, lineIndex: cursorPos, cursorPos: msg.length }),
         };
         terminal.render(state);
         const rendered = mockTerm.getRendered();
@@ -685,7 +673,7 @@ describe('Terminal renderer', function () {
         const msg = 'hello world';
         const state: RebaseState = {
           ...getState([{ action: 'reword', hash: 'abc', message: msg }], 0),
-          rewordState: { message: msg, lineIndex: 0, cursorPos: 8, selectAnchor: 3, originalMessage: msg },
+          rewordState: getRewordState({ message: msg, cursorPos: 8, selectAnchor: 3 }),
         };
         terminal.render(state);
         const rendered = mockTerm.getRendered();
@@ -701,7 +689,7 @@ describe('Terminal renderer', function () {
         // Selection only covers second line (4-7)
         const state: RebaseState = {
           ...getState([{ action: 'reword', hash: 'abc', message: msg }], 0),
-          rewordState: { message: msg, lineIndex: 0, cursorPos: 7, selectAnchor: 4, originalMessage: msg },
+          rewordState: getRewordState({ message: msg, cursorPos: 7, selectAnchor: 4 }),
         };
         terminal.render(state);
         const rendered = mockTerm.getRendered();
@@ -717,7 +705,7 @@ describe('Terminal renderer', function () {
         const msg = 'hello\nworld';
         const state: RebaseState = {
           ...getState([{ action: 'reword', hash: 'abc', message: msg }], 0),
-          rewordState: { message: msg, lineIndex: 0, cursorPos: 8, selectAnchor: 3, originalMessage: msg },
+          rewordState: getRewordState({ message: msg, cursorPos: 8, selectAnchor: 3 }),
         };
         terminal.render(state);
         const rendered = mockTerm.getRendered();
@@ -732,7 +720,7 @@ describe('Terminal renderer', function () {
         const msg = 'hello\n\nworld';
         const state: RebaseState = {
           ...getState([{ action: 'reword', hash: 'abc', message: msg }], 0),
-          rewordState: { message: msg, lineIndex: 0, cursorPos: 9, selectAnchor: 3, originalMessage: msg },
+          rewordState: getRewordState({ message: msg, cursorPos: 9, selectAnchor: 3 }),
         };
         terminal.render(state);
         const rendered = mockTerm.getRendered();

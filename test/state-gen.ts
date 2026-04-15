@@ -1,4 +1,4 @@
-import { RebaseState, RebaseLine, CursorState } from '../src/types';
+import { RebaseState, RebaseLine, CursorState, RewordModeState } from '../src/types';
 
 interface StateInput {
   lines: RebaseLine[];
@@ -7,20 +7,33 @@ interface StateInput {
   height?: number;
 }
 
-export default function getState(
+export function getLines(count: number): RebaseLine[] {
+  return new Array(count || 0).fill(null).map((_val: null, idx: number) => ({
+    action: 'pick',
+    hash: '123',
+    message: `Line ${idx}`,
+  }));
+}
+
+export function getRewordState(overrides?: Partial<RewordModeState>): RewordModeState {
+  const message = overrides?.message ?? 'My commit';
+  return {
+    message,
+    originalMessage: message,
+    lineIndex: 0,
+    cursorPos: 0,
+    ...overrides,
+  };
+}
+
+export function getState(
   lines: number | RebaseLine[] | StateInput,
   cursor?: number | CursorState,
   info?: number | string[],
 ): RebaseState {
   let height = 20;
   if (typeof lines === 'number') {
-    lines = new Array(lines || 0).fill(null).map((_val: null, idx: number) => {
-      return {
-        action: 'pick',
-        hash: '123',
-        message: `Line ${idx}`,
-      };
-    });
+    lines = getLines(lines);
   } else if (!Array.isArray(lines)) {
     ({ lines, cursor, info, height = 20 } = lines);
   }
