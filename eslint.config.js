@@ -11,7 +11,7 @@ export default [
     languageOptions: {
       parser: tsparser,
       parserOptions: {
-        project: './tsconfig.eslint.json',
+        project: './tsconfig.json',
       },
     },
     rules: {
