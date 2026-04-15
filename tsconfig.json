@@ -5,7 +5,9 @@
     "declaration": false,
     "declarationMap": false,
     "sourceMap": false,
-    "noEmit": true
+    "noEmit": true,
+    "incremental": true,
+    "tsBuildInfoFile": ".cache/tsbuildinfo"
   },
   "include": ["src", "test"]
 }
