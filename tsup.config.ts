@@ -7,6 +7,7 @@ export default defineConfig({
   outDir: 'dist',
   sourcemap: true,
   dts: true,
+  tsconfig: 'tsconfig.build.json',
   clean: true,
   banner: {
     js: '#!/usr/bin/env node',

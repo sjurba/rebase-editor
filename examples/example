@@ -1,0 +1,29 @@
+pick a1b2c3d commit 1 - add user authentication
+pick b2c3d4e commit 2 - fix login redirect bug
+pick c3d4e5f commit 3 - update password validation rules
+pick d4e5f6a commit 4 - add forgot password flow
+pick e5f6a7b commit 5 - refactor auth middleware
+pick f6a7b8c commit 6 - add session timeout handling
+pick a7b8c9d commit 7 - fix token expiry edge case
+pick b8c9d0e commit 8 - add unit tests for auth service
+pick c9d0e1f commit 9 - update API docs for auth endpoints
+pick d0e1f2a commit 10 - bump auth library to v3.2.1
+
+# Rebase e1f2a3b..d0e1f2a onto e1f2a3b (10 commands)
+#
+# Commands:
+# p, pick = use commit
+# r, reword = use commit, but edit the commit message
+# e, edit = use commit, but stop for amending
+# s, squash = use commit, but meld into previous commit
+# f, fixup = like "squash", but discard this commit's log message
+# x, exec = run command (the rest of the line) using shell
+# d, drop = remove commit
+#
+# These lines can be re-ordered; they are executed from top to bottom.
+#
+# If you remove a line here THAT COMMIT WILL BE LOST.
+#
+# However, if you remove everything, the rebase will be aborted.
+#
+# Note that empty commits are commented out

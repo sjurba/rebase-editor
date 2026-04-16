@@ -3,3 +3,5 @@ console.log
 coverage
 .nyc_output
 dist
+.cache
+.idea

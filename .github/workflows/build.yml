@@ -18,12 +18,17 @@ jobs:
         with:
           node-version: 24.x
 
-      - name: Test
-        run: |
-          npm install
-          npm run cover-ci
+      - name: Install
+        run: npm install
 
-      - name: Coveralls
-        uses: coverallsapp/github-action@v2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Format check
+        run: npm run format:check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm run coverage-ci

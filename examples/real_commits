@@ -1,0 +1,29 @@
+pick 3f0ed85 Fix CJS interop for terminal-kit in ESM build
+pick 49eadeb Merge pull request #50 from sjurba/chore/typescript
+pick dc3bbf4 Bump minimatch from 5.1.6 to 5.1.9
+pick 3f5aecf Update GitHub Actions to Node.js 24-compatible versions
+pick dc53380 Merge pull request #52 from sjurba/chore/update-actions
+pick 0663c36 Add corner case tests for untested scenarios
+pick 01d2920 Merge pull request #53 from sjurba/test/corner-cases
+pick cae2bb9 Merge pull request #51 from sjurba/dependabot/npm_and_yarn/minimatch-5.1.9
+pick 2c89b23 Update minimum Node.js version to 18
+pick 40cac5e 2.1.0
+
+# Rebase onto master (10 commands)
+#
+# Commands:
+# p, pick = use commit
+# r, reword = use commit, but edit the commit message
+# e, edit = use commit, but stop for amending
+# s, squash = use commit, but meld into previous commit
+# f, fixup = like "squash", but discard this commit's log message
+# x, exec = run command (the rest of the line) using shell
+# d, drop = remove commit
+#
+# These lines can be re-ordered; they are executed from top to bottom.
+#
+# If you remove a line here THAT COMMIT WILL BE LOST.
+#
+# However, if you remove everything, the rebase will be aborted.
+#
+# Note that empty commits are commented out

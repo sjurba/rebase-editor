@@ -2,10 +2,7 @@ import utils from '../src/utils';
 import { expect } from 'chai';
 
 describe('Utils', function () {
-
-
   describe('trimTo', function () {
-
     it('should trim non styled line', function () {
       expect(utils.trimTo('Line Line', 4)).to.equal('Line');
     });
@@ -46,5 +43,4 @@ describe('Utils', function () {
       expect(utils.trimTo('Hello', 0)).to.equal('');
     });
   });
-
 });

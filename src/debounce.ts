@@ -1,6 +1,9 @@
-export default function debounce<T extends (...args: unknown[]) => void>(func: T, wait: number): (...args: Parameters<T>) => void {
+export default function debounce<T extends (...args: unknown[]) => void>(
+  func: T,
+  wait: number,
+): (...args: Parameters<T>) => void {
   let timeout: ReturnType<typeof setTimeout> | null;
-  let args: Parameters<T> | null;
+  let args: Parameters<T>;
   let timestamp: number;
 
   function later(): void {
@@ -8,16 +11,15 @@ export default function debounce<T extends (...args: unknown[]) => void>(func: T
     if (last < wait && last > 0) {
       timeout = setTimeout(later, wait - last);
     } else {
-      func(...args!);
-      timeout = args = null;
+      func(...args);
+      timeout = null;
+      args = [] as unknown as Parameters<T>;
     }
   }
 
   return function debounced(...funcArgs: Parameters<T>): void {
     args = funcArgs;
     timestamp = Date.now();
-    if (!timeout) {
-      timeout = setTimeout(later, wait);
-    }
+    timeout ??= setTimeout(later, wait);
   };
 }

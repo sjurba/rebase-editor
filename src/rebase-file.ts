@@ -1,37 +1,36 @@
 import { RebaseState, RebaseLine, KeyBindings } from './types';
 
 function getKeyInfo(action: string, keyBindings: KeyBindings, description: string): string {
-  const keys = Object.keys(keyBindings)
-    .filter((key) => keyBindings[key] === action);
+  const keys = Object.keys(keyBindings).filter((key) => keyBindings[key] === action);
   return '# ' + keys.join(', ') + ' = ' + description;
 }
 
 const actionDescriptions: Record<string, string> = {
-  'up': 'Moves cursor up',
-  'down': 'Moves cursor down',
-  'selectDown': 'Select one line down',
-  'selectUp': 'Select one line up',
-  'moveDown': 'Moves current line down one position',
-  'moveUp': 'Moves current line up one position',
-  'undo': 'Undo',
-  'redo': 'Redo',
-  'quit': 'Save and quit',
-  'abort': 'Abort',
+  up: 'Moves cursor up',
+  down: 'Moves cursor down',
+  selectDown: 'Select one line down',
+  selectUp: 'Select one line up',
+  moveDown: 'Moves current line down one position',
+  moveUp: 'Moves current line up one position',
+  undo: 'Undo',
+  redo: 'Redo',
+  quit: 'Save and quit',
+  abort: 'Abort',
   'fixup -c': 'fixup -c',
-  'fixup -C': 'fixup -C'
+  'fixup -C': 'fixup -C',
 };
 
 function editorCommands(keyBindings: KeyBindings): string[] {
   const extraInfo = [
     '# NOTE: execute (x) is not supported by rebase editor',
     '# You cannot add update-ref (u), label (l), reset (t) or merge (m), but you can move them around',
+    '# Press the reword key twice to open an inline message editor (ENTER=new line, ESC=save).',
     '#',
     '# Rebase Editor Commands:',
   ];
 
   Object.keys(actionDescriptions).forEach((action) => {
-    extraInfo.push(getKeyInfo(action, keyBindings,
-      actionDescriptions[action]));
+    extraInfo.push(getKeyInfo(action, keyBindings, actionDescriptions[action]));
   });
 
   extraInfo.push('# HOME, END, PAGE_UP, PAGE_DOWN = Moves cursor and selects with SHIFT');
@@ -40,12 +39,12 @@ function editorCommands(keyBindings: KeyBindings): string[] {
 }
 
 function toState(data: string): RebaseState {
-  const lines = data.split('\n');
-  if (!lines[0].match(/^(noop|pick|break|update-ref|label|# pick)/)) {
-    throw 'Not a proper rebase file: \n' + lines.slice(0, 5).join('\n') + '\n ...';
+  const lines = data.replace(/\r/g, '').split('\n');
+  if (!/^(noop|pick|break|update-ref|label|# pick)/.exec(lines[0])) {
+    throw new Error('Not a proper rebase file: \n' + lines.slice(0, 5).join('\n') + '\n ...');
   }
-  return lines
-    .reduce<RebaseState>((state, line) => {
+  return lines.reduce<RebaseState>(
+    (state, line) => {
       line = line.trim();
       if (line.length > 0) {
         let parts = line.split(' ');
@@ -59,28 +58,46 @@ function toState(data: string): RebaseState {
           state.lines.push({
             action: parts[0],
             hash: parts[1],
-            message: parts.slice(2).join(' ')
+            message: parts.slice(2).join(' '),
           });
         }
       }
       return state;
-    }, {
+    },
+    {
       lines: [],
       info: [],
       cursor: {
         pos: 0,
-        from: 0
+        from: 0,
       },
       height: 0,
-      extraInfo: editorCommands
-    });
+      extraInfo: editorCommands,
+    },
+  );
 }
 
 function toFile(state: RebaseState | undefined): string {
   if (!state) {
     return '';
   }
-  const lines = state.lines.map((line: RebaseLine) => [line.action, line.hash, line.message].filter((part) => part).join(' '));
+  let inRewordedBlock = false;
+  const lines = state.lines.map((line: RebaseLine) => {
+    if (line.action === 'reworded') {
+      inRewordedBlock = true;
+      const parts = line.message.split('\n').filter((p) => p.length > 0 && !p.startsWith('#'));
+      const flags = parts.map((p) => `-m '${p.replace(/'/g, "'\\''")}'`).join(' ');
+      const firstLine = parts[0] ?? '';
+      return `pick ${line.hash} # ${firstLine}\nexec git commit --amend ${flags}`;
+    }
+    if (line.action === 'squash' && inRewordedBlock) {
+      return `fixup ${line.hash} ${line.message.split('\n')[0]}`;
+    }
+    if (line.action !== 'squash') {
+      inRewordedBlock = false;
+    }
+    return [line.action, line.hash, line.message.split('\n')[0]].filter((part) => part).join(' ');
+  });
   return [...lines, '', ...state.info].join('\n');
 }
 

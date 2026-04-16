@@ -1,11 +1,8 @@
 import debounce from './debounce';
 import utils from './utils';
-import { RebaseState, TerminalKitTerminal, TerminalOpts, KeyBindings } from './types';
-
-function inSelection(state: RebaseState, idx: number): boolean {
-  const [from, to] = [state.cursor.from, state.cursor.pos].sort((a, b) => a - b);
-  return from <= idx && idx <= to;
-}
+import { RebaseState, TerminalKitTerminal, TerminalOpts } from './types';
+import renderRebase from './rebase-renderer';
+import renderReword from './reword-renderer';
 
 function getBlankLines(n: number): string {
   return new Array(n + 1).join('\n');
@@ -17,11 +14,14 @@ export default class Terminal {
   viewPort: string[];
 
   constructor(term: TerminalKitTerminal, opts?: TerminalOpts) {
-    this.opts = Object.assign({
-      status: false,
-      selectMarker: '^!',
-      alternateScreen: true
-    }, opts);
+    this.opts = Object.assign(
+      {
+        status: false,
+        selectMarker: '^!',
+        alternateScreen: true,
+      },
+      opts,
+    );
     this.term = term;
     this.viewPort = [];
     if (this.opts.alternateScreen) {
@@ -35,19 +35,22 @@ export default class Terminal {
   addKeyListener(cb: (key: string, param: string | number) => void): void {
     this.term.grabInput();
     this.term.on('key', (key: unknown) => {
-      cb(this.opts.keyBindings![key as string], key as string);
+      cb(this.opts.keyBindings[key as string], key as string);
     });
     let oldHeight = this.term.height;
-    this.term.on('resize', debounce(() => {
-      this.viewPort = [];
-      const height = this.term.height;
-      if (height > oldHeight) {
-        this.term.moveTo(1, height);
-        this.term(getBlankLines(height - oldHeight));
-        oldHeight = height;
-      }
-      cb('resize', this.term.height);
-    }, 100));
+    this.term.on(
+      'resize',
+      debounce(() => {
+        this.viewPort = [];
+        const height = this.term.height;
+        if (height > oldHeight) {
+          this.term.moveTo(1, height);
+          this.term(getBlankLines(height - oldHeight));
+          oldHeight = height;
+        }
+        cb('resize', this.term.height);
+      }, 100),
+    );
     cb('resize', this.term.height);
   }
 
@@ -60,7 +63,6 @@ export default class Terminal {
     }
     this.term.hideCursor(false);
   }
-
 
   _writeLine(line: string, index: number): void {
     line = utils.trimTo(line, this.term.width);
@@ -76,62 +78,31 @@ export default class Terminal {
     this.term.moveTo(1, line + 1);
   }
 
-  _wrapColors(arr: string[], colors: string[]): string {
-    return arr.map((txt, idx) => {
-      const color = colors[idx];
-      if (color) {
-        return color + txt + '^';
-      } else {
-        return txt;
-      }
-    }).join(' ');
-  }
-
   render(state: RebaseState, key?: string, rawKey?: string): void {
-    const allLines: string[] = [];
+    const allLines = state.rewordState
+      ? renderReword(state.rewordState, this.term.height)
+      : renderRebase(state, this.opts);
 
-    state.lines.forEach((line, idx) => {
-      const selected = inSelection(state, idx);
-      let termStr: string;
-      const message = (line.message || '').replace(/\^/g, '^^');
-      if (this.opts.colors && !selected) {
-        termStr = this._wrapColors([line.action, line.hash, message], this.opts.colors);
-      } else {
-        termStr = (selected ? this.opts.selectMarker : '') + [line.action, line.hash, message].filter(part => part).join(' ');
-      }
-      allLines.push(termStr);
-    });
-    allLines.push('');
-    let emptyLines = 0;
-    let extraInfo = state.extraInfo && state.extraInfo(this.opts.keyBindings as KeyBindings);
-    state.info.forEach((line) => {
-      if (line === '#' && extraInfo) {
-        emptyLines++;
-        if (emptyLines === 2) {
-          extraInfo.forEach((infoLine) => {
-            allLines.push(infoLine);
-          });
-        }
-      }
-      allLines.push(line);
-    });
     let offset = 0;
-    const pos = Math.max(state.cursor.pos, state.cursor.from) + (this.opts.status ? 1 : 0);
-    if (pos >= this.term.height) {
-      offset = pos - this.term.height + 1;
+    if (!state.rewordState) {
+      const pos = Math.max(state.cursor.pos, state.cursor.from) + (this.opts.status ? 1 : 0);
+      if (pos >= this.term.height) {
+        offset = pos - this.term.height + 1;
+      }
     }
     if (this.opts.status) {
-      const statusLine = `^+^_Cursor: ${state.cursor.pos} From: ${state.cursor.from} Key: ${key}  Raw key: ${rawKey} Height: ${this.term.height}`;
+      const statusLine = `^+^_Cursor: ${state.cursor.pos} From: ${state.cursor.from} Key: ${key ?? ''}  Raw key: ${rawKey ?? ''} Height: ${this.term.height}`;
       allLines.splice(offset, 0, statusLine);
     }
     allLines.slice(offset, this.term.height + offset).forEach((line, index) => {
       this._writeLine(line, index);
     });
-    if (key === 'resize') {
-      for (let i = this.viewPort.length + 1; i <= this.term.height; i++) {
-        this.term.moveTo(1, i);
-        this.term.eraseLine();
-      }
+    const renderedCount = Math.min(allLines.length - offset, this.term.height);
+    const clearTo = key === 'resize' ? this.term.height : this.viewPort.length;
+    for (let i = renderedCount; i < clearTo; i++) {
+      this._moveTo(i);
+      this.term.eraseLine();
     }
+    this.viewPort = this.viewPort.slice(0, renderedCount);
   }
 }

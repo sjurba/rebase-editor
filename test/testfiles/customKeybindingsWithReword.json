@@ -1,0 +1,6 @@
+{
+  "rewordMode": {
+    "CTRL_ENTER": "rewordEnter",
+    "ENTER": "rewordDone"
+  }
+}

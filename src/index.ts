@@ -6,18 +6,27 @@ import minimist from 'minimist';
 import debugLog from './debug-log';
 import { TerminalKitTerminal } from './types';
 
+interface ParsedArgs {
+  _: string[];
+  status: boolean;
+  keys?: string;
+  colors?: string | boolean;
+  marker?: string;
+  'alternate-screen': boolean;
+}
+
 const args = minimist(process.argv, {
   boolean: ['s', 'alternate-screen'],
   alias: {
     s: 'status',
     k: 'keys',
     c: 'colors',
-    m: 'marker'
+    m: 'marker',
   },
   default: {
-    'alternate-screen': true
-  }
-});
+    'alternate-screen': true,
+  },
+}) as unknown as ParsedArgs;
 
 if (args._.length < 3) {
   console.error('No input file specified.');
@@ -42,12 +51,12 @@ const progArgs = {
   status: args.status,
   keys: args.keys,
   colors: colors,
-  selectMarker: marker || '^!',
+  selectMarker: marker ?? '^!',
   alternateScreen: args['alternate-screen'],
   file: new FileHandle(file),
-  term: terminal as unknown as TerminalKitTerminal
+  term: terminal as unknown as TerminalKitTerminal,
 };
-main(progArgs, debugLog, (err) => {
+void main(progArgs, debugLog, (err) => {
   let status = 0;
   if (err) {
     console.error(err);

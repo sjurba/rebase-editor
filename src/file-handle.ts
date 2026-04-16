@@ -11,12 +11,15 @@ export default class FileHandle {
     return new Promise((resolve, reject) => {
       fs.readFile(this.file, 'utf8', function (err, data) {
         if (err) {
-          return reject(err);
+          reject(err);
+          return;
         }
-        if (data !== null && data.length > 0) {
-          return resolve(data);
+        if (data.length > 0) {
+          resolve(data);
+          return;
         } else {
-          return reject('File was empty');
+          reject(new Error('File was empty'));
+          return;
         }
       });
     });

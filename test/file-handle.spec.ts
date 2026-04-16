@@ -3,7 +3,6 @@ import fs from 'fs';
 import { expect } from 'chai';
 
 describe('File handler', function () {
-
   describe('read', function () {
     it('should read file', function () {
       const handler = new Handler('test/testfiles/testfile.txt');
@@ -22,7 +21,6 @@ describe('File handler', function () {
   });
 
   describe('write', function () {
-
     const file = 'test/testfiles/writtenfile.txt';
 
     function remove(file: string, done: (err?: Error) => void) {
@@ -64,7 +62,4 @@ describe('File handler', function () {
       });
     });
   });
-
-
-
 });
