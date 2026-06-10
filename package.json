@@ -61,7 +61,7 @@
     "c8": "^11.0.0",
     "chai": "^6.2.2",
     "chai-as-promised": "^8.0.2",
-    "concurrently": "^9.2.1",
+    "concurrently": "^10.0.3",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-chai-friendly": "^1.2.0",
     "mocha": "^11.3.0",
