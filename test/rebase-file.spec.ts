@@ -2,6 +2,7 @@ import rebaseFile from '../src/rebase-file.ts';
 import keyBindings from '../src/key-bindings.ts';
 import { expect, assert } from 'chai';
 import type { RebaseState } from '../src/types.ts';
+import reduce from '../src/reducer.ts';
 
 function trim(str: string): string {
   return str
@@ -13,6 +14,76 @@ function trim(str: string): string {
 
 describe('Rebase file', function () {
   describe('to state', function () {
+    const commands = [
+      ['p', 'pick'],
+      ['r', 'reword'],
+      ['e', 'edit'],
+      ['s', 'squash'],
+      ['f', 'fixup'],
+      ['x', 'exec'],
+      ['b', 'break'],
+      ['d', 'drop'],
+      ['l', 'label'],
+      ['t', 'reset'],
+      ['m', 'merge'],
+      ['u', 'update-ref'],
+    ];
+
+    commands.forEach(([short, full]) => {
+      it(`should accept ${short} and ${full} as the first or a later command`, function () {
+        for (const action of [short, full]) {
+          const line = `${action} abc123 subject`;
+          const first = rebaseFile.toState(line);
+          const later = rebaseFile.toState(`pick 123 first\n${line}`);
+          expect(first.lines[0].action).to.equal(full);
+          expect(later.lines[1].action).to.equal(full);
+          expect(rebaseFile.toFile(first)).to.equal(`${full} abc123 subject\n`);
+        }
+      });
+    });
+
+    it('should normalize commented abbreviated picks and tab-separated commands', function () {
+      const state = rebaseFile.toState('# p\tabc123\tEmpty commit\np\tdef456\tOther commit');
+      expect(state.lines).to.deep.equal([
+        { action: '# pick', hash: 'abc123', message: 'Empty commit' },
+        { action: 'pick', hash: 'def456', message: 'Other commit' },
+      ]);
+    });
+
+    it('should keep flagged fixup hashes editable', function () {
+      for (const action of ['f', 'fixup']) {
+        for (const flag of ['-c', '-C']) {
+          const state = rebaseFile.toState(`${action} ${flag} abc123 subject`);
+          expect(state.lines[0]).to.deep.equal({ action: `fixup ${flag}`, hash: 'abc123', message: 'subject' });
+          expect(rebaseFile.toFile(state)).to.equal(`fixup ${flag} abc123 subject\n`);
+          expect(rebaseFile.toFile(reduce(state, 'pick'))).to.equal('pick abc123 subject\n');
+        }
+      }
+    });
+
+    it('should apply editing rules after normalizing abbreviated commands', function () {
+      for (const command of ['b', 'l', 't', 'm', 'u', 'x']) {
+        const state = rebaseFile.toState(`${command} argument`);
+        expect(reduce(state, 'pick').lines[0]).to.equal(state.lines[0]);
+      }
+      const state = rebaseFile.toState('r abc123 subject\ns def456 next');
+      const rewording = reduce(state, 'reword');
+      expect(rewording.rewordState?.lineIndex).to.equal(0);
+      const reworded = reduce(rewording, 'rewordDone');
+      expect(rebaseFile.toFile(reworded)).to.include('fixup def456 next');
+    });
+
+    it('should reject invalid command prefixes', function () {
+      for (const command of ['picker', 'rubbish', 'noop-extra', '# picking']) {
+        expect(() => rebaseFile.toState(`${command} abc123 subject`)).to.throw('Not a proper rebase file');
+      }
+    });
+
+    it('should preserve spacing in exec shell commands', function () {
+      const state = rebaseFile.toState(`x printf 'one  two'`);
+      expect(rebaseFile.toFile(state)).to.equal(`exec printf 'one  two'\n`);
+    });
+
     it('should parse lines', function () {
       const state = rebaseFile.toState('pick ad3d434 Hello message');
       expect(state.lines).to.deep.equal([
@@ -99,7 +170,7 @@ describe('Rebase file', function () {
       const bindings = await keyBindings();
       assert.isDefined(state.extraInfo);
       expect(state.extraInfo(bindings)).to.deep.equal([
-        '# NOTE: execute (x) is not supported by rebase editor',
+        '# NOTE: execute (x) cannot be added or edited, but you can move it around',
         '# You cannot add update-ref (u), label (l), reset (t) or merge (m), but you can move them around',
         '# Press the reword key twice to open an inline message editor (ENTER=new line, ESC=save).',
         '#',
