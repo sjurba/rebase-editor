@@ -248,7 +248,7 @@ describe('Rebase file', function () {
       } as unknown as RebaseState;
       const file = rebaseFile.toFile(state);
       expect(file).to.include('pick abc123 # New commit message');
-      expect(file).to.include("exec git commit --amend -m 'New commit message'");
+      expect(file).to.include(`exec git commit --amend -m "$(printf '%s\\n' 'New commit message')"`);
     });
 
     it('should serialize reworded lines with multiple message paragraphs', function () {
@@ -264,7 +264,7 @@ describe('Rebase file', function () {
       } as unknown as RebaseState;
       const file = rebaseFile.toFile(state);
       expect(file).to.include('pick abc123 # First line');
-      expect(file).to.include("exec git commit --amend -m 'First line' -m 'Second paragraph'");
+      expect(file).to.include(`exec git commit --amend -m "$(printf '%s\\n' 'First line' '' 'Second paragraph')"`);
     });
 
     it('should escape single quotes in reworded message', function () {
@@ -279,7 +279,9 @@ describe('Rebase file', function () {
         info: [],
       } as unknown as RebaseState;
       const file = rebaseFile.toFile(state);
-      expect(file).to.equal(`pick abc123 # It's a bug\nexec git commit --amend -m 'It'\\''s a bug'\n`);
+      expect(file).to.equal(
+        `pick abc123 # It's a bug\nexec git commit --amend -m "$(printf '%s\\n' 'It'\\''s a bug')"\n`,
+      );
     });
 
     it('should serialize reworded lines with multiple lines in message', function () {
@@ -295,7 +297,7 @@ describe('Rebase file', function () {
       } as unknown as RebaseState;
       const file = rebaseFile.toFile(state);
       expect(file).to.include('pick abc123 # First line');
-      expect(file).to.include("exec git commit --amend -m 'First line' -m 'Second line'");
+      expect(file).to.include(`exec git commit --amend -m "$(printf '%s\\n' 'First line' 'Second line')"`);
     });
 
     it('should convert following squash lines to fixup when preceded by reworded', function () {
@@ -314,7 +316,7 @@ describe('Rebase file', function () {
       expect(file).to.include('pick ddd444 # New message');
       expect(file).to.include('fixup bbb222 squash commit b');
       expect(file).to.include('fixup ccc333 squash commit c');
-      expect(file).to.include("exec git commit --amend -m 'New message'");
+      expect(file).to.include(`exec git commit --amend -m "$(printf '%s\\n' 'New message')"`);
     });
 
     it('should not convert squash to fixup if not followed by reworded', function () {
@@ -349,7 +351,7 @@ describe('Rebase file', function () {
       } as unknown as RebaseState;
       const file = rebaseFile.toFile(state);
       expect(file).to.include('pick abc123 # First commit subject');
-      expect(file).to.include("-m 'First commit subject' -m 'Second commit subject'");
+      expect(file).to.include(`-m "$(printf '%s\\n' '' 'First commit subject' '' '' 'Second commit subject' '')"`);
     });
 
     it('should handle reworded message with only comment lines', function () {
