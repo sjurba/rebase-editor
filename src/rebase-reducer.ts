@@ -142,7 +142,7 @@ function getLineAction(state: RebaseState, pos: number = state.cursor.pos): stri
 }
 
 function isEditable(action: string): boolean {
-  const nonEditableActions = ['break', 'update-ref', 'label', 'reset', 'merge'];
+  const nonEditableActions = ['break', 'update-ref', 'label', 'reset', 'merge', 'exec', 'noop'];
   return !action.startsWith('#') && !nonEditableActions.includes(action);
 }
 
