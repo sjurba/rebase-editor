@@ -1,11 +1,8 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": [
-    "typescript",
-    "unicorn"
-  ],
+  "plugins": ["typescript", "unicorn"],
   "categories": {
-    "correctness": "off"
+    "correctness": "error"
   },
   "options": {
     "typeAware": true
@@ -105,10 +102,7 @@
         "allowNumber": true
       }
     ],
-    "typescript/return-await": [
-      "error",
-      "error-handling-correctness-only"
-    ],
+    "typescript/return-await": ["error", "error-handling-correctness-only"],
     "typescript/triple-slash-reference": "error",
     "typescript/unbound-method": "error",
     "typescript/unified-signatures": "error",
@@ -132,16 +126,12 @@
     "typescript/prefer-nullish-coalescing": "error",
     "typescript/prefer-regexp-exec": "error",
     "typescript/prefer-string-starts-ends-with": "error",
-    "curly": "error"
+    "curly": "error",
+    "typescript/switch-exhaustiveness-check": "error"
   },
   "overrides": [
     {
-      "files": [
-        "**/*.ts",
-        "**/*.tsx",
-        "**/*.mts",
-        "**/*.cts"
-      ],
+      "files": ["**/*.ts", "**/*.tsx", "**/*.mts", "**/*.cts"],
       "rules": {
         "constructor-super": "off",
         "getter-return": "off",
@@ -166,21 +156,13 @@
       }
     },
     {
-      "files": [
-        "test/**/*.ts"
-      ],
+      "files": ["test/**/*.ts"],
       "rules": {
         "no-unused-expressions": "off",
         "chai-friendly/no-unused-expressions": "error"
       },
-      "jsPlugins": [
-        "eslint-plugin-chai-friendly"
-      ]
+      "jsPlugins": ["eslint-plugin-chai-friendly"]
     }
   ],
-  "ignorePatterns": [
-    "dist",
-    "coverage",
-    "test/testfiles"
-  ]
+  "ignorePatterns": ["dist", "coverage", "test/testfiles"]
 }
