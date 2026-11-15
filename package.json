@@ -34,8 +34,8 @@
   "author": "Sjur Bakka",
   "license": "ISC",
   "dependencies": {
-    "minimist": "^1.1.1",
-    "terminal-kit": "^3.1.1"
+    "minimist": "^1.2.8",
+    "terminal-kit": "^3.1.4"
   },
   "bin": {
     "rebase-editor": "dist/index.js"
@@ -52,21 +52,25 @@
     "@types/chai-as-promised": "^8.0.2",
     "@types/minimist": "^1.2.5",
     "@types/mocha": "^10.0.10",
-    "@types/node": "^25.4.0",
-    "@types/sinon": "^21.0.0",
-    "@types/sinon-chai": "^4.0.0",
+    "@types/node": "^26.6.6",
+    "@types/sinon": "^22.0.2",
+    "@types/sinon-chai": "^4.0.1",
     "@types/terminal-kit": "^2.5.7",
-    "c8": "^11.0.0",
-    "chai": "^6.2.2",
+    "c8": "^12.0.0",
+    "chai": "^6.3.0",
     "chai-as-promised": "^8.0.2",
-    "concurrently": "^9.2.1",
-    "eslint-plugin-chai-friendly": "^1.2.0",
-    "mocha": "^11.3.0",
+    "concurrently": "^10.0.7",
+    "eslint-plugin-chai-friendly": "^1.2.1",
+    "mocha": "^12.0.3",
     "oxlint": "^1.93.0",
     "oxlint-tsgolint": "^7.0.2007",
-    "prettier": "^3.8.2",
-    "sinon": "^21.0.1",
+    "prettier": "^3.10.1",
+    "sinon": "^22.1.0",
     "sinon-chai": "^4.0.1",
     "typescript": "^7.0.2"
+  },
+  "overrides": {
+    "glob": "^14.0.2",
+    "minimatch": "^11.0.1"
   }
 }
