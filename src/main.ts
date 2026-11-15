@@ -29,13 +29,13 @@ export default async function main(args: MainArgs, logger: Logger, onExit?: (err
           try {
             if (state.rewordState) {
               if (key === 'resize') {
-                state = reduce(state, key, rawKey) as RebaseState;
+                state = reduce(state, key, rawKey);
               } else {
                 const rewordAction = rewordMap[rawKey as string];
                 if (rewordAction) {
-                  state = reduce(state, rewordAction) as RebaseState;
+                  state = reduce(state, rewordAction);
                 } else if ((rawKey as string).length === 1) {
-                  state = reduce(state, 'rewordChar', rawKey) as RebaseState;
+                  state = reduce(state, 'rewordChar', rawKey);
                 }
               }
               terminal.render(state, key, rawKey as string);
@@ -45,7 +45,7 @@ export default async function main(args: MainArgs, logger: Logger, onExit?: (err
               resolve(undefined);
             } else {
               const prevState = state;
-              state = reduce(state, key, rawKey) as RebaseState;
+              state = reduce(state, key, rawKey);
               if (state.rewordState && !prevState.rewordState) {
                 const { lineIndex } = state.rewordState;
                 const hashes: string[] = [state.lines[lineIndex].hash];

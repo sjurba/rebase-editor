@@ -14,8 +14,8 @@
     "format:check": "prettier --check \"src/**/*.ts\" \"test/**/*.ts\"",
     "typecheck": "tsc",
     "ci": "concurrently --kill-others-on-failure --prefix-colors \"blue,green,yellow,magenta\" -n \"coverage,typecheck,lint,format\" \"npm run coverage-ci\" \"npm run typecheck\" \"npm run lint\" \"npm run format:check\"",
-    "lint": "eslint --cache --cache-location .cache/eslintcache \"src/**/*.ts\" \"test/**/*.ts\"",
-    "lint:fix": "npm run lint -- --fix",
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
     "start": "node src/index.ts"
   },
   "files": [
@@ -56,19 +56,17 @@
     "@types/sinon": "^21.0.0",
     "@types/sinon-chai": "^4.0.0",
     "@types/terminal-kit": "^2.5.7",
-    "@typescript-eslint/eslint-plugin": "^8.57.0",
-    "@typescript-eslint/parser": "^8.57.0",
     "c8": "^11.0.0",
     "chai": "^6.2.2",
     "chai-as-promised": "^8.0.2",
     "concurrently": "^9.2.1",
-    "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-chai-friendly": "^1.2.0",
     "mocha": "^11.3.0",
+    "oxlint": "^1.93.0",
+    "oxlint-tsgolint": "^7.0.2007",
     "prettier": "^3.8.2",
     "sinon": "^21.0.1",
     "sinon-chai": "^4.0.1",
-    "tsx": "^4.21.0",
     "typescript": "^7.0.2"
   }
 }

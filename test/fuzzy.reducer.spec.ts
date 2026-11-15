@@ -23,7 +23,7 @@ describe('Fuzzy reducer test', function () {
       for (let i = 0; i < 100; i++) {
         const randomAction = actions[Math.floor(Math.random() * actions.length)];
         executedActions.push(randomAction);
-        state = reducer(state as RebaseState, randomAction);
+        state = reducer(state, randomAction);
       }
     } catch (err) {
       console.log('Executed actions', executedActions);
