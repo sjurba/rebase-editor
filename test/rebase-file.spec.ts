@@ -80,8 +80,17 @@ describe('Rebase file', function () {
     });
 
     it('should preserve spacing in exec shell commands', function () {
-      const state = rebaseFile.toState(`x printf 'one  two'`);
-      expect(rebaseFile.toFile(state)).to.equal(`exec printf 'one  two'\n`);
+      for (const command of [`printf 'one  two'`, `VALUE='one  two' ./test`, `'my  script.sh'`]) {
+        const state = rebaseFile.toState(`x\t${command}`);
+        expect(state.lines[0]).to.deep.equal({ action: 'exec', hash: command, message: '' });
+        expect(rebaseFile.toFile(state)).to.equal(`exec ${command}\n`);
+      }
+    });
+
+    it('should treat comments without a space after # as info', function () {
+      const state = rebaseFile.toState('pick 123 first\n#pick 456 second\n#');
+      expect(state.lines).to.have.length(1);
+      expect(state.info).to.deep.equal(['#pick 456 second', '#']);
     });
 
     it('should parse lines', function () {
@@ -425,13 +434,23 @@ describe('Rebase file', function () {
       expect(file).to.include(`-m "$(printf '%s\\n' '' 'First commit subject' '' '' 'Second commit subject' '')"`);
     });
 
-    it('should handle reworded message with only comment lines', function () {
+    it('should fall back to a plain pick when reworded message has only comment lines', function () {
       const state = {
-        lines: [{ action: 'reworded', hash: 'abc123', message: '# only comments' }],
+        lines: [{ action: 'reworded', hash: 'abc123', message: '# only comments', originalMessage: 'Original' }],
         info: [],
       } as unknown as RebaseState;
-      const file = rebaseFile.toFile(state);
-      expect(file).to.include('pick abc123 # \nexec git commit --amend');
+      expect(rebaseFile.toFile(state)).to.equal('pick abc123 Original\n');
+    });
+
+    it('should fall back to a plain pick when reworded message is blank', function () {
+      const state = {
+        lines: [
+          { action: 'reworded', hash: 'abc123', message: ' \n\n' },
+          { action: 'squash', hash: 'def456', message: 'next' },
+        ],
+        info: [],
+      } as unknown as RebaseState;
+      expect(rebaseFile.toFile(state)).to.equal('pick abc123\nsquash def456 next\n');
     });
   });
 });
