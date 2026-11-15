@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import rewordReducer from '../src/reword-reducer';
-import { RewordModeState } from '../src/types';
+import rewordReducer from '../src/reword-reducer.ts';
+import type { RewordModeState } from '../src/types.ts';
 
 function state(message: string, cursorPos?: number, selectAnchor?: number): RewordModeState {
   return {

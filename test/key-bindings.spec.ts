@@ -1,4 +1,4 @@
-import keyBindings, { rewordKeyBindings } from '../src/key-bindings';
+import keyBindings, { rewordKeyBindings } from '../src/key-bindings.ts';
 import { expect } from 'chai';
 
 describe('Key bindings', function () {

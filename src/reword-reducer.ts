@@ -1,4 +1,4 @@
-import { RewordModeState } from './types';
+import type { RewordModeState } from './types.ts';
 
 function insertAt(str: string, pos: number, chars: string): string {
   return str.slice(0, pos) + chars + str.slice(pos);

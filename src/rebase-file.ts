@@ -1,4 +1,4 @@
-import { RebaseState, RebaseLine, KeyBindings } from './types';
+import type { RebaseState, RebaseLine, KeyBindings } from './types.ts';
 
 function getKeyInfo(action: string, keyBindings: KeyBindings, description: string): string {
   const keys = Object.keys(keyBindings).filter((key) => keyBindings[key] === action);

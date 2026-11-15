@@ -8,7 +8,7 @@
 
 ```bash
 npm run build          # Compile TypeScript (src/ → dist/)
-npm test               # Run all tests (Mocha + tsx)
+npm test               # Run all tests (Mocha, native Node TypeScript)
 npm test -- test/reducer.spec.ts   # Run a single test file
 npm test -- --grep "should move"   # Run tests matching a pattern
 npm run coverage       # Coverage report (HTML + text, via c8)

@@ -1,4 +1,4 @@
-import { RebaseState, RebaseLine, CursorState, RewordModeState } from '../src/types';
+import type { RebaseState, RebaseLine, CursorState, RewordModeState } from '../src/types.ts';
 
 interface StateInput {
   lines: RebaseLine[];

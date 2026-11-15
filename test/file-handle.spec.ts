@@ -1,4 +1,4 @@
-import Handler from '../src/file-handle';
+import Handler from '../src/file-handle.ts';
 import fs from 'fs';
 import { expect } from 'chai';
 

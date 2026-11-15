@@ -1,9 +1,9 @@
-import Terminal from './terminal';
-import reduce from './reducer';
-import rebaseFile from './rebase-file';
-import keyBindings, { rewordKeyBindings } from './key-bindings';
-import { getFullCommitMessages as defaultGetFullCommitMessages } from './git-commands';
-import { MainArgs, Logger, RebaseState } from './types';
+import Terminal from './terminal.ts';
+import reduce from './reducer.ts';
+import rebaseFile from './rebase-file.ts';
+import keyBindings, { rewordKeyBindings } from './key-bindings.ts';
+import { getFullCommitMessages as defaultGetFullCommitMessages } from './git-commands.ts';
+import type { MainArgs, Logger, RebaseState } from './types.ts';
 
 export default async function main(args: MainArgs, logger: Logger, onExit?: (err?: unknown) => void): Promise<void> {
   const file = args.file;
