@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
-    "build": "tsup",
+    "build": "node -e \"fs.rmSync('dist', { recursive: true, force: true })\" && tsc -p tsconfig.build.json && node -e \"fs.chmodSync('dist/index.js', 0o755)\"",
     "test": "mocha",
     "tdd": "mocha --watch --reporter min",
     "coverage": "c8 --reporter=html --reporter=text mocha",
@@ -16,7 +16,7 @@
     "ci": "concurrently --kill-others-on-failure --prefix-colors \"blue,green,yellow,magenta\" -n \"coverage,typecheck,lint,format\" \"npm run coverage-ci\" \"npm run typecheck\" \"npm run lint\" \"npm run format:check\"",
     "lint": "eslint --cache --cache-location .cache/eslintcache \"src/**/*.ts\" \"test/**/*.ts\"",
     "lint:fix": "npm run lint -- --fix",
-    "start": "tsx src/index.ts"
+    "start": "node src/index.ts"
   },
   "files": [
     "dist",
@@ -68,8 +68,7 @@
     "prettier": "^3.8.2",
     "sinon": "^21.0.1",
     "sinon-chai": "^4.0.1",
-    "tsup": "^8.5.1",
     "tsx": "^4.21.0",
-    "typescript": "^5.9.3"
+    "typescript": "^7.0.2"
   }
 }

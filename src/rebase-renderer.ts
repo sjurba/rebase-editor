@@ -1,4 +1,4 @@
-import { RebaseState, TerminalOpts } from './types';
+import type { RebaseState, TerminalOpts } from './types.ts';
 
 function inSelection(state: RebaseState, idx: number): boolean {
   const [from, to] = [state.cursor.from, state.cursor.pos].sort((a, b) => a - b);

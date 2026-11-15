@@ -1,4 +1,4 @@
-import debugLog from '../src/debug-log';
+import debugLog from '../src/debug-log.ts';
 import fs from 'fs';
 import sinon from 'sinon';
 import { expect } from 'chai';

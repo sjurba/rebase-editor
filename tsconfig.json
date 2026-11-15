@@ -2,12 +2,9 @@
   "extends": "./tsconfig.build.json",
   "compilerOptions": {
     "rootDir": ".",
-    "declaration": false,
-    "declarationMap": false,
     "sourceMap": false,
     "noEmit": true,
-    "incremental": true,
-    "tsBuildInfoFile": ".cache/tsbuildinfo"
+    "types": ["node", "mocha"]
   },
   "include": ["src", "test"]
 }

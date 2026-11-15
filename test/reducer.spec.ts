@@ -1,7 +1,7 @@
-import reduce from '../src/reducer';
-import { getState, getLines } from './state-gen';
+import reduce from '../src/reducer.ts';
+import { getState, getLines } from './state-gen.ts';
 import { expect, assert } from 'chai';
-import { RebaseState } from '../src/types';
+import type { RebaseState } from '../src/types.ts';
 
 describe('Reducer', function () {
   it('should return same state on unknown command', function () {

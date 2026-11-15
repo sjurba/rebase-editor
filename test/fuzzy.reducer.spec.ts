@@ -1,7 +1,7 @@
-import bindingsFactory from '../src/key-bindings';
-import reducer from '../src/reducer';
-import { getState } from './state-gen';
-import { RebaseState } from '../src/types';
+import bindingsFactory from '../src/key-bindings.ts';
+import reducer from '../src/reducer.ts';
+import { getState } from './state-gen.ts';
+import type { RebaseState } from '../src/types.ts';
 
 const bindings = await bindingsFactory();
 

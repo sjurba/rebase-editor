@@ -1,10 +1,11 @@
+#!/usr/bin/env node
 import terminalKit from 'terminal-kit';
 const { terminal } = terminalKit;
-import FileHandle from './file-handle';
-import main from './main';
+import FileHandle from './file-handle.ts';
+import main from './main.ts';
 import minimist from 'minimist';
-import debugLog from './debug-log';
-import { TerminalKitTerminal } from './types';
+import debugLog from './debug-log.ts';
+import type { TerminalKitTerminal } from './types.ts';
 
 interface ParsedArgs {
   _: string[];

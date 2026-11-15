@@ -1,4 +1,4 @@
-import { RewordModeState } from './types';
+import type { RewordModeState } from './types.ts';
 
 export default function renderReword(rewordState: RewordModeState, termHeight: number): string[] {
   const { message, cursorPos, selectAnchor } = rewordState;
