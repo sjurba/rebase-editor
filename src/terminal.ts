@@ -5,7 +5,7 @@ import renderRebase from './rebase-renderer.ts';
 import renderReword from './reword-renderer.ts';
 
 function getBlankLines(n: number): string {
-  return new Array(n + 1).join('\n');
+  return '\n'.repeat(n);
 }
 
 export default class Terminal {
