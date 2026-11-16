@@ -1,11 +1,11 @@
-import debounce from './debounce';
-import utils from './utils';
-import { RebaseState, TerminalKitTerminal, TerminalOpts } from './types';
-import renderRebase from './rebase-renderer';
-import renderReword from './reword-renderer';
+import debounce from './debounce.ts';
+import utils from './utils.ts';
+import type { RebaseState, TerminalKitTerminal, TerminalOpts } from './types.ts';
+import renderRebase from './rebase-renderer.ts';
+import renderReword from './reword-renderer.ts';
 
 function getBlankLines(n: number): string {
-  return new Array(n + 1).join('\n');
+  return '\n'.repeat(n);
 }
 
 export default class Terminal {

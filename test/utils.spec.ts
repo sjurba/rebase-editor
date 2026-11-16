@@ -1,4 +1,4 @@
-import utils from '../src/utils';
+import utils from '../src/utils.ts';
 import { expect } from 'chai';
 
 describe('Utils', function () {

@@ -184,11 +184,11 @@ npm run build
 
 Using the example file in the repo:
 
-    npx tsx src/index.ts examples/example
+    node src/index.ts examples/example
 
 Using git:
 
-    GIT_SEQUENCE_EDITOR="npx tsx src/index.ts" git rebase -i HEAD^^^
+    GIT_SEQUENCE_EDITOR="node src/index.ts" git rebase -i HEAD^^^
 
 ## Changelog
 

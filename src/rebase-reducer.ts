@@ -1,4 +1,4 @@
-import { RebaseState, RebaseLine, CursorState, UndoEntry, RewordModeState } from './types';
+import type { RebaseState, RebaseLine, CursorState, UndoEntry, RewordModeState } from './types.ts';
 
 const actions = ['pick', 'fixup', 'fixup -c', 'fixup -C', 'squash', 'reword', 'edit', 'drop'];
 const [DOWN, UP] = [1, -1];

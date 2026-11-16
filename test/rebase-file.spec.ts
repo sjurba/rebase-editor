@@ -1,7 +1,7 @@
-import rebaseFile from '../src/rebase-file';
-import keyBindings from '../src/key-bindings';
+import rebaseFile from '../src/rebase-file.ts';
+import keyBindings from '../src/key-bindings.ts';
 import { expect, assert } from 'chai';
-import { RebaseState } from '../src/types';
+import type { RebaseState } from '../src/types.ts';
 
 function trim(str: string): string {
   return str
