@@ -2,6 +2,7 @@ import rebaseFile from '../src/rebase-file.ts';
 import keyBindings from '../src/key-bindings.ts';
 import { expect, assert } from 'chai';
 import type { RebaseState } from '../src/types.ts';
+import reduce from '../src/reducer.ts';
 
 function trim(str: string): string {
   return str
@@ -13,6 +14,85 @@ function trim(str: string): string {
 
 describe('Rebase file', function () {
   describe('to state', function () {
+    const commands = [
+      ['p', 'pick'],
+      ['r', 'reword'],
+      ['e', 'edit'],
+      ['s', 'squash'],
+      ['f', 'fixup'],
+      ['x', 'exec'],
+      ['b', 'break'],
+      ['d', 'drop'],
+      ['l', 'label'],
+      ['t', 'reset'],
+      ['m', 'merge'],
+      ['u', 'update-ref'],
+    ];
+
+    commands.forEach(([short, full]) => {
+      it(`should accept ${short} and ${full} as the first or a later command`, function () {
+        for (const action of [short, full]) {
+          const line = `${action} abc123 subject`;
+          const first = rebaseFile.toState(line);
+          const later = rebaseFile.toState(`pick 123 first\n${line}`);
+          expect(first.lines[0].action).to.equal(full);
+          expect(later.lines[1].action).to.equal(full);
+          expect(rebaseFile.toFile(first)).to.equal(`${full} abc123 subject\n`);
+        }
+      });
+    });
+
+    it('should normalize commented abbreviated picks and tab-separated commands', function () {
+      const state = rebaseFile.toState('# p\tabc123\tEmpty commit\np\tdef456\tOther commit');
+      expect(state.lines).to.deep.equal([
+        { action: '# pick', hash: 'abc123', message: 'Empty commit' },
+        { action: 'pick', hash: 'def456', message: 'Other commit' },
+      ]);
+    });
+
+    it('should keep flagged fixup hashes editable', function () {
+      for (const action of ['f', 'fixup']) {
+        for (const flag of ['-c', '-C']) {
+          const state = rebaseFile.toState(`${action} ${flag} abc123 subject`);
+          expect(state.lines[0]).to.deep.equal({ action: `fixup ${flag}`, hash: 'abc123', message: 'subject' });
+          expect(rebaseFile.toFile(state)).to.equal(`fixup ${flag} abc123 subject\n`);
+          expect(rebaseFile.toFile(reduce(state, 'pick'))).to.equal('pick abc123 subject\n');
+        }
+      }
+    });
+
+    it('should apply editing rules after normalizing abbreviated commands', function () {
+      for (const command of ['b', 'l', 't', 'm', 'u', 'x']) {
+        const state = rebaseFile.toState(`${command} argument`);
+        expect(reduce(state, 'pick').lines[0]).to.equal(state.lines[0]);
+      }
+      const state = rebaseFile.toState('r abc123 subject\ns def456 next');
+      const rewording = reduce(state, 'reword');
+      expect(rewording.rewordState?.lineIndex).to.equal(0);
+      const reworded = reduce(rewording, 'rewordDone');
+      expect(rebaseFile.toFile(reworded)).to.include('fixup def456 next');
+    });
+
+    it('should reject invalid command prefixes', function () {
+      for (const command of ['picker', 'rubbish', 'noop-extra', '# picking']) {
+        expect(() => rebaseFile.toState(`${command} abc123 subject`)).to.throw('Not a proper rebase file');
+      }
+    });
+
+    it('should preserve spacing in exec shell commands', function () {
+      for (const command of [`printf 'one  two'`, `VALUE='one  two' ./test`, `'my  script.sh'`]) {
+        const state = rebaseFile.toState(`x\t${command}`);
+        expect(state.lines[0]).to.deep.equal({ action: 'exec', hash: command, message: '' });
+        expect(rebaseFile.toFile(state)).to.equal(`exec ${command}\n`);
+      }
+    });
+
+    it('should treat comments without a space after # as info', function () {
+      const state = rebaseFile.toState('pick 123 first\n#pick 456 second\n#');
+      expect(state.lines).to.have.length(1);
+      expect(state.info).to.deep.equal(['#pick 456 second', '#']);
+    });
+
     it('should parse lines', function () {
       const state = rebaseFile.toState('pick ad3d434 Hello message');
       expect(state.lines).to.deep.equal([
@@ -99,7 +179,7 @@ describe('Rebase file', function () {
       const bindings = await keyBindings();
       assert.isDefined(state.extraInfo);
       expect(state.extraInfo(bindings)).to.deep.equal([
-        '# NOTE: execute (x) is not supported by rebase editor',
+        '# NOTE: execute (x) cannot be added or edited, but you can move it around',
         '# You cannot add update-ref (u), label (l), reset (t) or merge (m), but you can move them around',
         '# Press the reword key twice to open an inline message editor (ENTER=new line, ESC=save).',
         '#',
@@ -248,7 +328,7 @@ describe('Rebase file', function () {
       } as unknown as RebaseState;
       const file = rebaseFile.toFile(state);
       expect(file).to.include('pick abc123 # New commit message');
-      expect(file).to.include("exec git commit --amend -m 'New commit message'");
+      expect(file).to.include(`exec git commit --amend -m "$(printf '%s\\n' 'New commit message')"`);
     });
 
     it('should serialize reworded lines with multiple message paragraphs', function () {
@@ -264,7 +344,7 @@ describe('Rebase file', function () {
       } as unknown as RebaseState;
       const file = rebaseFile.toFile(state);
       expect(file).to.include('pick abc123 # First line');
-      expect(file).to.include("exec git commit --amend -m 'First line' -m 'Second paragraph'");
+      expect(file).to.include(`exec git commit --amend -m "$(printf '%s\\n' 'First line' '' 'Second paragraph')"`);
     });
 
     it('should escape single quotes in reworded message', function () {
@@ -279,7 +359,9 @@ describe('Rebase file', function () {
         info: [],
       } as unknown as RebaseState;
       const file = rebaseFile.toFile(state);
-      expect(file).to.equal(`pick abc123 # It's a bug\nexec git commit --amend -m 'It'\\''s a bug'\n`);
+      expect(file).to.equal(
+        `pick abc123 # It's a bug\nexec git commit --amend -m "$(printf '%s\\n' 'It'\\''s a bug')"\n`,
+      );
     });
 
     it('should serialize reworded lines with multiple lines in message', function () {
@@ -295,7 +377,7 @@ describe('Rebase file', function () {
       } as unknown as RebaseState;
       const file = rebaseFile.toFile(state);
       expect(file).to.include('pick abc123 # First line');
-      expect(file).to.include("exec git commit --amend -m 'First line' -m 'Second line'");
+      expect(file).to.include(`exec git commit --amend -m "$(printf '%s\\n' 'First line' 'Second line')"`);
     });
 
     it('should convert following squash lines to fixup when preceded by reworded', function () {
@@ -314,7 +396,7 @@ describe('Rebase file', function () {
       expect(file).to.include('pick ddd444 # New message');
       expect(file).to.include('fixup bbb222 squash commit b');
       expect(file).to.include('fixup ccc333 squash commit c');
-      expect(file).to.include("exec git commit --amend -m 'New message'");
+      expect(file).to.include(`exec git commit --amend -m "$(printf '%s\\n' 'New message')"`);
     });
 
     it('should not convert squash to fixup if not followed by reworded', function () {
@@ -349,16 +431,26 @@ describe('Rebase file', function () {
       } as unknown as RebaseState;
       const file = rebaseFile.toFile(state);
       expect(file).to.include('pick abc123 # First commit subject');
-      expect(file).to.include("-m 'First commit subject' -m 'Second commit subject'");
+      expect(file).to.include(`-m "$(printf '%s\\n' '' 'First commit subject' '' '' 'Second commit subject' '')"`);
     });
 
-    it('should handle reworded message with only comment lines', function () {
+    it('should fall back to a plain pick when reworded message has only comment lines', function () {
       const state = {
-        lines: [{ action: 'reworded', hash: 'abc123', message: '# only comments' }],
+        lines: [{ action: 'reworded', hash: 'abc123', message: '# only comments', originalMessage: 'Original' }],
         info: [],
       } as unknown as RebaseState;
-      const file = rebaseFile.toFile(state);
-      expect(file).to.include('pick abc123 # \nexec git commit --amend');
+      expect(rebaseFile.toFile(state)).to.equal('pick abc123 Original\n');
+    });
+
+    it('should fall back to a plain pick when reworded message is blank', function () {
+      const state = {
+        lines: [
+          { action: 'reworded', hash: 'abc123', message: ' \n\n' },
+          { action: 'squash', hash: 'def456', message: 'next' },
+        ],
+        info: [],
+      } as unknown as RebaseState;
+      expect(rebaseFile.toFile(state)).to.equal('pick abc123\nsquash def456 next\n');
     });
   });
 });

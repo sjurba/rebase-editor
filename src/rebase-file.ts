@@ -22,7 +22,7 @@ const actionDescriptions: Record<string, string> = {
 
 function editorCommands(keyBindings: KeyBindings): string[] {
   const extraInfo = [
-    '# NOTE: execute (x) is not supported by rebase editor',
+    '# NOTE: execute (x) cannot be added or edited, but you can move it around',
     '# You cannot add update-ref (u), label (l), reset (t) or merge (m), but you can move them around',
     '# Press the reword key twice to open an inline message editor (ENTER=new line, ESC=save).',
     '#',
@@ -38,28 +38,69 @@ function editorCommands(keyBindings: KeyBindings): string[] {
   return extraInfo;
 }
 
+const abbreviatedActions = new Map([
+  ['p', 'pick'],
+  ['r', 'reword'],
+  ['e', 'edit'],
+  ['s', 'squash'],
+  ['f', 'fixup'],
+  ['x', 'exec'],
+  ['b', 'break'],
+  ['d', 'drop'],
+  ['l', 'label'],
+  ['t', 'reset'],
+  ['m', 'merge'],
+  ['u', 'update-ref'],
+]);
+
+const commentedActions = ['pick', 'p', 'Branch', 'Branch:'];
+
+function splitFirstWord(text: string): [string, string] {
+  const separator = /[ \t]+/.exec(text);
+  return separator ? [text.slice(0, separator.index), text.slice(separator.index + separator[0].length)] : [text, ''];
+}
+
+function parseLine(line: string): RebaseLine | undefined {
+  const commented = /^#[ \t]/.test(line);
+  if (line.startsWith('#') && !commented) {
+    return undefined;
+  }
+  const [command, firstRest] = splitFirstWord(commented ? line.slice(1).trimStart() : line);
+  if (commented && !commentedActions.includes(command)) {
+    return undefined;
+  }
+  let action = abbreviatedActions.get(command) ?? command;
+  if (action === 'exec') {
+    return { action, hash: firstRest, message: '' };
+  }
+  let rest = firstRest;
+  const fixupFlag = /^(-[cC])[ \t]+(.*)$/.exec(rest);
+  if (action === 'fixup' && fixupFlag) {
+    action += ' ' + fixupFlag[1];
+    rest = fixupFlag[2];
+  }
+  const [hash, message] = splitFirstWord(rest);
+  return { action: commented ? '# ' + action : action, hash, message };
+}
+
 function toState(data: string): RebaseState {
   const lines = data.replace(/\r/g, '').split('\n');
-  if (!/^(noop|pick|break|update-ref|label|# pick)/.exec(lines[0])) {
+  if (
+    !/^(?:noop|pick|reword|edit|squash|fixup|exec|break|drop|label|reset|merge|update-ref|[presfxbdltmu]|#\s+(?:pick|p))(?:\s|$)/.test(
+      lines[0].trim(),
+    )
+  ) {
     throw new Error('Not a proper rebase file: \n' + lines.slice(0, 5).join('\n') + '\n ...');
   }
   return lines.reduce<RebaseState>(
     (state, line) => {
       line = line.trim();
       if (line.length > 0) {
-        let parts = line.split(' ');
-        if (parts[0] === '#' && parts[1] !== 'pick' && parts[1] !== 'Branch' && parts[1] !== 'Branch:') {
-          state.info.push(line);
+        const parsed = parseLine(line);
+        if (parsed) {
+          state.lines.push(parsed);
         } else {
-          if (parts[0] === '#') {
-            parts = parts.slice(1);
-            parts[0] = '# ' + parts[0];
-          }
-          state.lines.push({
-            action: parts[0],
-            hash: parts[1],
-            message: parts.slice(2).join(' '),
-          });
+          state.info.push(line);
         }
       }
       return state;
@@ -84,11 +125,15 @@ function toFile(state: RebaseState | undefined): string {
   let inRewordedBlock = false;
   const lines = state.lines.map((line: RebaseLine) => {
     if (line.action === 'reworded') {
+      const parts = line.message.split('\n').filter((p) => !p.startsWith('#'));
+      const firstLine = parts.find((p) => p.trim().length > 0);
+      if (firstLine === undefined) {
+        inRewordedBlock = false;
+        return ['pick', line.hash, line.originalMessage].filter((part) => part).join(' ');
+      }
       inRewordedBlock = true;
-      const parts = line.message.split('\n').filter((p) => p.length > 0 && !p.startsWith('#'));
-      const flags = parts.map((p) => `-m '${p.replace(/'/g, "'\\''")}'`).join(' ');
-      const firstLine = parts[0] ?? '';
-      return `pick ${line.hash} # ${firstLine}\nexec git commit --amend ${flags}`;
+      const quoted = parts.map((p) => `'${p.replace(/'/g, "'\\''")}'`).join(' ');
+      return `pick ${line.hash} # ${firstLine}\nexec git commit --amend -m "$(printf '%s\\n' ${quoted})"`;
     }
     if (line.action === 'squash' && inRewordedBlock) {
       return `fixup ${line.hash} ${line.message.split('\n')[0]}`;
