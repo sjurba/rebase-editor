@@ -1,7 +1,7 @@
-import bindingsFactory from '../src/key-bindings';
-import reducer from '../src/reducer';
-import { getState } from './state-gen';
-import { RebaseState } from '../src/types';
+import bindingsFactory from '../src/key-bindings.ts';
+import reducer from '../src/reducer.ts';
+import { getState } from './state-gen.ts';
+import type { RebaseState } from '../src/types.ts';
 
 const bindings = await bindingsFactory();
 
@@ -23,7 +23,7 @@ describe('Fuzzy reducer test', function () {
       for (let i = 0; i < 100; i++) {
         const randomAction = actions[Math.floor(Math.random() * actions.length)];
         executedActions.push(randomAction);
-        state = reducer(state as RebaseState, randomAction);
+        state = reducer(state, randomAction);
       }
     } catch (err) {
       console.log('Executed actions', executedActions);

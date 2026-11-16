@@ -8,13 +8,13 @@
 
 ```bash
 npm run build          # Compile TypeScript (src/ → dist/)
-npm test               # Run all tests (Mocha + tsx)
+npm test               # Run all tests (Mocha, native Node TypeScript)
 npm test -- test/reducer.spec.ts   # Run a single test file
 npm test -- --grep "should move"   # Run tests matching a pattern
 npm run coverage       # Coverage report (HTML + text, via c8)
 npm run format         # Format all source and test files (Prettier)
 npm run format:check   # Check formatting without writing
-npm run lint           # Lint source and test files (ESLint)
+npm run lint           # Lint source and test files (Oxlint, type-aware)
 npm run lint:fix       # Auto-fix lint violations
 ```
 
@@ -36,8 +36,9 @@ src/types.ts          shared types: RebaseState, RebaseLine, CursorState, KeyBin
 ## Conventions
 
 - **TypeScript strict mode.** ES modules (`"type": "module"`). One default export per `src/` file.
+- **Imports.** Relative imports include the `.ts` extension, and type-only imports use `import type` (enforced by `verbatimModuleSyntax`). Node runs the sources directly via type stripping, so only erasable TypeScript syntax is allowed (no enums, namespaces or parameter properties).
 - **Pure, immutable reducer.** State is deeply frozen before return. Never mutate — spread to produce new state.
-- **ESLint** (`@typescript-eslint/strict-type-checked`): `===` only, curly braces required, no `any`, prefix unused vars with `_`.
+- **Oxlint** (`.oxlintrc.json`, type-aware via tsgolint; typescript-eslint `strict-type-checked` + `stylistic-type-checked` rule set): `===` only, curly braces required, no `any`, prefix unused vars with `_`.
 - **Prettier** (`.prettierrc`): single quotes, print width 120.
 
 ## Testing

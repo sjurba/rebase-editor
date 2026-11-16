@@ -1,4 +1,4 @@
-import { RebaseState, RebaseLine, CursorState, RewordModeState } from '../src/types';
+import type { RebaseState, RebaseLine, CursorState, RewordModeState } from '../src/types.ts';
 
 interface StateInput {
   lines: RebaseLine[];
@@ -8,7 +8,7 @@ interface StateInput {
 }
 
 export function getLines(count: number): RebaseLine[] {
-  return new Array(count || 0).fill(null).map((_val: null, idx: number) => ({
+  return Array.from({ length: count || 0 }, (_val: unknown, idx: number) => ({
     action: 'pick',
     hash: '123',
     message: `Line ${idx}`,
@@ -38,7 +38,7 @@ export function getState(
     ({ lines, cursor, info, height = 20 } = lines);
   }
   if (typeof info === 'number') {
-    info = new Array(info || 0).fill(null).map((_val: null, idx: number) => {
+    info = Array.from({ length: info || 0 }, (_val: unknown, idx: number) => {
       return `# Info ${idx}`;
     });
   }

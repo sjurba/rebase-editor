@@ -40,7 +40,7 @@ function createMockTerminal(): MockTerm {
   const controlFncs = ['fullscreen', 'grabInput', 'clear', 'hideCursor'] as const;
 
   const term = Object.assign(base, {
-    moveTo: (col: number, row: number): void => {
+    moveTo: (_col: number, row: number): void => {
       if (row < 1) {
         throw new Error('Should not move to row < 1');
       }

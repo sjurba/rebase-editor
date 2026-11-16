@@ -1,6 +1,6 @@
-import { RebaseState, UndoEntry } from './types';
-import rebaseReducer from './rebase-reducer';
-import rewordReducer from './reword-reducer';
+import type { RebaseState, UndoEntry } from './types.ts';
+import rebaseReducer from './rebase-reducer.ts';
+import rewordReducer from './reword-reducer.ts';
 
 function deepFreeze<T extends object>(obj: T): Readonly<T> {
   const propNames = Object.getOwnPropertyNames(obj);

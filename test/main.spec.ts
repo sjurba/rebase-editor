@@ -1,9 +1,9 @@
-import orgMain from '../src/main';
-import mockTerminal from './mock-terminal';
+import orgMain from '../src/main.ts';
+import mockTerminal from './mock-terminal.ts';
 import sinon from 'sinon';
 import { expect } from 'chai';
-import { MainArgs, TerminalKitTerminal } from '../src/types';
-import { MockTerm } from './mock-terminal';
+import type { MainArgs } from '../src/types.ts';
+import type { MockTerm } from './mock-terminal.ts';
 
 const debugLog = {
   trapConsole: sinon.stub(),
@@ -25,7 +25,7 @@ describe('Main loop', function () {
       write: sinon.stub(),
     };
     args = {
-      term: mockTerm as unknown as TerminalKitTerminal,
+      term: mockTerm,
       file: file,
       alternateScreen: true,
       selectMarker: '^!',

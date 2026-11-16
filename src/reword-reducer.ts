@@ -1,4 +1,4 @@
-import { RewordModeState } from './types';
+import type { RewordModeState } from './types.ts';
 
 function insertAt(str: string, pos: number, chars: string): string {
   return str.slice(0, pos) + chars + str.slice(pos);
@@ -39,7 +39,9 @@ function getCurrentLine(
 
 function deleteSelection(state: RewordModeState): RewordModeState {
   const { message, cursorPos, selectAnchor } = state;
-  if (selectAnchor === undefined) return state;
+  if (selectAnchor === undefined) {
+    return state;
+  }
   const selStart = Math.min(selectAnchor, cursorPos);
   const selEnd = Math.max(selectAnchor, cursorPos);
   return {

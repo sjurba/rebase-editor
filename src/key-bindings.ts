@@ -1,5 +1,5 @@
 import path from 'path';
-import { KeyBindings } from './types';
+import type { KeyBindings } from './types.ts';
 
 const defaultRewordBindings: KeyBindings = {
   ESCAPE: 'rewordDone',

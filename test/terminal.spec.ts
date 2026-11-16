@@ -1,10 +1,10 @@
-import Terminal from '../src/terminal';
-import mockTerminal from './mock-terminal';
-import { getState, getRewordState } from './state-gen';
+import Terminal from '../src/terminal.ts';
+import mockTerminal from './mock-terminal.ts';
+import { getState, getRewordState } from './state-gen.ts';
 import sinon from 'sinon';
 import { expect } from 'chai';
-import { RebaseLine, TerminalKitTerminal, RebaseState, TerminalOpts } from '../src/types';
-import { MockTerm } from './mock-terminal';
+import type { RebaseLine, RebaseState, TerminalOpts } from '../src/types.ts';
+import type { MockTerm } from './mock-terminal.ts';
 
 const noopLines: RebaseLine[] = [
   {
@@ -24,7 +24,7 @@ describe('Terminal renderer', function () {
   });
 
   function createTerminal(opts?: Partial<TerminalOpts>): Terminal {
-    return new Terminal(mockTerm as unknown as TerminalKitTerminal, {
+    return new Terminal(mockTerm, {
       keyBindings: {},
       ...opts,
     });

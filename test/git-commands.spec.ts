@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 import childProcess from 'child_process';
-import { getFullCommitMessages } from '../src/git-commands';
+import { getFullCommitMessages } from '../src/git-commands.ts';
 
 describe('git-commands', function () {
   afterEach(function () {
